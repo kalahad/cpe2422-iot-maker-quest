@@ -1,0 +1,97 @@
+/* ================= NEO PINOUT ================= */
+.np-svg{display:block;width:100%;height:100%;font-family:'Chakra Petch','Kanit',system-ui,sans-serif}
+.np-svg .np-nm{fill:var(--n-text)}
+.np-svg .np-cap{fill:var(--n-mute)}
+.np-pin.dim .np-nm{fill:var(--n-mute)}
+.np-pin.dim{opacity:.5}
+.np-pin{cursor:pointer;transition:opacity .25s}
+.np-pin.dim{opacity:.22}
+.np-pin.on .np-halo{animation:npPulse 1.6s ease-in-out infinite}
+.np-pin.sel .np-pill{fill-opacity:.42;stroke-width:3}
+.np-pin:hover .np-pill{fill-opacity:.32}
+@keyframes npPulse{50%{opacity:.15}}
+@media (prefers-reduced-motion:reduce){.np-pin.on .np-halo{animation:none}}
+
+/* สไลด์ที่มีผังขา: เนื้อหาซ้าย ผังขวา */
+.neo-slide.np-has{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,min(38%,500px));grid-template-rows:auto minmax(0,1fr);column-gap:clamp(12px,1.6vw,24px);row-gap:8px}
+.neo-slide.np-has>.neo-slabel{grid-column:1;grid-row:1}
+.neo-slide.np-has>.neo-in{grid-column:1;grid-row:2;min-width:0}
+.neo-slide.np-has>.np-fig{grid-column:2;grid-row:1/3}
+.np-fig{display:flex;flex-direction:column;min-height:0;border-radius:20px;border:1px solid var(--n-edge);position:relative;
+  background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--n-a) 12%,transparent),transparent 60%),color-mix(in srgb,#05070d 72%,var(--n-bg));padding:8px 8px 6px;gap:4px;animation:neoIn .5s both}
+html[data-theme="light"] .np-fig{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--n-a) 10%,transparent),transparent 60%),#f6f6fb}
+.np-fig-h{display:flex;flex-wrap:nowrap;align-items:center;gap:6px;padding:0 2px;min-width:0}
+.np-fig-h b{font-family:var(--disp);font-size:clamp(12px,.95vw,14px);color:var(--n-a);flex:none;order:0}
+.np-fig-h .np-zoom{order:2;flex:none}
+.np-chips{order:1;flex:1;min-width:0;display:flex;flex-wrap:nowrap;gap:4px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+.np-chips i{flex:none;font-style:normal;font-family:var(--disp);font-weight:700;font-size:clamp(11px,.85vw,13px);padding:1px 8px;border-radius:99px;
+  border:1px solid var(--pc,var(--n-a));background:color-mix(in srgb,var(--pc,var(--n-a)) 18%,transparent);color:var(--n-text)}
+.np-fig-b{flex:1;min-height:0;cursor:zoom-in}
+.np-zoom{border:1px solid var(--n-edge);background:var(--n-glass);color:var(--n-text);border-radius:10px;padding:3px 10px;font:inherit;font-size:clamp(12px,.9vw,13px);cursor:pointer}
+.np-zoom:hover{border-color:var(--n-a)}
+.np-chip{display:none}
+
+/* ปุ่มผังขาในแถบบน/อาร์เคด */
+#btnPin,#acPin{position:relative;font-weight:700}
+#btnPin.np-has,#acPin.np-has{border-color:var(--n-a) !important;color:var(--n-a) !important;box-shadow:0 0 0 0 var(--n-a);animation:npBtn 1.8s ease-out infinite}
+#btnPin b,#acPin b{position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;border-radius:9px;background:var(--n-b);color:#fff;font-size:11px;line-height:18px;padding:0 4px;display:none}
+#btnPin.np-has b,#acPin.np-has b{display:block}
+@keyframes npBtn{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--n-a) 60%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+
+/* หน้าต่างผังเต็มจอ */
+#npModal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:clamp(6px,2vw,24px);
+  background:color-mix(in srgb,#02030a 78%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#npModal.show{display:flex}
+#npModal .np-card{width:min(1280px,100%);height:min(860px,100%);display:flex;flex-direction:column;border-radius:24px;border:1px solid var(--n-edge);
+  background:linear-gradient(160deg,color-mix(in srgb,var(--n-a) 8%,var(--n-bg)),var(--n-bg));box-shadow:0 30px 80px -20px #000;overflow:hidden;color:var(--n-text)}
+#npModal .np-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--n-edge);flex-wrap:wrap}
+#npModal .np-head>div:first-child{flex:1 1 260px}
+#npModal .np-head b{font-family:var(--disp);font-size:clamp(17px,1.6vw,22px)}
+#npModal .np-sub{color:var(--n-mute);font-size:clamp(12px,1vw,14px)}
+#npModal .np-sel{display:flex;gap:6px}
+#npModal .np-sel button,#npModal .np-x{border:1px solid var(--n-edge);background:var(--n-glass);color:var(--n-text);border-radius:12px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
+#npModal .np-sel button.on{border-color:var(--n-a);background:color-mix(in srgb,var(--n-a) 20%,transparent);color:var(--n-text);font-weight:700}
+#npModal .np-x{width:40px;height:40px;padding:0;font-size:16px}
+#npModal .np-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,330px)}
+#npModal .np-board{min-height:0;padding:10px}
+#npModal aside{border-left:1px solid var(--n-edge);padding:14px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+#npModal .np-info{min-height:120px}
+#npModal .np-ititle{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-left:5px solid var(--pc);padding-left:10px}
+#npModal .np-ititle b{font-family:var(--disp);font-size:clamp(26px,2.6vw,36px);line-height:1}
+#npModal .np-ititle span{color:var(--pc);font-weight:700;font-size:14px}
+#npModal .np-itag{margin:8px 0 0;font-family:var(--disp);font-size:14px;color:var(--n-mute)}
+#npModal .np-info p{margin:8px 0 0;font-size:clamp(15px,1.2vw,17px);line-height:1.6}
+#npModal .np-hint{color:var(--n-mute)}
+#npModal .np-hl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#npModal .np-hl b{flex:1 1 100%;font-size:13px;color:var(--n-mute);font-weight:600}
+#npModal .np-hl button{border:1px solid var(--pc);background:color-mix(in srgb,var(--pc) 16%,transparent);color:var(--n-text);border-radius:99px;padding:4px 10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+#npModal .np-hl small{flex:1 1 100%;color:var(--n-r)}
+#npModal .np-leg{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:12.5px;color:var(--n-mute);margin-top:auto}
+#npModal .np-leg i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px}
+@media (max-width:900px){
+  .neo-slide.np-has{display:flex}
+  .neo-slide.np-has>.np-fig{display:none}
+  .np-chip{display:inline-flex;align-self:flex-start;align-items:center;gap:6px;border:1px solid var(--n-a);background:color-mix(in srgb,var(--n-a) 14%,transparent);color:var(--n-text);
+    border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+  #npModal .np-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+  #npModal aside{border-left:0;border-top:1px solid var(--n-edge);max-height:42%;padding:10px 12px;gap:8px}
+  #npModal .np-leg{display:none}
+  #npModal .np-board{padding:4px}
+}
+
+/* ส่วนประกอบบนบอร์ด */
+.np-part{cursor:pointer}
+.np-part .np-pglow{animation:npPulse 1.8s ease-in-out infinite}
+.np-part.sel rect:nth-child(2){stroke-width:4;fill-opacity:.22}
+@media (prefers-reduced-motion:reduce){.np-part .np-pglow{animation:none}}
+#npModal .np-hl .np-allparts{--pc:var(--n-a);border-style:dashed;font-weight:600}
+#npModal .np-hl b:empty{flex-basis:100%;height:0}
+.neo-slide.np-has .neo-in .np-focus{outline:2px solid #22d3ee;outline-offset:2px;border-radius:8px;background:color-mix(in srgb,#22d3ee 10%,transparent)}
+.neo-slide.np-has .neo-in tr,.neo-slide.np-has .neo-in .keyfact,.neo-slide.np-has .neo-in li{cursor:help}
+#npModal aside>*{flex:none}
+#npModal .np-leg{margin-top:8px}
+@media (max-width:900px){
+  #npModal .np-body{display:flex;flex-direction:column}
+  #npModal .np-board{flex:1 1 auto;min-height:0}
+  #npModal aside{flex:0 0 auto;max-height:40%}
+}

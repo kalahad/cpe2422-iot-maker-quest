@@ -1,0 +1,40 @@
+/* ===== NEO ARCADE · หน้าแผนที่ภารกิจ ===== */
+:root{--bg:#05060d;--surface:rgba(18,20,34,.72);--surface2:rgba(24,26,44,.8);--card:rgba(18,20,34,.72);--card-hi:rgba(28,30,52,.9);
+  --text:#f2f4ff;--muted:#a9b0d0;--faint:#7c84a8;--gold:#ffe14d;--line:rgba(140,150,255,.16);--line2:rgba(140,150,255,.28);
+  --mapbg:#070917;--na:#00f0ff;--nb:#ff2e88;--nc:#c6ff3d;--glow:0 0 0 1px rgba(0,240,255,.18),0 18px 50px -18px rgba(0,240,255,.35)}
+:root[data-theme="light"]{--bg:#f3f1ff;--surface:rgba(255,255,255,.86);--surface2:#fff;--card:rgba(255,255,255,.86);--card-hi:#fff;
+  --text:#14122b;--muted:#4a4670;--faint:#5f5a86;--gold:#8a4b00;--line:rgba(80,60,200,.16);--line2:rgba(80,60,200,.28);
+  --mapbg:#fbfaff;--na:#0077a8;--nb:#c0186a;--nc:#3d7a00;--glow:0 0 0 1px rgba(80,60,200,.12),0 14px 40px -16px rgba(80,60,200,.3)}
+body{font-family:'Kanit','IBM Plex Sans Thai',system-ui,sans-serif !important;
+  background:radial-gradient(900px 500px at 0% 0%,color-mix(in srgb,var(--na) 16%,transparent),transparent 60%),
+             radial-gradient(800px 520px at 100% 100%,color-mix(in srgb,var(--nb) 16%,transparent),transparent 60%),var(--bg) !important}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 80%);mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 80%)}
+.app{position:relative;z-index:1}
+.brand h1,.pc h3,.nx b,.cta,.kv b,#uStars{font-family:'Chakra Petch','Kanit',sans-serif !important}
+.brand h1{font-size:clamp(1.25rem,2.1vw,1.8rem) !important;letter-spacing:.01em;
+  background:linear-gradient(95deg,var(--text),var(--na) 55%,var(--nb));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand h1 span{color:transparent !important}
+.logo{background:linear-gradient(135deg,color-mix(in srgb,var(--na) 30%,transparent),color-mix(in srgb,var(--nb) 30%,transparent)) !important;
+  border:1px solid var(--line2) !important;color:var(--na) !important;box-shadow:0 0 24px -6px var(--na)}
+.logo svg{width:24px;height:24px}
+.map{border:1px solid var(--line2) !important;box-shadow:var(--glow) !important;
+  background:radial-gradient(circle at 14% 82%,color-mix(in srgb,var(--na) 18%,transparent),transparent 32%),
+  radial-gradient(circle at 50% 30%,color-mix(in srgb,#8b7bff 18%,transparent),transparent 32%),
+  radial-gradient(circle at 88% 16%,color-mix(in srgb,var(--nb) 18%,transparent),transparent 28%),var(--mapbg) !important}
+.node .disc{filter:drop-shadow(0 0 14px currentColor) !important}
+.pc{background:var(--surface) !important;border:1px solid var(--line2) !important;border-radius:20px !important;box-shadow:var(--glow) !important;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.pc.nx{border-color:color-mix(in srgb,var(--na) 45%,transparent) !important}
+.cta{background:linear-gradient(100deg,var(--na),#8b7bff 50%,var(--nb)) !important;color:#fff !important;border-radius:16px !important;
+  box-shadow:0 10px 30px -10px var(--nb),0 0 0 1px rgba(255,255,255,.15) inset !important;font-size:1.08rem !important;letter-spacing:.02em;
+  text-shadow:0 1px 2px rgba(0,0,0,.35);animation:ixPulse 2.2s ease-in-out infinite}
+.cta:active{box-shadow:0 4px 14px -8px var(--nb) !important}
+@keyframes ixPulse{50%{box-shadow:0 10px 40px -6px var(--nb),0 0 0 1px rgba(255,255,255,.2) inset}}
+.bar{background:color-mix(in srgb,var(--text) 10%,transparent) !important}
+.bar i{background:linear-gradient(90deg,var(--na),var(--nb)) !important;box-shadow:0 0 10px -2px var(--na)}
+.ava{background:linear-gradient(135deg,var(--na),var(--nb)) !important;color:#fff !important;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--na),0 0 22px -4px var(--na) !important}
+#gate>*{border:1px solid var(--line2) !important;box-shadow:var(--glow) !important}
+#gate button[type="submit"],#gate .go,#gate .cta{background:linear-gradient(100deg,var(--na),#8b7bff 50%,var(--nb)) !important;color:#fff !important}
+@media (prefers-reduced-motion:reduce){.cta{animation:none}}

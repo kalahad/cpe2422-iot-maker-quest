@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('gnr1007_theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GNR1007 · เกมบทเรียนเตรียมสอบ | มหาวิทยาลัยรามคำแหง</title>
+<meta name="description" content="ชุดเกมบทเรียน 11 เกม วิชา GNR1007 การโปรแกรมคอมพิวเตอร์สำหรับวิศวกร คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง ฝึกทำข้อสอบแนว กว พร้อมประเมินจุดเด่นจุดด้อยรายหัวข้อ">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230b0f14'/%3E%3Ctext x='50' y='64' font-family='monospace' font-weight='700' font-size='42' text-anchor='middle' fill='%23fbbf24'%3E%7B%7D%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* =================================================================
+   GNR1007 Learning Game Series — หน้าแผนที่ผจญภัย v4.0 (UI v7.0)
+   - แผนที่ผจญภัย 11 ด่านในจอเดียว ไม่ต้องเลื่อน (เดสก์ท็อปและมือถือแนวตั้ง) · v4.1 เพิ่มด่าน 11 FINAL CORNER
+   - ลงทะเบียนด้วยรหัสนักศึกษา 10 หลัก หรือรหัสลับจากผู้สอน + ชื่อเล่น
+   - โหมดมืด/สว่าง ความต่างสีข้อความ >= 4.5:1
+   ================================================================= */
+:root{
+  --bg:#070a10; --surface:#0f151f; --surface2:#151d2a; --card:#111824; --card-hi:#172133;
+  --text:#edf2f9; --muted:#a8b6c9; --faint:#7d8ca2;
+  --gold:#fbbf24; --green:#4ade80; --red:#fb7185;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.16);
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 16px 40px rgba(0,0,0,.40);
+  --input:rgba(255,255,255,.06); --mapbg:#0f1626;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#f2f4f8; --surface:#ffffff; --surface2:#ffffff; --card:#ffffff; --card-hi:#ffffff;
+  --text:#0f1726; --muted:#44516a; --faint:#5d6a80;
+  --gold:#8a5a00; --green:#15703d; --red:#c2102e;
+  --line:rgba(15,23,38,.12); --line2:rgba(15,23,38,.20);
+  --shadow:0 1px 2px rgba(15,23,38,.06),0 10px 28px rgba(15,23,38,.08);
+  --input:#f5f7fb; --mapbg:#f8fafd;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{
+  background:radial-gradient(1000px 520px at 8% -10%,rgba(96,140,255,.12),transparent 60%),
+             radial-gradient(900px 520px at 100% 0%,rgba(251,191,36,.08),transparent 55%),var(--bg);
+  color:var(--text);font-family:'IBM Plex Sans Thai','Sarabun',system-ui,sans-serif;font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit}
+.app{height:100dvh;min-height:540px;display:grid;grid-template-columns:minmax(0,1fr) 316px;grid-template-rows:auto minmax(0,1fr);gap:12px;
+  max-width:1520px;margin:0 auto;padding:12px clamp(10px,1.6vw,22px) 12px}
+
+/* ---------- แถบบน ---------- */
+.top{grid-column:1/-1;display:flex;align-items:center;gap:12px;min-width:0}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 auto}
+.logo{width:44px;height:44px;flex:0 0 44px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#1b2436,#0b0f14);border:1px solid var(--line2);color:#fbbf24;
+  font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:1.05rem}
+.brand h1{margin:0;font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:clamp(1.05rem,2vw,1.45rem);line-height:1.2}
+.brand h1 span{color:var(--gold)}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.82rem;line-height:1.4}
+.cleared{font-size:.8rem;border:1px solid var(--line2);border-radius:99px;padding:5px 12px;color:var(--muted);white-space:nowrap;background:var(--surface)}
+.cleared b{color:var(--text)}
+.ibtn{height:40px;min-width:40px;padding:0 11px;border-radius:11px;border:1px solid var(--line2);background:var(--surface2);
+  color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:.84rem;box-shadow:var(--shadow)}
+.ibtn:hover{border-color:var(--gold)}
+.ibtn svg{width:18px;height:18px;flex:0 0 18px}
+
+/* ---------- แผนที่ผจญภัย ---------- */
+.map{position:relative;min-height:0;border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);
+  background:radial-gradient(circle at 14% 82%,rgba(56,189,248,.17),transparent 30%),radial-gradient(circle at 42% 38%,rgba(167,139,250,.17),transparent 30%),
+  radial-gradient(circle at 72% 72%,rgba(52,211,153,.17),transparent 30%),radial-gradient(circle at 88% 16%,rgba(244,114,182,.19),transparent 26%),var(--mapbg)}
+.map svg.world{position:absolute;inset:0;width:100%;height:100%}
+.map .dots{position:absolute;inset:0;opacity:.5;background-image:radial-gradient(var(--line2) 1px,transparent 1.2px);background-size:26px 26px;pointer-events:none}
+.zlabel{font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em;paint-order:stroke;stroke:var(--mapbg);stroke-width:4px}
+.zsub{font-size:11px;fill:var(--muted);paint-order:stroke;stroke:var(--mapbg);stroke-width:3px}
+.node{cursor:pointer;outline:none}
+.node .ring{transform-box:fill-box;transform-origin:center;animation:pulse 1.6s ease-out infinite}
+.node .disc{transition:filter .15s}
+.node:hover .disc,.node:focus-visible .disc{filter:brightness(1.18) drop-shadow(0 0 10px currentColor)}
+.node:hover .nname,.node:focus-visible .nname{text-decoration:underline}
+.nname{font-family:'Bai Jamjuree',sans-serif;font-weight:700;font-size:13px;fill:var(--text);paint-order:stroke;stroke:var(--mapbg);stroke-width:4px}
+.pin{animation:bob 1.4s ease-in-out infinite}
+.tipbox{position:absolute;z-index:3;pointer-events:none;min-width:200px;max-width:250px;background:var(--surface);border:1px solid var(--line2);border-radius:14px;
+  padding:10px 12px;box-shadow:var(--shadow);font-size:.8rem;line-height:1.45;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.tipbox.show{opacity:1;transform:none}
+.tipbox b{display:block;font-family:'Bai Jamjuree',sans-serif;font-size:.95rem}
+.tipbox .z{color:var(--muted)}
+@keyframes pulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* ---------- แผงผู้เล่น ---------- */
+.side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.pc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+.pl{display:flex;gap:12px;align-items:center;cursor:pointer;background:none;border:none;color:inherit;padding:0;width:100%;text-align:left}
+.ava{width:46px;height:46px;flex:0 0 46px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:1.15rem;color:#1a1204;
+  background:linear-gradient(135deg,#fde68a,#f59e0b);box-shadow:0 0 0 3px var(--surface),0 0 0 5px #f59e0b}
+.pl b{display:block;font-size:1.08rem;line-height:1.2}.pl small{display:block;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;font-size:.8rem}
+.pl .chg{margin-left:auto;font-size:.72rem;color:var(--muted);border:1px solid var(--line2);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.kv{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--muted);margin-top:10px}
+.kv b{color:var(--gold);font-size:.9rem}
+.bar{height:9px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:5px}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#22c55e,#fbbf24);transition:width .8s ease}
+.nx h4{margin:0 0 8px;font-size:.76rem;color:var(--muted);letter-spacing:.08em;font-weight:600}
+.nx .nm{display:flex;gap:11px;align-items:center;margin-bottom:12px}
+.nx .bx{width:52px;height:52px;flex:0 0 52px;border-radius:15px;padding:12px;color:#0b0f14}
+.nx .nm b{display:block;font-family:'Bai Jamjuree',sans-serif;font-size:1.06rem;line-height:1.2}
+.nx .nm small{color:var(--muted);font-size:.8rem}
+.cta{display:block;width:100%;text-align:center;text-decoration:none;border:none;border-radius:14px;padding:13px 16px;font-weight:700;font-size:1rem;cursor:pointer;color:#1a1204;
+  font-family:'Bai Jamjuree',sans-serif;background:linear-gradient(135deg,#fde047,#f59e0b);box-shadow:0 6px 0 #b45309,0 10px 24px rgba(245,158,11,.30);transition:transform .1s,box-shadow .1s}
+.cta:hover{transform:translateY(-1px)}
+.cta:active{transform:translateY(4px);box-shadow:0 2px 0 #b45309}
+.zones{display:grid;gap:9px}
+.zones .z{font-size:.8rem}.zones .z .h{display:flex;justify-content:space-between;gap:6px}
+.zones .z .h span{display:flex;align-items:center;gap:7px}.zones .z .h i{width:9px;height:9px;border-radius:3px;display:inline-block}
+.zones .z .bar{height:7px;margin-top:4px}
+.advice{font-size:.8rem;color:var(--muted);line-height:1.5;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line2)}
+.advice b{color:var(--text)}
+.org{margin-top:auto;font-size:.72rem;color:var(--faint);text-align:center;line-height:1.5}
+
+@media (max-width:980px){ .app{grid-template-columns:minmax(0,1fr) 280px} }
+@media (max-width:760px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr) auto;padding:10px;gap:9px}
+  .side{display:contents}
+  .side>.pc:not(.nx),.org{display:none}
+  .brand p{display:none}
+  .brand h1{font-size:1rem}
+  .cleared{font-size:.72rem;padding:4px 9px}
+  .nx{padding:10px 12px}.nx h4{display:none}.nx .nm{margin-bottom:9px}.nx .bx{width:42px;height:42px;flex-basis:42px;padding:9px}
+  .ibtn.user .who{display:none}
+}
+@media (max-height:600px) and (min-width:761px){ .advice,.zones{display:none} }
+@media (max-height:760px) and (min-width:761px){ .advice{display:none} .zones{gap:5px} }   /* 5 โซน (เพิ่มด่าน 11) ยังอยู่ในจอเดียวบนจอเตี้ย */
+
+/* ---------- ด่านลงทะเบียน ---------- */
+#gate{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;
+  background:color-mix(in srgb,var(--bg) 93%,transparent);backdrop-filter:blur(8px);overflow:auto}
+#gate.hidden{display:none}
+.gcard{width:100%;max-width:440px;border:1px solid var(--line2);border-radius:20px;padding:26px 24px 20px;background:var(--surface);box-shadow:var(--shadow)}
+.gcard .gt{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.gcard h2{margin:0;font-family:'Bai Jamjuree',sans-serif;font-size:1.22rem;line-height:1.25}
+.gcard .sub{margin:2px 0 0;color:var(--muted);font-size:.84rem}
+.gcard label{display:flex;justify-content:space-between;align-items:baseline;font-size:.86rem;font-weight:600;margin:12px 0 6px}
+.gcard label small{font-family:'IBM Plex Mono',monospace;font-weight:500;color:var(--muted)}
+.gcard label small.ok{color:var(--green)}
+.gcard input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line2);background:var(--input);color:var(--text);
+  font-size:1.05rem;outline:none;font-family:'IBM Plex Mono','IBM Plex Sans Thai',monospace;letter-spacing:.08em}
+.gcard input#gNick{font-family:'IBM Plex Sans Thai',sans-serif;letter-spacing:0}
+.gcard input:focus{border-color:var(--gold);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 22%,transparent)}
+.gcard input::placeholder{color:var(--faint)}
+.hint{margin-top:8px;font-size:.8rem;line-height:1.55;color:var(--muted);border-left:3px solid var(--gold);
+  padding:7px 10px;border-radius:0 10px 10px 0;background:color-mix(in srgb,var(--gold) 7%,transparent)}
+.hint b{color:var(--text)}
+.hint .ex{font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--text)}
+.gerr{min-height:0;margin-top:6px;font-size:.8rem;color:var(--red)}
+.gnote{min-height:1.2em;margin-top:4px;font-size:.78rem;color:var(--green)}
+#gGo{margin-top:14px;width:100%;padding:13px;border-radius:12px;border:none;cursor:pointer;font-weight:700;font-size:1rem;
+  font-family:'Bai Jamjuree',sans-serif;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1204}
+#gGo:active{transform:scale(.99)}
+.gcard{position:relative}
+.gtheme{position:absolute;top:14px;right:14px;height:38px;min-width:38px;padding:0 10px;box-shadow:none}
+.gcard .gt{padding-right:46px}
+.gorg{margin-top:16px;padding-top:12px;border-top:1px dashed var(--line2);text-align:center;font-size:.82rem;line-height:1.55;color:var(--muted);font-weight:500}
+.gfoot{margin-top:8px;font-size:.72rem;color:var(--faint);text-align:center}
+</style>
+</head>
+<body>
+
+<!-- ===================== ด่านลงทะเบียน ===================== -->
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gTitle">
+  <form class="gcard" id="gForm" autocomplete="off" novalidate>
+    <button class="ibtn gtheme" id="gTheme" type="button" aria-label="สลับโหมดสว่างหรือมืด" title="สลับโหมดสว่าง/มืด">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+    </button>
+    <div class="gt">
+      <div class="logo" aria-hidden="true">{}</div>
+      <div><h2 id="gTitle">ลงทะเบียนเข้าสนามฝึก</h2><p class="sub">GNR1007 · เตรียมสอบ กว ด้านการเขียนโปรแกรม</p></div>
+    </div>
+    <label for="gSid">รหัสนักศึกษา <small id="gCount">0/10</small></label>
+    <input id="gSid" type="text" maxlength="12" placeholder="เช่น 69xxxxxxxx" spellcheck="false" aria-describedby="gHint">
+    <div class="hint" id="gHint">
+      กรอก <b>รหัสนักศึกษา 10 หลัก</b> เป็นตัวเลขล้วน ขึ้นต้นด้วยปีที่เข้าศึกษา<br>
+      ตัวอย่าง <span class="ex">69xxxxxxxx</span> (รหัสปี 2569)
+    </div>
+    <div class="gerr" id="gErr" role="alert"></div>
+    <div class="gnote" id="gNote"></div>
+    <label for="gNick">ชื่อเล่น <small>แสดงบนใบรายงานผล</small></label>
+    <input id="gNick" type="text" maxlength="24" placeholder="เช่น ต้นกล้า">
+    
+    <button id="gGo" type="submit">เข้าสู่สนามฝึก</button>
+    <div class="gorg">สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์<br>มหาวิทยาลัยรามคำแหง</div>
+    <div class="gfoot">ข้อมูลเก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น ไม่ส่งออกไปที่ใด</div>
+  </form>
+</div>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">{}</div>
+      <div>
+        <h1>ผจญภัยโลกภาษา C <span>GNR1007</span></h1>
+        <p>เคลียร์ให้ครบ 11 ด่าน สะสมดาว พิสูจน์ความพร้อมสอบ กว ด้านการเขียนโปรแกรม</p>
+      </div>
+    </div>
+    <span class="cleared" id="cleared">เคลียร์แล้ว <b>0 / 11</b> ด่าน</span>
+    <button class="ibtn" id="btnTheme" type="button" aria-label="สลับโหมดสว่างหรือมืด" title="สลับโหมดสว่าง/มืด">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+    </button>
+  </header>
+
+  <main class="map" id="map" aria-label="แผนที่ด่าน 11 ด่าน"><div class="dots"></div><div id="world"></div><div class="tipbox" id="tipbox" role="tooltip"></div></main>
+
+  <aside class="side">
+    <div class="pc">
+      <button class="pl" id="btnUser" type="button" title="เปลี่ยนผู้ใช้">
+        <span class="ava" id="uAva">?</span>
+        <span><b id="uNick">—</b><small id="uSid">—</small></span>
+        <span class="chg">เปลี่ยน</span>
+      </button>
+      <div class="kv"><span>ฉายา</span><b id="uRank">—</b></div>
+      <div class="kv"><span>ดาวสะสม</span><b id="uStars">0 / 76</b></div>
+      <div class="bar"><i id="uBar"></i></div>
+    </div>
+    <div class="pc nx">
+      <h4 id="nxH">ภารกิจถัดไป</h4>
+      <div class="nm" id="nxBox"></div>
+      <a class="cta" id="nxGo" href="#">เริ่มผจญภัย →</a>
+    </div>
+    <div class="pc">
+      <div class="zones" id="zones"></div>
+      <div class="advice" id="advice"></div>
+    </div>
+    <div class="org">สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง<br>ผศ.ดร.กุลวลัญช์ วรุณสิน · index v4.1 · UI v7.0</div>
+  </aside>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var GAMES=[
+    {k:'game1', f:'game1_cpu_city.html',        n:'CPU CITY',          th:'เมืองแห่งหน่วยประมวลผล',   tp:'MEMORY · COMPILER · NETWORK',       d:1, ch:'บทที่ 1–2', acc:'#22d3ee', accl:'#0b6f7f', max:6},
+    {k:'game2', f:'game2_memory_vault.html',    n:'MEMORY VAULT',      th:'ห้องนิรภัยความจำ',          tp:'SIZING · OVERFLOW · CASTING',        d:1, ch:'บทที่ 3',   acc:'#d4a843', accl:'#7d5f1c', max:6},
+    {k:'game3', f:'game3_operator_arena.html',  n:'OPERATOR ARENA',    th:'สังเวียนตัวดำเนินการ',       tp:'PRECEDENCE · ++x/x++ · MODULO',      d:1, ch:'บทที่ 4',   acc:'#ff5b3c', accl:'#b81d00', max:6},
+    {k:'game4', f:'game4_logic_labyrinth.html', n:'LOGIC LABYRINTH',   th:'เขาวงกตแห่งเงื่อนไข',        tp:'IF · ELSE IF · SWITCH · BREAK',      d:2, ch:'บทที่ 5',   acc:'#c084fc', accl:'#6605c7', max:6},
+    {k:'game5', f:'game5_loop_factory.html',    n:'LOOP FACTORY',      th:'โรงงานวนซ้ำ',               tp:'FOR · WHILE · DO-WHILE · INFINITE',  d:2, ch:'บทที่ 5',   acc:'#f59e0b', accl:'#8a5806', max:6},
+    {k:'game6', f:'game6_trace_detective.html', n:'TRACE DETECTIVE',   th:'สำนักสืบรหัสลับ',            tp:'TRACE TABLE · LOOP + MODULO',        d:2, ch:'บทที่ 5',   acc:'#e2b96b', accl:'#85601a', max:6},
+    {k:'game7', f:'game7_circuit_blueprint.html',n:'CIRCUIT BLUEPRINT',th:'พิมพ์เขียวผังงาน',            tp:'TERMINATOR · DECISION · I/O · LOOP', d:3, ch:'บทที่ 10',  acc:'#5cc8ff', accl:'#006ba1', max:6},
+    {k:'game8', f:'game8_pit_crew.html',        n:'PIT CREW',          th:'ทีมช่างฟังก์ชัน',             tp:'PARAMETER · RETURN · LOCAL/GLOBAL',  d:3, ch:'บทที่ 6',   acc:'#ff7a45', accl:'#b83500', max:6},
+    {k:'game9', f:'game9_lap_timer.html',       n:'LAP TIMER',         th:'ตารางเวลาต่อรอบ (อาร์เรย์)',   tp:'INDEX 0 · LOOP · OUT OF BOUNDS',     d:3, ch:'บทที่ 7a',  acc:'#35e07f', accl:'#11733b', max:6},
+    {k:'game10',f:'game10_championship.html',   n:'CHAMPIONSHIP',      th:'รอบชิงแชมป์ ทบทวนรวม',       tp:'7 บท · 7 ข้อ · จับเวลาต่อข้อ',        d:4, ch:'บทที่ 1–10',acc:'#b18aff', accl:'#4400cc', max:7},
+    {k:'game11',f:'game11_final_corner.html',   n:'FINAL CORNER',      th:'โค้งสุดท้ายพิชิต กว. (ทดสอบก่อนสอบจริง)', tp:'2D ARRAY · NESTED LOOP · FILE · OOP · STACK · SORT', d:5, ch:'บทที่ 7b, 8, 9, 11',acc:'#fb923c', accl:'#b3410a', max:15}
+  ];
+  var DAYS={1:'วันที่ 1',2:'วันที่ 2',3:'วันที่ 3',4:'ทบทวนรวม',5:'วันที่ 4'};
+  var ID_KEY='gnr1007_student', RES_KEY='gnr1007_results', SECRET='ru2569', MASK='xxxxxxxxxx';
+  function $(s){return document.querySelector(s);}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+  /* ---------- ธีม ---------- */
+  function flipTheme(){
+    var t=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+    document.documentElement.setAttribute('data-theme',t);
+    try{localStorage.setItem('gnr1007_theme',t);}catch(e){}
+  }
+  $('#btnTheme').addEventListener('click',flipTheme);
+  $('#gTheme').addEventListener('click',flipTheme);
+
+  /* ---------- ตัวตนผู้เรียน ---------- */
+  function checkId(raw){
+    var v=(raw||'').trim();
+    if(v.toLowerCase()===SECRET) return {ok:true,sid:MASK,via:'code'};
+    var d=v.replace(/[\s-]/g,'');
+    if(!d) return {ok:false,msg:'กรุณากรอกรหัสนักศึกษา 10 หลัก'};
+    if(/^\d+$/.test(d)){
+      if(d.length!==10) return {ok:false,msg:'รหัสนักศึกษาต้องมี 10 หลัก (ตอนนี้ '+d.length+' หลัก)'};
+      if(!/^[5-7]\d{9}$/.test(d)) return {ok:false,msg:'รหัสนักศึกษาต้องขึ้นต้นด้วยปีที่เข้าศึกษา เช่น 69xxxxxxxx'};
+      return {ok:true,sid:d,via:'id'};
+    }
+    return {ok:false,msg:'กรอกได้เฉพาะตัวเลข 10 หลัก หรือรหัสลับที่ได้รับจากผู้สอน'};
+  }
+  function getId(){try{var o=JSON.parse(sessionStorage.getItem(ID_KEY)||'null');return (o&&o.sid)?o:null;}catch(e){return null;}}
+  function setId(o){try{sessionStorage.setItem(ID_KEY,JSON.stringify(o));}catch(e){}}
+
+  var gate=$('#gate'), sid=$('#gSid'), nick=$('#gNick'), err=$('#gErr'), cnt=$('#gCount'), note=$('#gNote');
+  function live(){
+    var v=sid.value.trim(), d=v.replace(/[\s-]/g,''); err.textContent='';
+    if(v.toLowerCase()===SECRET){cnt.textContent='รหัสลับ';cnt.className='ok';note.textContent='ใช้รหัสลับ · ใบรายงานผลจะแสดงรหัสเป็น '+MASK;return;}
+    cnt.textContent=(/^\d*$/.test(d)?d.length:'-')+'/10';
+    var r=checkId(v); cnt.className=r.ok?'ok':''; note.textContent=r.ok?'รูปแบบรหัสนักศึกษาถูกต้อง':'';
+  }
+  sid.addEventListener('input',live);
+  sid.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();nick.focus();}});
+  $('#gForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var r=checkId(sid.value);
+    if(!r.ok){err.textContent=r.msg;sid.focus();return;}
+    var nk=nick.value.trim();
+    if(!nk){err.textContent='กรุณากรอกชื่อเล่น เพื่อแสดงบนใบรายงานผล';nick.focus();return;}
+    setId({sid:r.sid,via:r.via,raw:sid.value.trim(),nick:nk});
+    gate.classList.add('hidden'); render();
+  });
+  function openGate(){
+    var c=getId(); if(c){sid.value=c.raw||(c.via==='id'?c.sid:'');nick.value=c.nick||'';}
+    live(); gate.classList.remove('hidden'); setTimeout(function(){sid.focus();},50);
+  }
+  $('#btnUser').addEventListener('click',openGate);
+
+  /* ---------- แผนที่ผจญภัย + แผงผู้เล่น ---------- */
+  var ZONES={1:{n:'เมืองฮาร์ดแวร์',s:'วันที่ 1 · บทที่ 1–4 พื้นฐานเครื่องและข้อมูล',c:'#38bdf8',cl:'#0369a1'},
+             2:{n:'ป่าแห่งเงื่อนไข',s:'วันที่ 2 · บทที่ 5 เงื่อนไขและการวนซ้ำ',c:'#a78bfa',cl:'#6d28d9'},
+             3:{n:'ภูเขาฟังก์ชัน',s:'วันที่ 3 · บทที่ 6, 7a, 10 ฟังก์ชัน อาร์เรย์ ผังงาน',c:'#34d399',cl:'#047857'},
+             4:{n:'สนามชิงแชมป์',s:'ด่านบอส · ทบทวนรวมบทที่ 1–7a, 10',c:'#f472b6',cl:'#be185d'},
+             5:{n:'โค้งสุดท้าย',s:'วันที่ 4 · บทที่ 7b, 8, 9, 11 ก่อนสอบจริง',c:'#fb923c',cl:'#b3410a'}};
+  var ICON={
+   game1:'<rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9.5 3v4M14.5 3v4M9.5 17v4M14.5 17v4M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/>',
+   game2:'<rect x="3.5" y="4" width="17" height="15" rx="2"/><circle cx="12" cy="11.5" r="3.5"/><path d="M12 8v1M12 14v1M15.5 11.5h-1M9.5 11.5h-1M6 19v2M18 19v2"/>',
+   game3:'<path d="M6 8h6M9 5v6M14 17h6M5 18l5-5M5 13l5 5M15 6h4"/>',
+   game4:'<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 7v10M6 12h4a4 4 0 0 0 4-4V7M16 12h-2"/>',
+   game5:'<path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/>',
+   game6:'<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5M8 10.5h5M10.5 8v5"/>',
+   game7:'<rect x="8" y="2.5" width="8" height="4.5" rx="2.2"/><path d="M12 7v2.5M12 9.5l4.5 3-4.5 3-4.5-3z"/><path d="M12 15.5V18"/><rect x="7.5" y="18" width="9" height="3.5" rx="1"/>',
+   game8:'<path d="M14.5 6.5a4 4 0 0 0 5 5L21 13l-8 8-1.5-1.5a4 4 0 0 0-5-5L3 11l8-8z"/><circle cx="12" cy="12" r="1.3"/>',
+   game9:'<circle cx="12" cy="13" r="7.5"/><path d="M12 13V9M9.5 2.5h5M18.5 6l1.5-1.5"/>',
+   game10:'<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v3M8 21h8M9 17h6v4H9z"/>',
+   game11:'<path d="M5 21V4"/><path d="M5 4h11l-2.5 3.5L16 11H5"/><path d="M9 21c0-4 3-6 6-6h4"/><path d="M17 13l2 2-2 2"/>'};
+  function svgIcon(k,size){return '<svg viewBox="0 0 24 24" width="'+(size||24)+'" height="'+(size||24)+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+ICON[k]+'</svg>';}
+  function isLight(){return document.documentElement.getAttribute('data-theme')==='light';}
+  function results(){
+    var c=getId(); if(!c) return {};
+    try{return (JSON.parse(localStorage.getItem(RES_KEY)||'{}')[c.sid])||{};}catch(e){return {};}
+  }
+  function rankOf(st){var R=[[0,'ผู้เริ่มต้นเดินทาง'],[10,'นักสำรวจโค้ด'],[25,'นักผจญภัยตัวจริง'],[40,'อัศวินภาษา C'],[55,'ปรมาจารย์ GNR1007']],r=R[0];R.forEach(function(x){if(st>=x[0])r=x;});return r[1];}
+  var R={}, NX=0;
+  function pickNext(){
+    for(var i=0;i<GAMES.length;i++) if(!R[GAMES[i].k]) return {i:i,replay:false};
+    var w=0; GAMES.forEach(function(g,i){ if(R[g.k].post/g.max < R[GAMES[w].k].post/GAMES[w].max) w=i; });
+    return {i:w,replay:true};
+  }
+  function render(){
+    var c=getId(); R=results();
+    var st=0,mx=0,done=0; GAMES.forEach(function(g){mx+=g.max; if(R[g.k]){st+=R[g.k].post;done++;}});
+    $('#uAva').textContent=c&&c.nick?c.nick.charAt(0):'?';
+    $('#uNick').textContent=c?c.nick:'ยังไม่ลงทะเบียน';
+    $('#uSid').textContent=c?c.sid:'—';
+    $('#uRank').textContent=rankOf(st);
+    $('#uStars').textContent=st+' / '+mx;
+    $('#uBar').style.width=Math.round(st/mx*100)+'%';
+    $('#cleared').innerHTML='เคลียร์แล้ว <b>'+done+' / '+GAMES.length+'</b> ด่าน';
+    var nx=pickNext(); NX=nx.i; var g=GAMES[NX];
+    $('#nxH').textContent=nx.replay?'ภารกิจทบทวน (ดาวน้อยที่สุด)':'ภารกิจถัดไป';
+    $('#nxBox').innerHTML='<div class="bx" style="background:'+g.acc+'">'+svgIcon(g.k,28)+'</div><div><b>ด่าน '+(NX+1)+' · '+esc(g.n)+'</b><small>'+ZONES[g.d].n+' · '+g.ch+'</small></div>';
+    $('#nxGo').href=g.f; $('#nxGo').textContent=nx.replay?'เล่นอีกครั้ง เก็บดาวให้ครบ →':(done?'ลุยด่านต่อไป →':'เริ่มผจญภัย →');
+    $('#zones').innerHTML=[1,2,3,4,5].map(function(z){
+      var gs=GAMES.filter(function(x){return x.d===z;}), d=gs.filter(function(x){return R[x.k];}).length;
+      return '<div class="z"><div class="h"><span><i style="background:'+ZONES[z].c+'"></i>'+ZONES[z].n+'</span><b>'+d+'/'+gs.length+'</b></div><div class="bar"><i style="width:'+(d/gs.length*100)+'%"></i></div></div>';
+    }).join('');
+    var weak=GAMES.filter(function(x){return R[x.k] && R[x.k].post/x.max<0.67;});
+    $('#advice').innerHTML = !done ? 'เริ่มจากด่าน 1 แล้วเดินตามเส้นทาง · แต่ละด่านใช้เวลาราว 15 นาที'
+      : weak.length ? 'ควรกลับไปเก็บดาวเพิ่มที่ <b>'+weak.slice(0,3).map(function(x){return esc(x.n);}).join(', ')+'</b>'
+      : done<GAMES.length ? 'ทุกด่านที่เล่นผ่านเกณฑ์ดีมาก อีก <b>'+(GAMES.length-done)+' ด่าน</b> จะครบการผจญภัย'
+      : 'ครบทั้ง '+GAMES.length+' ด่านแล้ว พร้อมสำหรับการสอบ';
+    drawMap();
+  }
+  function drawMap(){
+    var el=$('#map'), W=el.clientWidth, H=el.clientHeight; if(!W||!H) return;
+    var port=W<H*0.95, VW=port?400:1000, VH=port?Math.round(400*H/W):Math.max(460,Math.round(1000*H/W));
+    var P=port?[[85,.885],[305,.811],[100,.737],[300,.663],[95,.589],[305,.515],[100,.441],[300,.367],[105,.293],[300,.219],[175,.145]]
+              :[[80,.84],[205,.72],[125,.47],[265,.27],[390,.42],[465,.68],[595,.8],[710,.62],[630,.37],[775,.18],[915,.5]];
+    P=P.map(function(p){return [p[0],p[1]*VH];});
+    var d='M'+P[0][0]+' '+P[0][1];
+    for(var i=0;i<P.length-1;i++){var p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||p2;
+      d+=' C'+(p1[0]+(p2[0]-p0[0])/6).toFixed(1)+' '+(p1[1]+(p2[1]-p0[1])/6).toFixed(1)+' '+(p2[0]-(p3[0]-p1[0])/6).toFixed(1)+' '+(p2[1]-(p3[1]-p1[1])/6).toFixed(1)+' '+p2[0]+' '+p2[1];}
+    var L=isLight(), s='<svg class="world" viewBox="0 0 '+VW+' '+VH+'" preserveAspectRatio="xMidYMid meet" role="list">';
+    s+='<path d="'+d+'" fill="none" style="stroke:var(--line2)" stroke-width="16" stroke-linecap="round"/>';
+    s+='<path d="'+d+'" fill="none" stroke="'+(L?'#d97706':'#fbbf24')+'" stroke-width="3" stroke-dasharray="2 12" stroke-linecap="round"/>';
+    if(!port){
+      var ZL={1:[250,.93],2:[340,.105],3:[545,.965],4:[640,.06],5:[990,.93]};
+      [1,2,3,4,5].forEach(function(z){var x=ZL[z][0],y=ZL[z][1]*VH;
+        var an=(z===5?' text-anchor="end"':'');
+        s+='<text class="zlabel"'+an+' x="'+x+'" y="'+y+'" fill="'+(L?ZONES[z].cl:ZONES[z].c)+'">'+ZONES[z].n+'</text><text class="zsub"'+an+' x="'+x+'" y="'+(y+15)+'">'+ZONES[z].s+'</text>';});
+    }
+    GAMES.forEach(function(g,i){
+      var p=P[i], r=R[g.k], cur=(i===NX), Rr=(g.k==='game10'||g.k==='game11'?38:31)*(port?.85:1), acc=L?g.accl:g.acc, filled=r||cur;
+      s+='<g class="node" role="listitem" tabindex="0" data-i="'+i+'" transform="translate('+p[0]+' '+p[1]+')" style="color:'+g.acc+'" aria-label="ด่าน '+(i+1)+' '+esc(g.n)+(r?' ผล Posttest '+r.post+' จาก '+g.max:' ยังไม่ได้เล่น')+'">';
+      if(cur) s+='<circle class="ring" r="'+Rr+'" fill="none" stroke="'+g.acc+'" stroke-width="4"/>';
+      s+='<circle class="disc" r="'+Rr+'" '+(filled?'fill="'+g.acc+'"':'style="fill:var(--surface)"')+' stroke="'+acc+'" stroke-width="3"'+(filled?'':' stroke-dasharray="5 4"')+'/>';
+      var isz=Math.round(Rr*0.85);
+      s+='<g transform="translate('+(-isz/2)+' '+(-isz/2)+')" style="color:'+(filled?'#0b0f14':acc)+'">'+svgIcon(g.k,isz)+'</g>';
+      if(r) s+='<g transform="translate('+(Rr*.72)+' '+(-Rr*.72)+')"><circle r="11" fill="#16a34a" style="stroke:var(--surface)" stroke-width="3"/><path d="M-5 0l3.5 3.5L5-4" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>';
+      s+='<text class="nname" text-anchor="middle" y="'+(Rr+18)+'"'+(port?' font-size="12"':'')+'>'+(i+1)+' · '+esc(g.n)+'</text>';
+      var ns=g.max>7?5:g.max, nf=r?(g.max>7?Math.round(r.post/g.max*5):r.post):0;   /* 15 ข้อ -> แสดง 5 ดวง ดวงละ 3 ข้อ */
+      for(var k=0;k<ns;k++) s+='<path transform="translate('+((k-(ns-1)/2)*13)+' '+(Rr+30)+') scale(.5)" d="M0-10 3-3 10-3 4 2 6 9 0 5-6 9-4 2-10-3-3-3z" '+(k<nf?'fill="#f5b301"':'style="fill:var(--line2)"')+'/>';
+      if(cur){
+        var c=getId(), lx=port?(p[0]<200?Rr+10:-Rr-10):0, anc=port?(p[0]<200?'start':'end'):'middle';
+        s+='<g transform="translate(0 '+(-Rr-24)+')"><g class="pin"><path d="M0 18 L-9 4 A11 11 0 1 1 9 4 Z" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><text y="4" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1204">'+esc(c&&c.nick?c.nick.charAt(0):'?')+'</text></g></g>';
+        if(!port) s+='<text class="nname" x="'+lx+'" y="'+(port?-Rr+2:-Rr-54)+'" text-anchor="'+anc+'" style="fill:'+(L?'#92400e':'#fbbf24')+'">คุณอยู่ที่นี่</text>';
+      }
+      s+='</g>';
+    });
+    $('#world').innerHTML=s+'</svg>';
+  }
+  /* แตะหรือคลิกหมุดเพื่อเข้าเกม · ชี้เมาส์เพื่อดูรายละเอียด */
+  var tip=$('#tipbox');
+  function showTip(node){
+    var i=+node.getAttribute('data-i'), g=GAMES[i], r=R[g.k], mb=$('#map').getBoundingClientRect(), nb=node.getBoundingClientRect();
+    tip.innerHTML='<b>ด่าน '+(i+1)+' · '+esc(g.n)+'</b><span class="z">'+esc(g.th)+' · '+g.ch+'</span><br>'+
+      (r?'ผลล่าสุด Pre '+r.pre+' → Post <b style="display:inline">'+r.post+'/'+g.max+'</b>'+(r.best>r.post?' · ดีที่สุด '+r.best:''):'ยังไม่ได้เล่น · มี '+g.max+' ดาวรอคุณอยู่');
+    var x=nb.left-mb.left+nb.width/2-110, y=nb.top-mb.top-tip.offsetHeight-8;
+    if(y<6) y=nb.bottom-mb.top+8;
+    tip.style.left=Math.max(6,Math.min(mb.width-256,x))+'px'; tip.style.top=y+'px'; tip.classList.add('show');
+  }
+  $('#map').addEventListener('mouseover',function(e){var n=e.target.closest('.node'); if(n) showTip(n);});
+  $('#map').addEventListener('mouseout',function(e){if(!e.relatedTarget||!e.relatedTarget.closest||!e.relatedTarget.closest('.node')) tip.classList.remove('show');});
+  $('#map').addEventListener('click',function(e){var n=e.target.closest('.node'); if(n) location.href=GAMES[+n.getAttribute('data-i')].f;});
+  $('#map').addEventListener('keydown',function(e){var n=e.target.closest('.node'); if(n&&(e.key==='Enter'||e.key===' ')){e.preventDefault();location.href=GAMES[+n.getAttribute('data-i')].f;}});
+  $('#map').addEventListener('focusin',function(e){var n=e.target.closest('.node'); if(n) showTip(n);});
+  $('#map').addEventListener('focusout',function(){tip.classList.remove('show');});
+  var rz; window.addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(drawMap,80);});
+  new MutationObserver(drawMap).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  if(getId()){ gate.classList.add('hidden'); } else { openGate(); }
+  render();
+  window.addEventListener('pageshow',render);
+})();
+</script>
+</body>
+</html>
