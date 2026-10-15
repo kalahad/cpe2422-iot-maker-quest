@@ -1,0 +1,5 @@
+qr_output/
+__pycache__/
+tools/qa_*.png
+*คลังข้อสอบ*
+secrets.h

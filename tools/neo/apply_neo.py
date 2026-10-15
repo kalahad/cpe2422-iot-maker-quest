@@ -25,4 +25,5 @@ def process(path):
 if __name__ == '__main__':
     d = sys.argv[1] if len(sys.argv) > 1 else '.'
     for f in sorted(os.listdir(d)):
-        if re.match(r'game\d+_.*\.html$', f): process(os.path.join(d, f))
+        if re.match(r'game\d+_.*\.html$', f) and 'data-standalone="1"' not in open(os.path.join(d, f), encoding='utf-8').read(3000):
+            process(os.path.join(d, f))   # ด่านแบบหน้าเดี่ยว (เช่น ด่าน 5) ไม่ผ่านแม่แบบ

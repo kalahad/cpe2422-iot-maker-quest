@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="th" data-game="game5" data-standalone="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BENCH READY · ด่านตรวจก่อนต่อวงจรจริง | CPE2422/2428</title>
+<meta name="description" content="ด่าน 5 BENCH READY: ตรวจความพร้อม 6 ทักษะก่อนประกอบวงจรจริง ขาและการต่อสาย ไฟเลี้ยง เซนเซอร์ โค้ด ความปลอดภัย และการไล่หาปัญหา — CPE2422/2428 ผศ.ดร.กุลวลัญช์ วรุณสิน มหาวิทยาลัยรามคำแหง">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Kanit:wght@300;400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem('cpe2422_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<style>
+/* ================= BENCH READY · Neon Arcade (ด่าน 5) ================= */
+:root{--disp:'Chakra Petch','Kanit',sans-serif;--font:'Kanit','Sarabun',sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+  --fs-h:clamp(24px,3vw,42px);--fs-b:clamp(15px,1.2vw,18px);--fs-s:clamp(12px,.95vw,14px);--r:18px}
+:root:not([data-theme="light"]){--bg:#08080f;--bg2:#11111e;--glass:rgba(255,255,255,.045);--glass2:rgba(255,255,255,.085);--edge:rgba(255,255,255,.11);
+  --text:#f4f4ff;--mute:#a9aac8;--a:#ffc21a;--b:#2ee6ff;--ok:#3dff8b;--bad:#ff4d6d;--ink:#08080f;color-scheme:dark}
+:root[data-theme="light"]{--bg:#f4f4f9;--bg2:#e8e9f3;--glass:rgba(255,255,255,.82);--glass2:#fff;--edge:rgba(20,22,60,.14);
+  --text:#13142a;--mute:#4b4e72;--a:#9a5b00;--b:#00788f;--ok:#0f7a3d;--bad:#be123c;--ink:#fff;color-scheme:light}
+:root{--n-a:var(--a);--n-b:var(--b);--n-r:var(--bad);--n-edge:var(--edge);--n-glass:var(--glass);--n-text:var(--text);--n-mute:var(--mute);--n-bg:var(--bg)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{height:100dvh;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:var(--fs-b);line-height:1.55}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(70% 55% at 85% -10%,color-mix(in srgb,var(--a) 16%,transparent),transparent 60%),
+             radial-gradient(60% 50% at -10% 110%,color-mix(in srgb,var(--b) 14%,transparent),transparent 60%),
+             linear-gradient(color-mix(in srgb,var(--text) 4%,transparent) 1px,transparent 1px) 0 0/28px 28px,
+             linear-gradient(90deg,color-mix(in srgb,var(--text) 4%,transparent) 1px,transparent 1px) 0 0/28px 28px}
+button{font:inherit;color:inherit}
+code{font-family:var(--mono);font-size:.9em;padding:1px 6px;border-radius:6px;background:var(--glass2);border:1px solid var(--edge)}
+#app{height:100dvh;display:flex;flex-direction:column}
+.hz{height:6px;flex:none;background:repeating-linear-gradient(135deg,var(--a) 0 14px,var(--ink) 14px 28px);opacity:.9}
+/* ---------- แถบบน ---------- */
+.tb{flex:none;display:flex;align-items:center;gap:12px;padding:8px clamp(10px,2vw,22px);border-bottom:1px solid var(--edge);background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(8px)}
+.ib{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:12px;border:1px solid var(--edge);background:var(--glass);cursor:pointer;text-decoration:none;color:var(--text)}
+.ib:hover{border-color:var(--a)}
+.brand{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.brand b{font-family:var(--disp);font-size:clamp(17px,1.6vw,22px);letter-spacing:.5px;color:var(--a)}
+.brand small{color:var(--mute);font-size:var(--fs-s);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud{margin-left:auto;display:flex;align-items:center;gap:clamp(8px,1.4vw,18px)}
+.hud[hidden]{display:none}
+.trace{display:flex;align-items:center;gap:4px}
+.trace i{width:9px;height:9px;border-radius:50%;background:var(--glass2);border:1px solid var(--edge)}
+.trace i.ok{background:var(--ok);border-color:var(--ok);box-shadow:0 0 8px var(--ok)}
+.trace i.no{background:var(--bad);border-color:var(--bad)}
+.trace i.now{background:var(--a);border-color:var(--a);box-shadow:0 0 10px var(--a)}
+.trace i.bs{width:16px;border-radius:5px}
+.fuses{display:flex;gap:5px}
+.fuse{width:26px;height:14px;border-radius:4px;border:2px solid var(--a);position:relative;background:color-mix(in srgb,var(--a) 22%,transparent)}
+.fuse::after{content:'';position:absolute;left:3px;right:3px;top:50%;height:2px;margin-top:-1px;background:var(--a)}
+.fuse.out{border-color:var(--mute);background:none;opacity:.45}
+.fuse.out::after{background:linear-gradient(90deg,var(--mute) 40%,transparent 40% 60%,var(--mute) 60%)}
+.fuse.blow{animation:blow .7s}
+@keyframes blow{0%,100%{transform:none}20%{transform:scale(1.5);background:var(--bad);box-shadow:0 0 18px var(--bad)}50%{transform:scale(.9)}}
+.combo{white-space:nowrap;font-family:var(--disp);font-weight:700;font-size:var(--fs-s);padding:4px 10px;border-radius:99px;border:1px solid var(--edge);color:var(--mute);min-width:84px;text-align:center}
+.combo.hot{color:var(--ink);background:var(--a);border-color:var(--a);box-shadow:0 0 16px color-mix(in srgb,var(--a) 60%,transparent)}
+main{flex:1;min-height:0;position:relative}
+.scr{position:absolute;inset:0;display:none;padding:clamp(10px,1.8vw,22px);overflow:auto}
+.scr.on{display:flex;flex-direction:column}
+.card{background:var(--glass);border:1px solid var(--edge);border-radius:var(--r);backdrop-filter:blur(6px)}
+.btn{border:1px solid var(--edge);background:var(--glass2);border-radius:14px;padding:11px 18px;cursor:pointer;font-weight:600;font-size:var(--fs-b);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:var(--text)}
+.btn:hover{border-color:var(--a)}
+.btn.pri{background:var(--a);color:var(--ink);border-color:var(--a);font-family:var(--disp);font-weight:700}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.alt{border-color:var(--b);color:var(--b)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.kick{font-family:var(--disp);font-weight:600;color:var(--b);font-size:var(--fs-s);letter-spacing:.5px}
+/* ---------- หน้าแรก ---------- */
+.intro{flex:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:clamp(14px,2.4vw,34px);align-items:center;max-width:1280px;width:100%;margin:0 auto}
+.hero h1{font-family:var(--disp);font-size:clamp(40px,6.6vw,92px);line-height:.95;margin:6px 0 10px;letter-spacing:1px}
+.hero h1 span{color:var(--a);text-shadow:0 0 28px color-mix(in srgb,var(--a) 45%,transparent)}
+.hero .lead{font-size:clamp(16px,1.4vw,21px);margin:0 0 16px;max-width:36em}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rule{padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
+.rule svg{flex:none;color:var(--a)}
+.rule b{display:block;font-family:var(--disp);font-size:clamp(14px,1.1vw,16px)}
+.rule span{color:var(--mute);font-size:var(--fs-s);line-height:1.45;display:block}
+.form{padding:clamp(14px,1.8vw,24px);display:flex;flex-direction:column;gap:12px}
+.form h2{margin:0;font-family:var(--disp);font-size:clamp(18px,1.6vw,24px)}
+.fld label{display:flex;justify-content:space-between;font-size:var(--fs-s);color:var(--mute);margin-bottom:4px}
+.fld input{width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--edge);background:var(--glass2);color:var(--text);font:inherit;font-size:var(--fs-b)}
+.fld input:focus{outline:2px solid var(--b);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--edge);background:var(--glass2);border-radius:99px;padding:6px 12px;cursor:pointer;font-size:var(--fs-s);font-weight:600}
+.chip.on{border-color:var(--a);background:color-mix(in srgb,var(--a) 22%,transparent)}
+.err{color:var(--bad);font-size:var(--fs-s);min-height:1.2em}
+.gname{font-size:var(--fs-s);color:var(--mute);min-height:1.3em}
+.foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:var(--fs-s);color:var(--mute)}
+.foot a,.foot button{color:var(--mute);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;font-size:var(--fs-s)}
+/* ---------- โจทย์ ---------- */
+.qcard{flex:1;min-height:0;display:flex;flex-direction:column;max-width:1280px;width:100%;margin:0 auto;padding:clamp(12px,1.8vw,24px);gap:12px;position:relative;overflow:hidden}
+.qhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sk{font-family:var(--disp);font-weight:700;padding:4px 12px;border-radius:99px;background:color-mix(in srgb,var(--b) 18%,transparent);border:1px solid var(--b);font-size:var(--fs-s)}
+.lv{display:inline-flex;gap:3px;align-items:center;font-size:var(--fs-s);color:var(--mute);font-family:var(--disp)}
+.lv i{width:16px;height:6px;border-radius:3px;background:var(--glass2);border:1px solid var(--edge)}
+.lv i.on{background:var(--a);border-color:var(--a)}
+.gtag{font-size:var(--fs-s);padding:3px 10px;border-radius:99px;border:1px dashed var(--a);color:var(--a);font-weight:600}
+.qno{margin-left:auto;font-family:var(--mono);color:var(--mute);font-size:var(--fs-s)}
+.qtext{font-size:clamp(18px,1.75vw,26px);font-weight:500;line-height:1.5;margin:0}
+.qbody{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;overflow:auto;padding:2px}
+.qbody.pin{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,auto);gap:16px;overflow:hidden}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:13px 15px;border-radius:14px;border:1px solid var(--edge);background:var(--glass2);cursor:pointer;font-size:clamp(15px,1.25vw,18px);line-height:1.45}
+.opt b{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-family:var(--disp);background:var(--glass);border:1px solid var(--edge)}
+.opt:hover{border-color:var(--b)}
+.opt.sel{border-color:var(--a);background:color-mix(in srgb,var(--a) 16%,transparent)}
+.opt.sel b{background:var(--a);color:var(--ink);border-color:var(--a)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.lock .opt,.lock .line,.lock .ord button,.lock .np-pin{pointer-events:none}
+.numrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.numrow input{width:min(260px,60vw);font-family:var(--mono);font-size:clamp(22px,2.2vw,30px);padding:10px 14px;border-radius:14px;border:2px solid var(--edge);background:var(--glass2);color:var(--text)}
+.numrow input:focus{outline:none;border-color:var(--a)}
+.numrow .u{font-family:var(--disp);font-size:clamp(18px,1.6vw,24px);color:var(--mute)}
+.numrow.ok input{border-color:var(--ok)} .numrow.bad input{border-color:var(--bad)}
+.code{font-family:var(--mono);font-size:clamp(13px,1.05vw,16px);border-radius:14px;border:1px solid var(--edge);background:color-mix(in srgb,#05060c 80%,var(--bg));overflow:auto;padding:8px 0}
+:root[data-theme="light"] .code{background:#f7f7fb}
+.line{display:flex;width:100%;text-align:left;border:0;background:none;padding:3px 14px;cursor:pointer;white-space:pre;font-family:inherit;font-size:inherit;border-left:3px solid transparent}
+.line i{font-style:normal;color:var(--mute);width:2.2em;flex:none;user-select:none}
+.line:hover{background:var(--glass2)}
+.line.sel{background:color-mix(in srgb,var(--a) 18%,transparent);border-left-color:var(--a)}
+.line.ok{background:color-mix(in srgb,var(--ok) 16%,transparent);border-left-color:var(--ok)}
+.line.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);border-left-color:var(--bad)}
+.ord{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ord h4{margin:0 0 6px;font-size:var(--fs-s);color:var(--mute);font-weight:500}
+.ord .col{display:flex;flex-direction:column;gap:8px}
+.ord button{text-align:left;padding:11px 13px;border-radius:12px;border:1px solid var(--edge);background:var(--glass2);cursor:pointer;display:flex;gap:10px;align-items:center;font-size:clamp(14px,1.15vw,17px)}
+.ord button b{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--a);color:var(--ink);font-family:var(--disp)}
+.ord .slot{border-style:dashed;color:var(--mute);min-height:46px;pointer-events:none}
+.ord button.ok{border-color:var(--ok)} .ord button.bad{border-color:var(--bad)}
+.pinside{display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto}
+.picked{font-family:var(--disp);font-size:clamp(18px,1.6vw,24px);padding:10px 14px;border-radius:14px;border:1px dashed var(--edge);color:var(--mute)}
+.picked.has{border-style:solid;border-color:var(--a);color:var(--text)}
+.boardbox{min-height:0;height:100%;display:flex;justify-content:center;border-radius:16px;background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--a) 10%,transparent),transparent 60%),color-mix(in srgb,#05070d 70%,var(--bg));border:1px solid var(--edge);padding:6px}
+.boardbox svg{height:100%;width:auto;max-width:100%}
+.np-pin .np-qring{stroke:transparent}
+.np-pin{cursor:pointer}
+.np-pin:hover .np-qring{stroke:var(--b)}
+.np-pin.q-sel .np-qring{stroke:#ffc21a}
+.np-pin.q-ok .np-qring{stroke:#3dff8b}
+.np-pin.q-bad .np-qring{stroke:#ff4d6d}
+.hint{font-size:var(--fs-s);padding:10px 14px;border-radius:12px;border:1px dashed var(--b);color:var(--text);background:color-mix(in srgb,var(--b) 8%,transparent)}
+.acts{flex:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--edge);padding-top:12px}
+.acts .sp{flex:1}
+.acts .note{font-size:var(--fs-s);color:var(--mute)}
+.fb{flex:none;border-top:1px solid var(--edge);padding-top:12px;display:none;gap:14px;align-items:flex-start}
+.fb.on{display:flex}
+.fb .vd{font-family:var(--disp);font-weight:700;font-size:clamp(22px,2.4vw,34px);line-height:1;flex:none;padding:10px 14px;border-radius:14px}
+.fb .vd.ok{color:var(--ink);background:var(--ok)} .fb .vd.no{color:#fff;background:var(--bad)}
+.fb .tx{flex:1;min-width:0;font-size:clamp(14px,1.15vw,17px);max-height:24vh;overflow:auto}
+.fb .tx p{margin:0 0 4px} .fb .tx .ans{font-weight:600}
+.flash-ok{animation:fok .6s} .flash-no{animation:fno .5s}
+@keyframes fok{30%{box-shadow:0 0 0 3px var(--ok),0 0 40px color-mix(in srgb,var(--ok) 50%,transparent)}}
+@keyframes fno{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{box-shadow:0 0 0 3px var(--bad)}}
+.shake{animation:fno .4s}
+/* ---------- บอส ---------- */
+.boss{flex:1;min-height:0;display:flex;flex-direction:column;max-width:1180px;width:100%;margin:0 auto;padding:clamp(12px,1.8vw,24px);gap:10px}
+.boss h2{margin:0;font-family:var(--disp);font-size:clamp(20px,2.3vw,32px);line-height:1.15}
+.boss h2 span{color:var(--bad)}
+.tbar{height:10px;border-radius:6px;background:var(--glass2);overflow:hidden;border:1px solid var(--edge)}
+.tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--bad),var(--a),var(--ok));transform-origin:left;transition:transform .25s linear}
+.brow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 12px;border-radius:14px;border:1px solid var(--edge);background:var(--glass2)}
+.brow p{margin:0;font-size:clamp(14px,1.15vw,17px)}
+.brow .why{grid-column:1/-1;font-size:var(--fs-s);color:var(--mute);display:none}
+.brow.done .why{display:block}
+.brow.ok{border-color:var(--ok)} .brow.bad{border-color:var(--bad)}
+.tg{display:flex;gap:6px}
+.tg button{border:1px solid var(--edge);background:var(--glass);border-radius:10px;padding:7px 12px;cursor:pointer;font-weight:600;font-size:var(--fs-s);white-space:nowrap}
+.tg button.on[data-v="1"]{background:var(--ok);color:var(--ink);border-color:var(--ok)}
+.tg button.on[data-v="0"]{background:var(--bad);color:#fff;border-color:var(--bad)}
+.blist{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px}
+@media (min-width:1100px){.blist{display:grid;grid-template-columns:1fr 1fr;align-content:start}.brow p{font-size:15px}}
+/* ---------- ผลลัพธ์ ---------- */
+.res{flex:1;min-height:0;display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.1fr);gap:clamp(12px,1.8vw,22px);max-width:1320px;width:100%;margin:0 auto}
+.rl{display:flex;flex-direction:column;gap:10px;min-height:0;padding:clamp(12px,1.6vw,20px)}
+.stamp{display:flex;align-items:center;gap:14px}
+.stamp .badge{font-family:var(--disp);font-weight:700;font-size:clamp(18px,1.8vw,26px);padding:8px 14px;border-radius:12px;border:3px solid currentColor;transform:rotate(-3deg);animation:stamp .5s cubic-bezier(.2,1.6,.4,1) both;white-space:nowrap}
+@keyframes stamp{from{transform:scale(2.2) rotate(-12deg);opacity:0}}
+.stamp .badge.R{color:var(--ok)} .stamp .badge.C{color:var(--a)} .stamp .badge.N{color:var(--bad)}
+.stamp .pct{font-family:var(--disp);font-size:clamp(34px,4vw,56px);font-weight:700;line-height:1}
+.stamp .pct small{display:block;font-size:var(--fs-s);color:var(--mute);font-weight:500}
+.stars{display:flex;gap:4px}
+.stars svg{width:22px;height:22px}
+.radar{flex:1;min-height:0;display:flex;justify-content:center}
+.radar svg{height:100%;width:100%;max-height:420px}
+.rr{display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto;padding:clamp(12px,1.6vw,20px)}
+.rr h3{margin:0 0 6px;font-family:var(--disp);font-size:clamp(15px,1.2vw,18px)}
+.skr{display:grid;grid-template-columns:14px minmax(120px,1fr) minmax(80px,1.4fr) 44px;gap:8px;align-items:center;font-size:var(--fs-s);padding:3px 0}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot.g{background:var(--ok)} .dot.y{background:var(--a)} .dot.r{background:var(--bad)}
+.bar{height:10px;border-radius:6px;background:var(--glass2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px}
+.skr b{font-family:var(--mono);text-align:right}
+.conf{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.conf div{padding:9px 11px;border-radius:12px;border:1px solid var(--edge);font-size:var(--fs-s)}
+.conf div b{display:block;font-family:var(--disp);font-size:clamp(20px,1.8vw,26px)}
+.conf .c1{border-color:var(--ok)} .conf .c3{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 8%,transparent)}
+.rx{display:flex;flex-direction:column;gap:8px}
+.rx .it{padding:10px 12px;border-radius:12px;border:1px solid var(--edge);background:var(--glass2);font-size:var(--fs-s)}
+.rx .it h4{margin:0 0 4px;font-size:clamp(14px,1.1vw,16px);display:flex;gap:8px;align-items:center}
+.rx .it ul{margin:4px 0 0;padding-left:18px}
+.rx .it a{color:var(--b)}
+.rx .it .warn{color:var(--bad);font-weight:600}
+.codebox{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.codebox output{font-family:var(--mono);font-size:clamp(13px,1.05vw,16px);padding:9px 12px;border-radius:12px;border:1px dashed var(--a);word-break:break-all;flex:1;min-width:220px}
+.rbtn{display:flex;gap:8px;flex-wrap:wrap}
+/* ---------- กล่องตรวจรหัส ---------- */
+.dlg{position:fixed;inset:0;z-index:50;display:none;place-items:center;padding:16px;background:color-mix(in srgb,#02030a 70%,transparent);backdrop-filter:blur(6px)}
+.dlg.on{display:grid}
+.dlg .card{width:min(860px,100%);max-height:90dvh;overflow:auto;padding:18px;background:var(--bg2)}
+.dlg textarea{width:100%;min-height:110px;font-family:var(--mono);font-size:14px;padding:10px;border-radius:12px;border:1px solid var(--edge);background:var(--glass2);color:var(--text)}
+.dlg table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.dlg th,.dlg td{border-bottom:1px solid var(--edge);padding:6px;text-align:left}
+.dlg .v1{color:var(--ok);font-weight:700} .dlg .v0{color:var(--bad);font-weight:700}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);padding:10px 16px;border-radius:12px;background:var(--text);color:var(--bg);font-size:var(--fs-s);opacity:0;transition:.25s;pointer-events:none;z-index:60}
+.toast.on{opacity:1}
+/* ---------- จอเล็ก ---------- */
+@media (max-width:900px){
+  .intro{grid-template-columns:1fr;align-items:start}
+  .rules{grid-template-columns:1fr 1fr}
+  .opts{grid-template-columns:1fr}
+  .qbody.pin{display:flex;flex-direction:column;overflow:auto}
+  .qbody.pin .boardbox{height:auto;flex:none}
+  .qbody.pin .boardbox svg{width:100%;height:auto;max-width:440px}
+  .pinside p{display:none}
+  .pinside{flex:none;overflow:visible}
+  .radar{flex:none;height:min(320px,80vw)}
+  .res{grid-template-columns:1fr;flex:none}
+  .rr{overflow:visible}
+  .radar svg{max-height:300px}
+  .ord{grid-template-columns:1fr}
+  .trace{display:none}
+}
+@media (max-width:560px){
+  .rules{grid-template-columns:1fr}
+  .rules{display:none}
+  .hero h1{margin:4px 0 6px}
+  .brand small{display:none}
+  .combo{min-width:0;padding:4px 8px;font-size:11px}
+  .brand b{font-size:16px}
+  .hero h1{font-size:44px}
+  .qtext{font-size:18px}
+  .brow{grid-template-columns:1fr}
+  .fb .tx{max-height:30vh}
+  .fb{flex-direction:column}
+}
+@media (max-height:760px) and (min-width:901px){ .rule span{display:none} .hero .lead{margin-bottom:10px} }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ================= NEO PINOUT ================= */
+.np-svg{display:block;width:100%;height:100%;font-family:'Chakra Petch','Kanit',system-ui,sans-serif}
+.np-svg .np-nm{fill:var(--n-text)}
+.np-svg .np-cap{fill:var(--n-mute)}
+.np-pin.dim .np-nm{fill:var(--n-mute)}
+.np-pin.dim{opacity:.5}
+.np-pin{cursor:pointer;transition:opacity .25s}
+.np-pin.dim{opacity:.22}
+.np-pin.on .np-halo{animation:npPulse 1.6s ease-in-out infinite}
+.np-pin.sel .np-pill{fill-opacity:.42;stroke-width:3}
+.np-pin:hover .np-pill{fill-opacity:.32}
+@keyframes npPulse{50%{opacity:.15}}
+@media (prefers-reduced-motion:reduce){.np-pin.on .np-halo{animation:none}}
+
+/* สไลด์ที่มีผังขา: เนื้อหาซ้าย ผังขวา */
+.neo-slide.np-has{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,min(38%,500px));grid-template-rows:auto minmax(0,1fr);column-gap:clamp(12px,1.6vw,24px);row-gap:8px}
+.neo-slide.np-has>.neo-slabel{grid-column:1;grid-row:1}
+.neo-slide.np-has>.neo-in{grid-column:1;grid-row:2;min-width:0}
+.neo-slide.np-has>.np-fig{grid-column:2;grid-row:1/3}
+.np-fig{display:flex;flex-direction:column;min-height:0;border-radius:20px;border:1px solid var(--n-edge);position:relative;
+  background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--n-a) 12%,transparent),transparent 60%),color-mix(in srgb,#05070d 72%,var(--n-bg));padding:8px 8px 6px;gap:4px;animation:neoIn .5s both}
+html[data-theme="light"] .np-fig{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--n-a) 10%,transparent),transparent 60%),#f6f6fb}
+.np-fig-h{display:flex;flex-wrap:nowrap;align-items:center;gap:6px;padding:0 2px;min-width:0}
+.np-fig-h b{font-family:var(--disp);font-size:clamp(12px,.95vw,14px);color:var(--n-a);flex:none;order:0}
+.np-fig-h .np-zoom{order:2;flex:none}
+.np-chips{order:1;flex:1;min-width:0;display:flex;flex-wrap:nowrap;gap:4px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+.np-chips i{flex:none;font-style:normal;font-family:var(--disp);font-weight:700;font-size:clamp(11px,.85vw,13px);padding:1px 8px;border-radius:99px;
+  border:1px solid var(--pc,var(--n-a));background:color-mix(in srgb,var(--pc,var(--n-a)) 18%,transparent);color:var(--n-text)}
+.np-fig-b{flex:1;min-height:0;cursor:zoom-in}
+.np-zoom{border:1px solid var(--n-edge);background:var(--n-glass);color:var(--n-text);border-radius:10px;padding:3px 10px;font:inherit;font-size:clamp(12px,.9vw,13px);cursor:pointer}
+.np-zoom:hover{border-color:var(--n-a)}
+.np-chip{display:none}
+
+/* ปุ่มผังขาในแถบบน/อาร์เคด */
+#btnPin,#acPin{position:relative;font-weight:700}
+#btnPin.np-has,#acPin.np-has{border-color:var(--n-a) !important;color:var(--n-a) !important;box-shadow:0 0 0 0 var(--n-a);animation:npBtn 1.8s ease-out infinite}
+#btnPin b,#acPin b{position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;border-radius:9px;background:var(--n-b);color:#fff;font-size:11px;line-height:18px;padding:0 4px;display:none}
+#btnPin.np-has b,#acPin.np-has b{display:block}
+@keyframes npBtn{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--n-a) 60%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+
+/* หน้าต่างผังเต็มจอ */
+#npModal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:clamp(6px,2vw,24px);
+  background:color-mix(in srgb,#02030a 78%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#npModal.show{display:flex}
+#npModal .np-card{width:min(1280px,100%);height:min(860px,100%);display:flex;flex-direction:column;border-radius:24px;border:1px solid var(--n-edge);
+  background:linear-gradient(160deg,color-mix(in srgb,var(--n-a) 8%,var(--n-bg)),var(--n-bg));box-shadow:0 30px 80px -20px #000;overflow:hidden;color:var(--n-text)}
+#npModal .np-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--n-edge);flex-wrap:wrap}
+#npModal .np-head>div:first-child{flex:1 1 260px}
+#npModal .np-head b{font-family:var(--disp);font-size:clamp(17px,1.6vw,22px)}
+#npModal .np-sub{color:var(--n-mute);font-size:clamp(12px,1vw,14px)}
+#npModal .np-sel{display:flex;gap:6px}
+#npModal .np-sel button,#npModal .np-x{border:1px solid var(--n-edge);background:var(--n-glass);color:var(--n-text);border-radius:12px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
+#npModal .np-sel button.on{border-color:var(--n-a);background:color-mix(in srgb,var(--n-a) 20%,transparent);color:var(--n-text);font-weight:700}
+#npModal .np-x{width:40px;height:40px;padding:0;font-size:16px}
+#npModal .np-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,330px)}
+#npModal .np-board{min-height:0;padding:10px}
+#npModal aside{border-left:1px solid var(--n-edge);padding:14px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+#npModal .np-info{min-height:120px}
+#npModal .np-ititle{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-left:5px solid var(--pc);padding-left:10px}
+#npModal .np-ititle b{font-family:var(--disp);font-size:clamp(26px,2.6vw,36px);line-height:1}
+#npModal .np-ititle span{color:var(--pc);font-weight:700;font-size:14px}
+#npModal .np-itag{margin:8px 0 0;font-family:var(--disp);font-size:14px;color:var(--n-mute)}
+#npModal .np-info p{margin:8px 0 0;font-size:clamp(15px,1.2vw,17px);line-height:1.6}
+#npModal .np-hint{color:var(--n-mute)}
+#npModal .np-hl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#npModal .np-hl b{flex:1 1 100%;font-size:13px;color:var(--n-mute);font-weight:600}
+#npModal .np-hl button{border:1px solid var(--pc);background:color-mix(in srgb,var(--pc) 16%,transparent);color:var(--n-text);border-radius:99px;padding:4px 10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+#npModal .np-hl small{flex:1 1 100%;color:var(--n-r)}
+#npModal .np-leg{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:12.5px;color:var(--n-mute);margin-top:auto}
+#npModal .np-leg i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px}
+@media (max-width:900px){
+  .neo-slide.np-has{display:flex}
+  .neo-slide.np-has>.np-fig{display:none}
+  .np-chip{display:inline-flex;align-self:flex-start;align-items:center;gap:6px;border:1px solid var(--n-a);background:color-mix(in srgb,var(--n-a) 14%,transparent);color:var(--n-text);
+    border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+  #npModal .np-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+  #npModal aside{border-left:0;border-top:1px solid var(--n-edge);max-height:42%;padding:10px 12px;gap:8px}
+  #npModal .np-leg{display:none}
+  #npModal .np-board{padding:4px}
+}
+
+/* ส่วนประกอบบนบอร์ด */
+.np-part{cursor:pointer}
+.np-part .np-pglow{animation:npPulse 1.8s ease-in-out infinite}
+.np-part.sel rect:nth-child(2){stroke-width:4;fill-opacity:.22}
+@media (prefers-reduced-motion:reduce){.np-part .np-pglow{animation:none}}
+#npModal .np-hl .np-allparts{--pc:var(--n-a);border-style:dashed;font-weight:600}
+#npModal .np-hl b:empty{flex-basis:100%;height:0}
+.neo-slide.np-has .neo-in .np-focus{outline:2px solid #22d3ee;outline-offset:2px;border-radius:8px;background:color-mix(in srgb,#22d3ee 10%,transparent)}
+.neo-slide.np-has .neo-in tr,.neo-slide.np-has .neo-in .keyfact,.neo-slide.np-has .neo-in li{cursor:help}
+#npModal aside>*{flex:none}
+#npModal .np-leg{margin-top:8px}
+@media (max-width:900px){
+  #npModal .np-body{display:flex;flex-direction:column}
+  #npModal .np-board{flex:1 1 auto;min-height:0}
+  #npModal aside{flex:0 0 auto;max-height:40%}
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+<div class="hz" aria-hidden="true"></div>
+<header class="tb">
+  <a class="ib" href="index.html" aria-label="กลับหน้ารวมภารกิจ"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/></svg></a>
+  <div class="brand"><b>BENCH READY</b><small>ด่าน 5 · ตรวจความพร้อมก่อนต่อวงจรจริง</small></div>
+  <div class="hud" id="hud" hidden>
+    <div class="trace" id="trace" aria-label="ความคืบหน้า"></div>
+    <div class="fuses" id="fuses" aria-label="ฟิวส์ที่เหลือ"></div>
+    <div class="combo" id="combo">COMBO 0</div>
+  </div>
+  <button class="ib" id="btnTheme" aria-label="สลับโหมดสว่าง/มืด" style="margin-left:auto"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+</header>
+<main>
+<!-- ================= หน้าแรก ================= -->
+<section class="scr on" id="sIntro">
+  <div class="intro">
+    <div class="hero">
+      <div class="kick">ด่าน 5 · CPE2422/2428 · ก่อนวันประกอบวงจรจริง</div>
+      <h1>BENCH <span>READY</span></h1>
+      <p class="lead">สอบใบอนุญาตเข้าโต๊ะแล็บ: <b>18 โจทย์ 6 ทักษะ</b> แล้วปิดท้ายด้วยบอส <b>Smoke Test</b> ตรวจสายก่อนจ่ายไฟ ผลออกมาเป็นเรดาร์ 6 ด้าน บอกชัดว่าเรื่องไหนพร้อม เรื่องไหนต้องทวน</p>
+      <div class="rules">
+        <div class="card rule"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="8" rx="2"/><path d="M6 12h12"/></svg><div><b>ฟิวส์ 3 ดวง</b><span>ตอบผิดในข้อความปลอดภัย ฟิวส์ขาด 1 ดวง ฟิวส์หมดจะไม่ได้ใบอนุญาต</span></div></div>
+        <div class="card rule"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><div><b>ส่งแบบมั่นใจ หรือไม่แน่ใจ</b><span>ระบบแยก "รู้จริง" ออกจาก "เดาถูก" และจับ "เข้าใจผิดแบบมั่นใจ" ที่อันตรายที่สุด</span></div></div>
+        <div class="card rule"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18h4v-5H4zM10 18h4V9h-4zM16 18h4V5h-4z"/></svg><div><b>ระดับปรับตามฝีมือ</b><span>ตอบถูกโจทย์จะยากขึ้น ตอบผิดจะง่ายลง แยกตามทักษะ ไม่มีโจทย์นอกเนื้อหาแล็บ</span></div></div>
+        <div class="card rule"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 5v8l-8 5-8-5V8z"/><path d="M12 3v18M4 8l16 8M20 8L4 16"/></svg><div><b>เรดาร์ 6 ทักษะ + รหัสผล</b><span>ได้ใบสั่งทบทวนรายเรื่อง และรหัสผลไปวางในไฟล์ห้องควบคุมของกลุ่ม</span></div></div>
+      </div>
+    </div>
+    <form class="card form" id="fStart" autocomplete="off" novalidate>
+      <h2>ลงทะเบียนเข้าโต๊ะแล็บ</h2>
+      <div class="fld"><label for="iSid"><span>รหัสนักศึกษา 10 หลัก หรือรหัสลับจากผู้สอน</span><span id="sidCnt">0/10</span></label><input id="iSid" inputmode="text" maxlength="12" placeholder="เช่น 69xxxxxxxx" spellcheck="false"></div>
+      <div class="fld"><label for="iNick"><span>ชื่อเล่น</span></label><input id="iNick" maxlength="20" placeholder="เช่น ต้นกล้า"></div>
+      <div class="fld"><label><span>กลุ่มโปรเจกต์ (โจทย์บางข้อจะอิงงานของกลุ่ม)</span></label><div class="chips" id="grpChips"></div><div class="gname" id="gName"></div></div>
+      <div class="fld"><label><span>บอร์ดที่ใช้ประกอบจริง</span></label><div class="chips" id="brdChips"><button type="button" class="chip" data-b="c38">38 ขา · DevKitC</button><button type="button" class="chip" data-b="v30">30 ขา · DevKit V1</button></div></div>
+      <div class="err" id="err" role="alert"></div>
+      <button class="btn pri" type="submit">เริ่มตรวจความพร้อม</button>
+      <div class="foot"><span>ใช้เวลาราว 15 นาที · เล่นซ้ำได้ โจทย์สุ่มใหม่ทุกครั้ง</span><button type="button" id="btnVerify">ตรวจรหัสผล (ผู้สอน)</button></div>
+    </form>
+  </div>
+</section>
+<!-- ================= โจทย์ ================= -->
+<section class="scr" id="sPlay">
+  <div class="card qcard" id="qcard">
+    <div class="qhead"><span class="sk" id="qSk"></span><span class="lv" id="qLv"></span><span class="gtag" id="qG" hidden></span><span class="qno" id="qNo"></span></div>
+    <p class="qtext" id="qText"></p>
+    <div class="qbody" id="qBody"></div>
+    <div class="acts" id="acts">
+      <button class="btn" id="btnHint" type="button">คำใบ้ (ได้คะแนนครึ่งเดียว)</button>
+      <span class="sp"></span>
+      <span class="note" id="actNote"></span>
+      <button class="btn alt" id="btnUnsure" type="button">ส่ง · ไม่แน่ใจ</button>
+      <button class="btn pri" id="btnSure" type="button">ส่ง · มั่นใจ</button>
+    </div>
+    <div class="fb" id="fb"><div class="vd" id="fbVd"></div><div class="tx" id="fbTx"></div><button class="btn pri" id="btnNext" type="button">ข้อถัดไป</button></div>
+  </div>
+</section>
+<!-- ================= บอส ================= -->
+<section class="scr" id="sBoss">
+  <div class="card boss">
+        <h2 id="bTitle"></h2>
+    <p style="margin:0" id="bLead">ตรวจรายการต่อสายก่อนเสียบ USB ภายใน <b id="bSec"></b> วินาที แต่ละแถวเลือก <b>ผ่าน</b> หรือ <b>ต้องแก้</b> ถ้าปล่อยจุดอันตรายผ่านไป ฟิวส์จะขาด</p>
+    <div class="tbar"><i id="bBar"></i></div>
+    <div class="blist" id="bList"></div>
+    <div class="acts"><span class="note" id="bNote"></span><span class="sp"></span><button class="btn pri" id="btnBoss" type="button">ยืนยันผลการตรวจ</button></div>
+  </div>
+</section>
+<!-- ================= ผล ================= -->
+<section class="scr" id="sResult">
+  <div class="res">
+    <div class="card rl">
+      <div class="kick" id="rWho"></div>
+      <div class="stamp"><div class="pct" id="rPct"></div><div class="badge" id="rBadge"></div></div>
+      <div class="stars" id="rStars"></div>
+      <div class="radar" id="rRadar"></div>
+      <div class="rbtn"><button class="btn pri" id="btnAgain" type="button">ตรวจอีกครั้ง (สุ่มโจทย์ใหม่)</button><a class="btn" href="index.html">กลับหน้ารวม</a></div>
+    </div>
+    <div class="card rr">
+      <section><h3>คะแนนรายทักษะ</h3><div id="rSkills"></div></section>
+      <section><h3>ความมั่นใจกับความถูกต้อง</h3><div class="conf" id="rConf"></div></section>
+      <section><h3>ใบสั่งทบทวน</h3><div class="rx" id="rRx"></div></section>
+      <section><h3>รหัสผล (วางในช่องหมายเหตุของไฟล์ห้องควบคุม)</h3><div class="codebox"><output id="rCode"></output><button class="btn" id="btnCopy" type="button">คัดลอก</button></div></section>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+<div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgH">
+  <div class="card">
+    <h3 id="dlgH" style="margin:0 0 6px;font-family:var(--disp)">ตรวจรหัสผล BENCH READY</h3>
+    <p style="margin:0 0 8px;font-size:14px;color:var(--mute)">วางรหัสผลได้หลายบรรทัด ระบบตรวจเลขตรวจสอบ (K) เพื่อจับรหัสที่ถูกแก้ด้วยมือ และแปลงเป็นตาราง</p>
+    <textarea id="dlgIn" placeholder="BR5-S3-4567-A80B67C90D58E75F70-T73-R-F2-K41"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn pri" id="dlgGo" type="button">ตรวจ</button><button class="btn" id="dlgX" type="button">ปิด</button></div>
+    <div id="dlgOut"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/* ================================================================
+   NEO PINOUT v1.0 — ผังขา ESP32 แบบเหมือนจริง (มุมมองด้านบน เสาอากาศอยู่ด้านบน)
+   - ESP32-DevKitC V4 38 ขา (บอร์ดในคลิป ESP32 Explained) และ ESP32 DevKit V1 (DOIT) 30 ขา
+   - NeoPin.detect(text)  -> รายการขาที่ถูกอ้างถึงในข้อความ
+   - NeoPin.figure(el, pins) -> วาดผังแบบย่อ (เน้นเฉพาะขาที่อ้างถึง) ลงใน el
+   - NeoPin.open(pins)     -> เปิดผังเต็มจอ แตะขาเพื่อดูรายละเอียด
+   ข้อมูลขาอ้างอิง Espressif ESP32 Datasheet / ESP32-DevKitC V4 User Guide
+   ================================================================ */
+(function(){
+  'use strict';
+  var D=document;
+
+  /* ---------- ข้อมูลหมวดขา ---------- */
+  var CAT={
+    safe :{c:'#22c55e',n:'ใช้งานทั่วไป (แนะนำ)'},
+    input:{c:'#a855f7',n:'อินพุตอย่างเดียว'},
+    strap:{c:'#f59e0b',n:'Strapping ระวังตอนบูต'},
+    flash:{c:'#64748b',n:'ต่อ Flash ภายใน ห้ามใช้'},
+    uart :{c:'#3b82f6',n:'UART0 / USB Serial'},
+    pwr  :{c:'#ef4444',n:'ไฟเลี้ยง'},
+    gnd  :{c:'#9aa3b5',n:'กราวด์ (GND)'},
+    en   :{c:'#f97316',n:'รีเซ็ต (EN)'},
+    part :{c:'#22d3ee',n:'ส่วนประกอบบนบอร์ด'}
+  };
+  /* ส่วนประกอบบนบอร์ด: [ชื่อ, คำอธิบายสั้น, รายละเอียด] */
+  var PART={
+    antenna:['เสาอากาศ PCB','Wi-Fi · BT 2.4 GHz','เสาอากาศลายทองแดงบนแผ่นวงจร รับส่ง Wi-Fi และ Bluetooth ย่าน 2.4 GHz ห้ามวางโลหะหรือสายไฟทับบริเวณนี้ และควรหันส่วนนี้ออกนอกกล่องโลหะ'],
+    module :['โมดูล WROOM-32','ชิป+Flash+เสาอากาศ','ESP32-WROOM-32 รวมชิป ESP32, หน่วยความจำ Flash, คริสตัล 40 MHz และเสาอากาศไว้ด้วยกันใต้ฝาโลหะ ผ่านการรับรองคลื่นวิทยุแล้ว ผู้ผลิตบอร์ดจึงนำไปวางบนบอร์ดพัฒนาได้ทันที'],
+    chip   :['ชิป ESP32','CPU 2 คอร์ 240 MHz','ชิป ESP32-D0WD อยู่ใต้ฝาโลหะของโมดูล มีซีพียู Xtensa LX6 2 คอร์ ความถี่สูงสุด 240 MHz พร้อม Wi-Fi, Bluetooth และวงจร ADC/DAC/PWM ในชิปเดียว'],
+    sram   :['SRAM ในชิป','520 KB · ไฟดับข้อมูลหาย','SRAM ขนาด 520 KB อยู่ภายในชิป ESP32 ใช้เก็บตัวแปรระหว่างโปรแกรมทำงาน เร็วมาก แต่ข้อมูลหายเมื่อปิดไฟหรือรีเซ็ต'],
+    flash  :['Flash 4 MB','เก็บโปรแกรม ไม่หาย','หน่วยความจำ Flash แบบ SPI (ทั่วไป 4 MB) อยู่ใต้ฝาโลหะ เก็บโปรแกรมและไฟล์ไว้แม้ปิดไฟ เชื่อมกับชิปผ่าน GPIO6–11 จึงห้ามนำขาเหล่านั้นไปใช้'],
+    psram  :['PSRAM','เฉพาะรุ่น WROVER','หน่วยความจำทำงานเสริม 4–8 MB มีเฉพาะโมดูล WROVER (เช่น บอร์ดกล้อง ESP32-CAM) เหมาะกับงานภาพและ AI โมดูล WROOM-32 บนบอร์ดนี้ไม่มี PSRAM'],
+    xtal   :['คริสตัล 40 MHz','นาฬิกาหลักของชิป','คริสตัลสร้างสัญญาณนาฬิกา 40 MHz ให้ชิปและวงจรวิทยุ อยู่ใต้ฝาโลหะของโมดูล'],
+    usbuart:['ชิป USB→UART','CP2102 / CH340','ชิปแปลงสัญญาณ USB เป็น UART (CP2102, CH340 หรือ CH9102 ทำหน้าที่เดียวกัน) ใช้อัปโหลดโค้ดและ Serial Monitor ผ่าน GPIO1/GPIO3 ถ้าคอมพิวเตอร์มองไม่เห็นพอร์ต COM ให้ติดตั้งไดรเวอร์ให้ตรงรุ่นชิป หรือเปลี่ยนเป็นสาย USB ที่ส่งข้อมูลได้'],
+    usb    :['พอร์ต USB','ไฟ 5 V + ข้อมูล','พอร์ต micro-USB (บางรุ่นเป็น USB-C) รับไฟ 5 V เข้าบอร์ดและรับส่งข้อมูลผ่านชิป USB→UART สายชาร์จบางเส้นมีแต่สายไฟ ไม่มีสายข้อมูล จึงอัปโหลดโค้ดไม่ได้'],
+    reg    :['เรกูเลเตอร์','5 V → 3.3 V','เรกูเลเตอร์แบบ LDO (เช่น AMS1117-3.3) แปลงไฟ 5 V จาก USB/VIN เป็น 3.3 V เลี้ยงชิปและขา 3V3 พิกัดราว 0.8–1 A และร้อนขึ้นเมื่อโหลดมาก ห้ามดึงไฟจากขา 3V3 ไปขับมอเตอร์'],
+    en     :['ปุ่ม EN','รีเซ็ตชิป','ปุ่ม EN ดึงขา CHIP_PU ลงกราวด์ เมื่อปล่อยชิปจะรีเซ็ตและเริ่มโปรแกรมใหม่จาก setup()'],
+    boot   :['ปุ่ม BOOT','GPIO0 · โหมดอัปโหลด','ปุ่ม BOOT ต่อกับ GPIO0 ถ้าอัปโหลดค้างที่ "Connecting..." ให้กด BOOT ค้างไว้จนเริ่มเขียนโค้ด หลังบูตแล้วใช้เป็นปุ่มอินพุตได้'],
+    pwr    :['LED ไฟเลี้ยง','แดง = มีไฟเข้า','LED สีแดงติดเมื่อบอร์ดได้รับไฟ ถ้าไม่ติดให้ตรวจสายและพอร์ต USB ก่อนตรวจอย่างอื่น'],
+    modpad :['ขา 6–11 ที่โมดูล','ต่อ Flash · ไม่ออกหัวเข็ม','บนบอร์ด 30 ขา GPIO6–11 ไม่ได้ต่อออกมาที่หัวเข็ม แต่ยังอยู่ที่ขาด้านล่างของโมดูล WROOM-32 (ขาโมดูลที่ 17–22: SD2=GPIO9, SD3=GPIO10, CMD=GPIO11, CLK=GPIO6, SD0=GPIO7, SD1=GPIO8) ซึ่งต่อกับชิป Flash ภายใน จึงห้ามนำไปใช้'],
+    led2   :['LED GPIO2','เฉพาะ DevKit V1','บอร์ด DevKit V1 (DOIT) มี LED สีฟ้าต่อกับ GPIO2 ใช้ทดสอบโปรแกรมไฟกะพริบได้ทันที ส่วน DevKitC ไม่มี LED ผู้ใช้']
+  };
+  function isPart(k){ return typeof k==='string'&&k.indexOf('p:')===0; }
+  function pid(k){ return String(k).slice(2); }
+  var G={
+    0 :['strap','BOOT · ADC2 · T1','ขา Strapping ต่อกับปุ่ม BOOT ถ้าเป็น LOW ขณะเปิดเครื่อง ชิปจะเข้าโหมดอัปโหลดโค้ด ใช้อ่านปุ่มได้ แต่ห้ามมีวงจรภายนอกดึงลงตอนบูต'],
+    1 :['uart','TX0 · USB Serial','UART0 ส่งข้อมูลไปยังชิป USB-to-UART ใช้กับ Serial Monitor และการอัปโหลดโค้ด ไม่ควรต่ออุปกรณ์อื่น'],
+    2 :['strap','ADC2 · T2 · LED*','ขา Strapping ต้องเป็น LOW หรือปล่อยลอยตอนเข้าโหมดอัปโหลด บอร์ด DevKit V1 (DOIT) ต่อ LED สีฟ้าไว้ที่ขานี้ ส่วน DevKitC ไม่มี LED ผู้ใช้'],
+    3 :['uart','RX0 · USB Serial','UART0 รับข้อมูลจากชิป USB-to-UART ไม่ควรต่ออุปกรณ์อื่น'],
+    4 :['safe','ADC2 · T0','ใช้งานทั่วไปได้ดี: ดิจิทัล PWM และ 1-Wire (DHT22, DS18B20) แต่ ADC2 อ่านค่าไม่ได้ขณะเปิด Wi-Fi'],
+    5 :['strap','VSPI CS','ขา Strapping (ส่งสัญญาณ PWM ช่วงบูต) เป็นขา CS เริ่มต้นของ SPI ใช้ได้แต่ระวังอุปกรณ์ที่ทำงานผิดเมื่อได้รับสัญญาณช่วงบูต'],
+    6 :['flash','FLASH CLK','ต่อกับหน่วยความจำ Flash ภายในโมดูล ห้ามใช้ ถ้านำไปต่ออุปกรณ์ บอร์ดจะรีเซ็ตหรือค้าง'],
+    7 :['flash','FLASH SD0','ต่อกับหน่วยความจำ Flash ภายในโมดูล ห้ามใช้'],
+    8 :['flash','FLASH SD1','ต่อกับหน่วยความจำ Flash ภายในโมดูล ห้ามใช้'],
+    9 :['flash','FLASH SD2','ต่อกับหน่วยความจำ Flash ภายในโมดูล ห้ามใช้'],
+    10:['flash','FLASH SD3','ต่อกับหน่วยความจำ Flash ภายในโมดูล ห้ามใช้'],
+    11:['flash','FLASH CMD','ต่อกับหน่วยความจำ Flash ภายในโมดูล ห้ามใช้'],
+    12:['strap','ADC2 · T5 · HSPI MISO','ขา Strapping (MTDI) ต้องเป็น LOW ตอนบูต ถ้าถูกดึงเป็น HIGH บอร์ดจะบูตไม่ขึ้น ห้ามต่อ pull-up'],
+    13:['safe','ADC2 · T4 · HSPI MOSI','ใช้งานทั่วไปได้ (ADC2 อ่านค่าไม่ได้ขณะเปิด Wi-Fi)'],
+    14:['safe','ADC2 · T6 · HSPI CLK','ใช้งานได้ แต่ส่ง PWM สั้นๆ ช่วงบูต จึงไม่เหมาะกับรีเลย์ที่ต้องไม่กระตุก'],
+    15:['strap','ADC2 · T3 · HSPI CS','ขา Strapping (MTDO) ส่ง PWM ช่วงบูต ถ้าเป็น LOW จะปิดข้อความบูตบน Serial'],
+    16:['safe','RX2 · UART2','UART2 ฝั่งรับ เหมาะกับ GPS, PMS5003, LD2410 (บนโมดูล WROVER ใช้กับ PSRAM ห้ามใช้)'],
+    17:['safe','TX2 · UART2','UART2 ฝั่งส่ง (บนโมดูล WROVER ใช้กับ PSRAM ห้ามใช้)'],
+    18:['safe','VSPI SCK','สัญญาณนาฬิกาของ SPI เริ่มต้น ใช้งานทั่วไปได้ดี'],
+    19:['safe','VSPI MISO','ขาข้อมูลเข้าของ SPI เริ่มต้น ใช้งานทั่วไปได้ดี'],
+    21:['safe','I2C SDA','ขาข้อมูล I2C เริ่มต้นของ Arduino (Wire) เช่น OLED, BME280, BH1750, MPU6050'],
+    22:['safe','I2C SCL','ขานาฬิกา I2C เริ่มต้นของ Arduino (Wire)'],
+    23:['safe','VSPI MOSI','ขาข้อมูลออกของ SPI เริ่มต้น ใช้งานทั่วไปได้ดี'],
+    25:['safe','DAC1 · ADC2','มี DAC 8 บิต สร้างแรงดันอนาล็อกจริงได้ ใช้ดิจิทัลและ PWM ได้ดี'],
+    26:['safe','DAC2 · ADC2','มี DAC 8 บิต สร้างแรงดันอนาล็อกจริงได้ ใช้ดิจิทัลและ PWM ได้ดี'],
+    27:['safe','ADC2 · T7','ใช้งานทั่วไปได้ดี (ADC2 อ่านค่าไม่ได้ขณะเปิด Wi-Fi)'],
+    32:['safe','ADC1 · T9','ADC1 อ่านอนาล็อกได้แม้เปิด Wi-Fi เหมาะกับเซนเซอร์อนาล็อกในงาน IoT'],
+    33:['safe','ADC1 · T8','ADC1 อ่านอนาล็อกได้แม้เปิด Wi-Fi เหมาะกับเซนเซอร์อนาล็อกในงาน IoT'],
+    34:['input','ADC1 · INPUT ONLY','อินพุตอย่างเดียว ไม่มี pull-up/pull-down ภายใน เหมาะกับอ่านเซนเซอร์อนาล็อก (ADC1) ห้ามใช้ขับ LED'],
+    35:['input','ADC1 · INPUT ONLY','อินพุตอย่างเดียว ไม่มี pull-up/pull-down ภายใน เหมาะกับอ่านเซนเซอร์อนาล็อก (ADC1)'],
+    36:['input','VP · ADC1 · INPUT','SENSOR_VP อินพุตอย่างเดียว ไม่มี pull-up/pull-down ภายใน (ADC1 ช่อง 0)'],
+    39:['input','VN · ADC1 · INPUT','SENSOR_VN อินพุตอย่างเดียว ไม่มี pull-up/pull-down ภายใน (ADC1 ช่อง 3)']
+  };
+  var SP={
+    '3V3':['pwr','3.3 V OUT','ไฟ 3.3 V จากเรกูเลเตอร์บนบอร์ด ใช้เลี้ยงเซนเซอร์ 3.3 V (ระวังโหลดรวมเกินความสามารถของเรกูเลเตอร์)'],
+    '5V' :['pwr','5 V · USB/VIN','ไฟ 5 V จากพอร์ต USB หรือป้อนไฟ 5 V เข้าที่ขานี้ ห้ามนำ 5 V ไปต่อเข้าขา GPIO'],
+    'GND':['gnd','0 V','กราวด์ร่วม ทุกอุปกรณ์ในวงจรต้องต่อ GND ร่วมกับ ESP32'],
+    'EN' :['en','RESET','Chip Enable ต่อกับปุ่ม EN ดึงเป็น LOW แล้วปล่อย = รีเซ็ตชิป']
+  };
+  function info(k){ if(isPart(k)){ var P=PART[pid(k)]; return P?['part',P[1],P[2]]:null; } return typeof k==='number'?G[k]:SP[k]; }
+  function nameOf(k){ if(isPart(k)) return (PART[pid(k)]||[k])[0]; return typeof k==='number'?'GPIO'+k:k; }
+
+  /* ---------- เลย์เอาต์ขาจริง (บนลงล่าง เมื่อเสาอากาศอยู่ด้านบน) ---------- */
+  var BOARDS={
+    c38:{t:'ESP32-DevKitC V4 · 38 ขา',s:'บอร์ดในคลิป ESP32 Explained',
+      L:['3V3','EN',36,39,34,35,32,33,25,26,27,14,12,'GND',13,9,10,11,'5V'],
+      R:['GND',23,22,1,3,21,'GND',19,18,5,17,16,4,0,2,15,8,7,6],
+      SL:['3V3','EN','VP','VN','34','35','32','33','25','26','27','14','12','GND','13','D2','D3','CMD','5V'],
+      SR:['GND','23','22','TX','RX','21','GND','19','18','5','17','16','4','0','2','15','D1','D0','CLK']},
+    v30:{t:'ESP32 DevKit V1 (DOIT) · 30 ขา',s:'บอร์ดยอดนิยมในชุดทดลอง',
+      L:['EN',36,39,34,35,32,33,25,26,27,14,12,13,'GND','5V'],
+      R:[23,22,1,3,21,19,18,5,17,16,4,2,15,'GND','3V3'],
+      SL:['EN','VP','VN','D34','D35','D32','D33','D25','D26','D27','D14','D12','D13','GND','VIN'],
+      SR:['D23','D22','TX0','RX0','D21','D19','D18','D5','TX2','RX2','D4','D2','D15','GND','3V3']}
+  };
+  var VALID=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,21,22,23,25,26,27,32,33,34,35,36,39];
+  var boardSel='c38';
+  try{ boardSel=localStorage.getItem('cpe2422_board')||'c38'; }catch(e){}
+  if(!BOARDS[boardSel]) boardSel='c38';
+
+  /* ---------- ตรวจจับการอ้างถึงขาในข้อความ ---------- */
+  function addRange(set,a,b){ a=+a; b=+b; if(b<a||b-a>12) return; for(var i=a;i<=b;i++) if(VALID.indexOf(i)>=0) set.push(i); }
+  function detect(text,force){
+    text=String(text||'').replace(/\s+/g,' ');
+    var out=[], m, ctx=!!force||/ESP32|GPIO|ขา/.test(text);
+    var re1=/(?:GPIO|\bIO)\s?(\d{1,2})((?:\s*(?:\([^)]{1,10}\))?\s*(?:,|และ|หรือ|\/|–|-|~|ถึง)\s*(?:GPIO)?\s?\d{1,2}\b)*)/g;
+    while((m=re1.exec(text))){
+      var seq=(m[1]+m[2]).replace(/\([^)]*\)/g,' ').replace(/GPIO/g,' ');
+      var parts=seq.split(/\s*(,|และ|หรือ|\/)\s*/);
+      parts.forEach(function(p){ var r=/^(\d{1,2})\s*(?:–|-|~|ถึง)\s*(\d{1,2})$/.exec(p.trim()); if(r) addRange(out,r[1],r[2]); else { var n=parseInt(p,10); if(!isNaN(n)&&VALID.indexOf(n)>=0) out.push(n); } });
+    }
+    var re2=/ขา\s*(\d{1,2})\s*(?:–|-|ถึง)\s*(\d{1,2})/g; while((m=re2.exec(text))) addRange(out,m[1],m[2]);
+    var re3=/(\d{1,2})\s*(?:–|-)\s*(\d{1,2})\s*ขา/g; while((m=re3.exec(text))) addRange(out,m[1],m[2]);
+    var re4=/ขา\s*(?:GPIO\s?)?(\d{1,2})(?![\d.]|\s*(?:–|-)|\s*(?:ขา|มม|mm|V|โวลต์|ตัว|เส้น|บิต|นาที))/g; while((m=re4.exec(text))){ var n=+m[1]; if(VALID.indexOf(n)>=0) out.push(n); }
+    if(ctx){
+      if(/\b3V3\b|3\.3\s?V/.test(text)) out.push('3V3');
+      if(/\bVIN\b|\b5\s?V\b/.test(text)) out.push('5V');
+      if(/\bGND\b|กราวด์/.test(text)) out.push('GND');
+      if(/\bI2C\b|\bSDA\b|\bSCL\b/.test(text)) out.push(21,22);
+      if(/\bVSPI\b|\bSPI\b(?!\s*Flash)|\bMOSI\b|\bMISO\b/.test(text)) out.push(5,18,19,23);
+      if(/\bDAC\b/.test(text)) out.push(25,26);
+      if(/UART2|\bRX2\b|\bTX2\b/.test(text)) out.push(16,17);
+      if(/UART0|\bTX0\b|\bRX0\b/.test(text)) out.push(1,3);
+      if(/strapping/i.test(text)) out.push(0,2,5,12,15);
+      if(/อินพุตอย่างเดียว|input[- ]only/i.test(text)) out.push(34,35,36,39);
+      if(/ADC1/.test(text)) out.push(32,33,34,35,36,39);
+      if(/ADC2/.test(text)) out.push(0,2,4,12,13,14,15,25,26,27);
+      if(/ขา[^.]{0,24}Flash|Flash[^.]{0,24}ขา|SPI Flash/.test(text)) out.push(6,7,8,9,10,11);
+      if(/\bBOOT\b/.test(text)) out.push(0);
+      if(/\bEN\b/.test(text)) out.push('EN');
+    }
+    var board=!!force||/ESP32|บอร์ด|โมดูล|WROOM|WROVER|GPIO|DevKit|Arduino IDE/.test(text), pp=[];
+    if(board){
+      if(/เสาอากาศ|antenna|Bluetooth|\bBLE\b|2\.4\s?GHz/i.test(text)) pp.push('antenna');
+      if(/WROOM|WROVER|ชิป\s*(?:ESP32\s*)?(?:→|->)\s*โมดูล|ฝาโลหะ|โมดูล ESP32|ESP32 Module/i.test(text)) pp.push('module');
+      if(/ชิป ESP32|\bSoC\b|Xtensa|ดูอัลคอร์|dual[- ]core|2 คอร์|240\s?MHz|ซีพียู|\bCPU\b|ประมวลผล/i.test(text)) pp.push('chip');
+      if(/\bSRAM\b|520\s?KB/.test(text)) pp.push('sram');
+      if(/Flash/.test(text)) pp.push('flash');
+      if(/PSRAM/.test(text)) pp.push('psram');
+      if(/คริสตัล|crystal|40\s?MHz/i.test(text)) pp.push('xtal');
+      if(/USB[- ]?to[- ]?UART|USB\s?→\s?UART|CP210[24]|CH340|CH9102|ไดรเวอร์|พอร์ต COM|\bCOM\d?\b|มองไม่เห็นพอร์ต/i.test(text)) pp.push('usbuart');
+      if(/USB/.test(text)) pp.push('usb');
+      if(/เรกูเลเตอร์|regulator|AMS1117|\bLDO\b/i.test(text)) pp.push('reg');
+      if(/ปุ่ม\s?EN\b|ปุ่ม\s?RESET|ปุ่มรีเซ็ต|กด\s?EN\b|พอร์ต USB\s*ปุ่ม|ปุ่มบนบอร์ด/i.test(text)) pp.push('en');
+      if(/ปุ่ม\s?BOOT|\bBOOT\b|โหมดอัปโหลด|download mode|Connecting\.\.\.|พอร์ต USB\s*ปุ่ม|ปุ่มบนบอร์ด/i.test(text)) pp.push('boot');
+      if(/Power LED|LED ไฟเลี้ยง|ไฟ\s?Power|\bPWR\b|ไฟสถานะ/i.test(text)) pp.push('pwr');
+      if(/LED_BUILTIN|LED บนบอร์ด|LED ผู้ใช้|GPIO2[^.]{0,30}LED|LED[^.]{0,30}GPIO2/.test(text)) pp.push('led2');
+    }
+    pp.forEach(function(x){ out.push('p:'+x); });
+    var seen={}, res=[]; out.forEach(function(k){ var id=String(k); if(!seen[id]){ seen[id]=1; res.push(k); } });
+    return res;
+  }
+
+  /* ---------- วาดบอร์ด (หน่วย 0.1 มม.) ---------- */
+  var UID=0;
+  var W=279, PITCH=25.4;
+  function boardSVG(bk,opt){
+    opt=opt||{}; var B=BOARDS[bk], n=B.L.length, id='np'+(++UID);
+    var H=n===19?544:515, y0=n===19?44:52, xl=22, xr=W-22;
+    var hl={}, parts=[]; (opt.pins||[]).forEach(function(k){ if(isPart(k)) parts.push(pid(k)); else hl[String(k)]=1; });
+    if(bk!=='v30') parts=parts.filter(function(p){ return p!=='led2'; });
+    if([6,7,8,9,10,11].some(function(k){ return hl[String(k)]&&B.L.indexOf(k)<0&&B.R.indexOf(k)<0; })&&parts.indexOf('modpad')<0) parts.push('modpad');
+    var any=Object.keys(hl).length>0||parts.length>0, compact=!!opt.compact, hasParts=parts.length>0;
+    var xray=parts.some(function(p){ return /^(chip|sram|flash|psram|xtal)$/.test(p); });
+    var LBW=compact?(hasParts&&!opt.numbers?162:132):300;
+    var vb=opt.quiz?[-34,-34,W+68,H+52]:(compact?[-LBW,-26,W+LBW*2,H+40]:[-LBW,-34,W+LBW*2,H+76]);
+    var s='<svg class="np-svg" viewBox="'+vb.join(' ')+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ผังขา '+B.t+'">';
+    s+='<defs>'+
+      '<linearGradient id="'+id+'pcb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b1f29"/><stop offset=".55" stop-color="#0d1017"/><stop offset="1" stop-color="#161a23"/></linearGradient>'+
+      '<linearGradient id="'+id+'sh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef1f4"/><stop offset=".35" stop-color="#c3c9d1"/><stop offset=".6" stop-color="#e2e6ea"/><stop offset="1" stop-color="#a9b0b9"/></linearGradient>'+
+      '<linearGradient id="'+id+'au" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6d77a"/><stop offset="1" stop-color="#b8892c"/></linearGradient>'+
+      '<linearGradient id="'+id+'usb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8d949c"/><stop offset=".5" stop-color="#e3e7eb"/><stop offset="1" stop-color="#8d949c"/></linearGradient>'+
+      '<filter id="'+id+'gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>'+
+      '</defs>';
+    /* PCB */
+    s+='<rect x="0" y="0" width="'+W+'" height="'+H+'" rx="14" fill="url(#'+id+'pcb)" stroke="#05070b" stroke-width="3"/>';
+    s+='<g stroke="#232a37" stroke-width="2" fill="none" opacity=".9"><path d="M60 300 H120 V330"/><path d="M220 300 H170 V345"/><path d="M80 420 H140 V470"/><path d="M200 400 V440 H160"/><path d="M45 270 V380"/><path d="M234 270 V360"/></g>';
+    /* โมดูล WROOM-32 */
+    var mx=49, mw=181, my=-14, mh=n===19?256:250;
+    s+='<rect x="'+mx+'" y="'+my+'" width="'+mw+'" height="'+mh+'" rx="5" fill="#141821" stroke="#05070b" stroke-width="2"/>';
+    /* ขาด้านล่างของโมดูล WROOM-32 (ขาโมดูล 15–24 จากซ้ายไปขวา) */
+    var MPAD=['GND',13,9,10,11,6,7,8,15,2], onHdr=function(k){ return B.L.indexOf(k)>=0||B.R.indexOf(k)>=0; };
+    var padHL=MPAD.map(function(k){ return typeof k==='number'&&k>=6&&k<=11&&hl[String(k)]&&!onHdr(k); });
+    for(var c=0;c<10;c++){
+      var pxx=mx+28+c*13;
+      if(padHL[c]) s+='<circle cx="'+(pxx+3)+'" cy="'+(my+mh-2)+'" r="8" fill="#ff4d5e" opacity=".6" filter="url(#'+id+'gl)"/>';
+      s+='<rect x="'+pxx+'" y="'+(my+mh-6)+'" width="6" height="7" fill="'+(padHL[c]?'#ff8a95':'url(#'+id+'au)')+'"/>';
+      if(padHL[c]) s+='<text x="'+(pxx+3)+'" y="'+(my+mh+14)+'" text-anchor="middle" font-family="Arial" font-size="9" font-weight="700" fill="#ff8a95">'+MPAD[c]+'</text>';
+    }
+    s+='<path d="M'+(mx+18)+' '+(my+52)+' V'+(my+14)+' H'+(mx+48)+' V'+(my+44)+' H'+(mx+70)+' V'+(my+14)+' H'+(mx+92)+' V'+(my+44)+' H'+(mx+114)+' V'+(my+14)+' H'+(mx+136)+' V'+(my+44)+' H'+(mx+160)+' V'+(my+14)+'" fill="none" stroke="url(#'+id+'au)" stroke-width="6" stroke-linejoin="miter"/>';
+    var sx=mx+11, sy=my+64, sw=mw-22, sh=mh-74;
+    if(xray){
+      /* มุมมองเอกซเรย์: เปิดฝาโลหะให้เห็นชิ้นส่วนภายใน */
+      s+='<rect x="'+sx+'" y="'+sy+'" width="'+sw+'" height="'+sh+'" rx="4" fill="#0b2a33" stroke="#7d848d" stroke-width="1.5" stroke-dasharray="6 4"/>';
+      s+='<text x="'+(sx+6)+'" y="'+(sy+14)+'" font-family="Arial" font-size="9.5" fill="#7fd6e6">มุมมองใต้ฝาโลหะ</text>';
+      s+='<rect x="'+(mx+28)+'" y="'+(sy+30)+'" width="72" height="72" rx="4" fill="#26292f" stroke="#0a0a0a" stroke-width="2"/><circle cx="'+(mx+36)+'" cy="'+(sy+38)+'" r="3" fill="#555"/>'+
+         '<text x="'+(mx+64)+'" y="'+(sy+64)+'" text-anchor="middle" font-family="Arial" font-size="11" font-weight="700" fill="#d8dce2">ESP32</text><text x="'+(mx+64)+'" y="'+(sy+78)+'" text-anchor="middle" font-family="Arial" font-size="8" fill="#9aa1a9">D0WD</text>';
+      for(var t=0;t<6;t++){ s+='<rect x="'+(mx+34+t*11)+'" y="'+(sy+26)+'" width="5" height="4" fill="#b8892c"/><rect x="'+(mx+34+t*11)+'" y="'+(sy+102)+'" width="5" height="4" fill="#b8892c"/>'; }
+      s+='<rect x="'+(mx+114)+'" y="'+(sy+32)+'" width="42" height="56" rx="3" fill="#1f2228" stroke="#0a0a0a" stroke-width="2"/><text x="'+(mx+135)+'" y="'+(sy+58)+'" text-anchor="middle" font-family="Arial" font-size="9" font-weight="700" fill="#d8dce2">FLASH</text><text x="'+(mx+135)+'" y="'+(sy+71)+'" text-anchor="middle" font-family="Arial" font-size="8" fill="#9aa1a9">4 MB</text>';
+      for(var t2=0;t2<4;t2++){ s+='<rect x="'+(mx+109)+'" y="'+(sy+38+t2*13)+'" width="5" height="4" fill="#b8892c"/><rect x="'+(mx+156)+'" y="'+(sy+38+t2*13)+'" width="5" height="4" fill="#b8892c"/>'; }
+      s+='<rect x="'+(mx+114)+'" y="'+(sy+100)+'" width="40" height="20" rx="8" fill="#c9ccd1" stroke="#6b7076"/><text x="'+(mx+134)+'" y="'+(sy+114)+'" text-anchor="middle" font-family="Arial" font-size="8" fill="#333">40MHz</text>';
+      s+='<rect x="'+(mx+28)+'" y="'+(sy+118)+'" width="72" height="40" rx="3" fill="none" stroke="#7fd6e6" stroke-width="1.5" stroke-dasharray="4 3"/><text x="'+(mx+64)+'" y="'+(sy+136)+'" text-anchor="middle" font-family="Arial" font-size="8.5" fill="#7fd6e6">PSRAM</text><text x="'+(mx+64)+'" y="'+(sy+149)+'" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#7fd6e6">(เฉพาะ WROVER)</text>';
+    } else {
+      s+='<rect x="'+sx+'" y="'+sy+'" width="'+sw+'" height="'+sh+'" rx="4" fill="url(#'+id+'sh)" stroke="#7d848d" stroke-width="1.5"/>';
+      s+='<text x="'+(mx+mw/2)+'" y="'+(sy+44)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="700" fill="#4a5059">ESP32-WROOM-32</text>';
+      s+='<text x="'+(mx+mw/2)+'" y="'+(sy+70)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#5d636c">Espressif · Wi-Fi + BT</text>';
+      s+='<text x="'+(mx+mw/2)+'" y="'+(sy+sh-24)+'" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" fill="#6b7179">C E</text>';
+    }
+    /* ชิ้นส่วนใต้โมดูล */
+    var by=mh+my;
+    s+='<g>'+
+      '<rect x="160" y="'+(by+18)+'" width="58" height="30" rx="2" fill="#1d1f24" stroke="#000"/><rect x="166" y="'+(by+8)+'" width="46" height="12" fill="#9aa1a9"/>'+
+      '<rect x="166" y="'+(by+48)+'" width="8" height="10" fill="#9aa1a9"/><rect x="185" y="'+(by+48)+'" width="8" height="10" fill="#9aa1a9"/><rect x="204" y="'+(by+48)+'" width="8" height="10" fill="#9aa1a9"/>'+
+      '<text x="189" y="'+(by+38)+'" text-anchor="middle" font-family="Arial" font-size="8" fill="#9aa1a9">AMS1117</text>'+
+      '<rect x="78" y="'+(by+70)+'" width="48" height="48" rx="3" fill="#1a1c21" stroke="#000"/><circle cx="85" cy="'+(by+77)+'" r="2.5" fill="#55595f"/>'+
+      '<text x="102" y="'+(by+98)+'" text-anchor="middle" font-family="Arial" font-size="8" fill="#8b9097">'+(bk==='c38'?'CP2102':'CP2102')+'</text>'+
+      '<rect x="150" y="'+(by+80)+'" width="14" height="8" fill="#c9a66b"/><rect x="150" y="'+(by+96)+'" width="14" height="8" fill="#c9a66b"/><rect x="176" y="'+(by+80)+'" width="14" height="8" fill="#1e1e1e" stroke="#bbb" stroke-width="1"/>'+
+      '<rect x="62" y="'+(by+22)+'" width="14" height="8" fill="#c9a66b"/><rect x="88" y="'+(by+22)+'" width="14" height="8" fill="#1e1e1e" stroke="#bbb" stroke-width="1"/>'+
+      '<rect x="206" y="'+(by+80)+'" width="12" height="7" rx="1" fill="#ff3b3b"/><circle cx="212" cy="'+(by+83)+'" r="11" fill="#ff3b3b" opacity=".35" filter="url(#'+id+'gl)"/>'+
+      '<text x="212" y="'+(by+100)+'" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#e8e8e8">PWR</text>'+
+      (bk==='v30'?'<rect x="206" y="'+(by+112)+'" width="12" height="7" rx="1" fill="#3aa0ff"/><text x="212" y="'+(by+131)+'" text-anchor="middle" font-family="Arial" font-size="7.5" fill="#e8e8e8">IO2</text>':'')+
+      '</g>';
+    /* ปุ่ม EN / BOOT และพอร์ต USB */
+    var bt=H-74;
+    [[80,'EN'],[W-80,'BOOT']].forEach(function(b){
+      s+='<rect x="'+(b[0]-18)+'" y="'+(bt+4)+'" width="36" height="36" rx="4" fill="#c7ccd2" stroke="#6e757d" stroke-width="1.5"/><circle cx="'+b[0]+'" cy="'+(bt+22)+'" r="11" fill="#2b2f36" stroke="#111"/>'+
+         '<text x="'+b[0]+'" y="'+(bt-6)+'" text-anchor="middle" font-family="Arial" font-size="11" font-weight="700" fill="#f1f1f1">'+b[1]+'</text>';
+    });
+    s+='<rect x="'+(W/2-34)+'" y="'+(H-58)+'" width="68" height="66" rx="6" fill="url(#'+id+'usb)" stroke="#5b6168" stroke-width="2"/><rect x="'+(W/2-22)+'" y="'+(H+1)+'" width="44" height="6" rx="2" fill="#30353b"/>'+
+       '<text x="'+(W/2)+'" y="'+(H-64)+'" text-anchor="middle" font-family="Arial" font-size="9" fill="#cfd3d8">micro-USB</text>';
+    /* ขาและป้ายชื่อ */
+    function side(list,silk,isL){
+      list.forEach(function(k,i){
+        var y=y0+i*PITCH, x=isL?xl:xr, key=String(k), inf=info(k)||['gnd','',''], cat=CAT[inf[0]], on=!!hl[key];
+        var dim=any&&!on&&compact;
+        s+='<g class="np-pin'+(on?' on':'')+(dim?' dim':'')+'" data-k="'+key+'" style="--pc:'+cat.c+'">';
+        if(on) s+='<circle class="np-halo" cx="'+x+'" cy="'+y+'" r="16" fill="'+cat.c+'" opacity=".55" filter="url(#'+id+'gl)"/>';
+        s+=(i===0?'<rect x="'+(x-9)+'" y="'+(y-9)+'" width="18" height="18" rx="2"':'<circle cx="'+x+'" cy="'+y+'" r="9.5"')+' fill="url(#'+id+'au)" stroke="#7a5a1c" stroke-width="1"/>';
+        s+='<rect x="'+(x-3.6)+'" y="'+(y-3.6)+'" width="7.2" height="7.2" fill="#d9dde2" stroke="#6b7076" stroke-width=".8"/>';
+        s+='<text x="'+(isL?x+15:x-15)+'" y="'+(y+3.6)+'" text-anchor="'+(isL?'start':'end')+'" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="700" fill="#eef0f3">'+silk[i]+'</text>';
+        if(opt.quiz){ s+='<circle class="np-qring" cx="'+x+'" cy="'+y+'" r="13" fill="none" stroke-width="3.5"/><rect class="np-hit" x="'+(isL?x-30:x-60)+'" y="'+(y-12.7)+'" width="90" height="25.4" fill="transparent"/></g>'; return; }
+        if(inf[0]==='flash') s+='<path d="M'+(x-7)+' '+(y-7)+' L'+(x+7)+' '+(y+7)+' M'+(x+7)+' '+(y-7)+' L'+(x-7)+' '+(y+7)+'" stroke="#ff4d5e" stroke-width="2.4" opacity="'+(dim?'.3':'.9')+'"/>';
+        /* ป้ายด้านนอก */
+        var nm=nameOf(k), tg=inf[1], x1=isL?-14:W+14;
+        if(compact){
+          if(on||!any){
+            var pw=on?112:100, fz=on?20:16, ppx=isL?x1-pw:x1;
+            s+='<line x1="'+(isL?x-10:x+10)+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="'+cat.c+'" stroke-width="'+(on?2.6:1.2)+'"/>';
+            s+='<rect class="np-pill" x="'+ppx+'" y="'+(y-12.2)+'" width="'+pw+'" height="24.4" rx="12.2" fill="'+cat.c+'" fill-opacity="'+(on?.3:.12)+'" stroke="'+cat.c+'" stroke-width="'+(on?2.2:1)+'"/>';
+            s+='<text class="np-nm" x="'+(ppx+pw/2)+'" y="'+(y+6.5)+'" text-anchor="middle" font-size="'+fz+'" font-weight="700">'+nm+'</text>';
+          } else if(!hasParts){
+            s+='<text class="np-nm" x="'+(isL?x1:x1)+'" y="'+(y+4.5)+'" text-anchor="'+(isL?'end':'start')+'" font-size="13" font-weight="600">'+nm+'</text>';
+          }
+        } else {
+          var nmW=80, pillW=nmW+tg.length*7.3+20, px=isL?x1-pillW:x1, on2=on;
+          s+='<line x1="'+(isL?x-10:x+10)+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="'+cat.c+'" stroke-width="'+(on2?2.4:1.2)+'" opacity="'+(on2?1:.55)+'"/>';
+          s+='<rect class="np-pill" x="'+px+'" y="'+(y-11.5)+'" width="'+pillW+'" height="23" rx="11.5" fill="'+cat.c+'" fill-opacity="'+(on2?.24:.1)+'" stroke="'+cat.c+'" stroke-opacity="'+(on2?1:.45)+'" stroke-width="'+(on2?2:1)+'"/>';
+          s+='<circle cx="'+(isL?x1-pillW+12:x1+12)+'" cy="'+y+'" r="4.5" fill="'+cat.c+'"/>';
+          var tx=isL?x1-pillW+22:x1+22;
+          s+='<text class="np-nm" x="'+tx+'" y="'+(y+5.6)+'" font-size="16" font-weight="700">'+nm+'</text>';
+          s+='<text class="np-tg" x="'+(tx+nmW-8)+'" y="'+(y+4.6)+'" font-size="12.5" fill="'+cat.c+'">'+tg+'</text>';
+        }
+        s+='<rect class="np-hit" x="'+(isL?-LBW:x-14)+'" y="'+(y-12.7)+'" width="'+(LBW+(isL?x+14:W-x+14))+'" height="25.4" fill="transparent"/>';
+        s+='</g>';
+      });
+    }
+    side(B.L,B.SL,true); side(B.R,B.SR,false);
+    /* ส่วนประกอบที่อ้างถึง: กรอบเรืองแสง + ป้ายชี้ (โหมดย่อ) หรือหมายเลข (โหมดเต็ม) */
+    var bt2=H-74, by2=mh+my;
+    var BOX={
+      antenna:[mx+8,my+4,mw-16,54], module:[mx-3,my-3,mw+6,mh+6],
+      chip:xray?[mx+24,sy+22,80,88]:[sx,sy,sw,sh], sram:xray?[mx+24,sy+22,80,88]:[sx,sy,sw,sh],
+      flash:xray?[mx+106,sy+28,58,64]:[sx,sy,sw,sh], psram:xray?[mx+24,sy+114,80,48]:[sx,sy,sw,sh], xtal:xray?[mx+110,sy+96,48,28]:[sx,sy,sw,sh],
+      usbuart:[72,by2+64,60,60], usb:[W/2-40,H-62,80,76], reg:[154,by2+2,70,62],
+      en:[58,bt2,44,44], boot:[W-102,bt2,44,44], modpad:[mx+50,my+mh-12,84,30], pwr:[198,by2+72,28,34], led2:[198,by2+104,28,34]
+    };
+    var occ={L:[],R:[]};
+    Object.keys(hl).forEach(function(k){ [['L',B.L],['R',B.R]].forEach(function(sd){ sd[1].forEach(function(x,i){ if(String(x)===k) occ[sd[0]].push([y0+i*PITCH-14,y0+i*PITCH+14]); }); }); });
+    function free(sd,a,b){ return occ[sd].every(function(r){ return b<r[0]-3||a>r[1]+3; }); }
+    var top=-20, bot=H+10, CH=46;
+    parts.forEach(function(pk,ix){
+      var bx=BOX[pk]; if(!bx) return; var P=PART[pk], c=CAT.part.c, cx=bx[0]+bx[2]/2, cy=bx[1]+bx[3]/2;
+      s+='<g class="np-part on" data-k="p:'+pk+'">';
+      s+='<rect class="np-pglow" x="'+bx[0]+'" y="'+bx[1]+'" width="'+bx[2]+'" height="'+bx[3]+'" rx="6" fill="'+c+'" fill-opacity=".14" stroke="'+c+'" stroke-width="3" filter="url(#'+id+'gl)"/>';
+      s+='<rect x="'+bx[0]+'" y="'+bx[1]+'" width="'+bx[2]+'" height="'+bx[3]+'" rx="6" fill="'+c+'" fill-opacity=".08" stroke="'+c+'" stroke-width="2.4"/>';
+      if(compact&&!opt.numbers){
+        var pref=cx<W/2?'L':'R', alt=pref==='L'?'R':'L', sd=null, yy=null;
+        for(var d=0;d<700&&sd==null;d+=6){ [cy+d,cy-d].some(function(t){ var a=t-CH/2,b=t+CH/2; if(a<top||b>bot) return false;
+          if(free(pref,a,b)){ sd=pref; yy=t; return true; } if(d>60&&free(alt,a,b)){ sd=alt; yy=t; return true; } return false; }); }
+        if(sd==null){ sd=pref; yy=cy; }
+        occ[sd].push([yy-CH/2,yy+CH/2]);
+        var isL=sd==='L', CW=LBW-14, x1=isL?-10:W+10, bxX=isL?x1-CW:x1, ex=isL?bx[0]:bx[0]+bx[2];
+        if((isL&&cx>W/2)||(!isL&&cx<W/2)) ex=cx;
+        s+='<polyline points="'+ex+','+cy+' '+(isL?Math.min(ex,-2):Math.max(ex,W+2))+','+cy+' '+x1+','+yy+'" fill="none" stroke="'+c+'" stroke-width="2.4"/>';
+        s+='<circle cx="'+ex+'" cy="'+cy+'" r="4.5" fill="'+c+'"/>';
+        s+='<rect class="np-pill" x="'+bxX+'" y="'+(yy-CH/2)+'" width="'+CW+'" height="'+CH+'" rx="12" fill="'+c+'" fill-opacity=".2" stroke="'+c+'" stroke-width="2.2"/>';
+        s+='<text class="np-nm" x="'+(bxX+CW/2)+'" y="'+(yy-2)+'" text-anchor="middle" font-size="17" font-weight="700">'+P[0]+'</text>';
+        s+='<text class="np-tg" x="'+(bxX+CW/2)+'" y="'+(yy+15)+'" text-anchor="middle" font-size="12" fill="'+c+'">'+P[1]+'</text>';
+      } else {
+        var lft=/^(sram|module|en)$/.test(pk), btm=/^(usb|psram)$/.test(pk), nx=lft?bx[0]+4:bx[0]+bx[2]-4, ny=btm?bx[1]+bx[3]-4:bx[1]+4;
+        s+='<circle cx="'+nx+'" cy="'+ny+'" r="13" fill="'+c+'" stroke="#05070b" stroke-width="2"/><text x="'+nx+'" y="'+(ny+5)+'" text-anchor="middle" font-size="15" font-weight="700" fill="#05070b">'+(ix+1)+'</text>';
+      }
+      s+='</g>';
+    });
+    if(!opt.quiz&&!(hasParts&&parts.indexOf('antenna')>=0)) s+='<text x="'+(W/2)+'" y="-18" text-anchor="middle" font-size="12" class="np-cap">เสาอากาศ PCB (ด้านบน)</text>';
+    s+='</svg>';
+    return s;
+  }
+
+  /* ---------- ผังแบบย่อในสไลด์ ---------- */
+  function figure(el,pins){
+    if(!el) return; el._pins=pins||[];
+    var pn=el._pins.filter(function(k){ return !isPart(k); }), pt=el._pins.filter(isPart);
+    if(boardSel!=='v30') pt=pt.filter(function(k){ return k!=='p:led2'; });
+    var chip=function(k){ var c=CAT[(info(k)||['gnd'])[0]].c; return '<i style="--pc:'+c+'">'+nameOf(k)+'</i>'; };
+    var chips=pt.map(chip).join('')+(pn.length>14?'<i>'+pn.length+' ขา</i>':pn.map(chip).join(''));
+    el.innerHTML='<div class="np-fig-h"><b>'+(pt.length?'บนบอร์ดจริง':'ขาบนบอร์ดจริง')+'</b><button type="button" class="np-zoom" aria-label="ขยายผังเต็ม">ขยาย ⤢</button><div class="np-chips">'+chips+'</div></div>'+
+      '<div class="np-fig-b" title="แตะเพื่อขยายผังเต็มและดูรายละเอียด">'+boardSVG(boardSel,{pins:el._pins,compact:true})+'</div>';
+  }
+
+  /* ---------- ผังเต็มจอ ---------- */
+  var M=null, cur=[], selK=null, allParts=false;
+  function legend(){ return Object.keys(CAT).map(function(k){ return '<span><i style="background:'+CAT[k].c+'"></i>'+CAT[k].n+'</span>'; }).join(''); }
+  function render(){
+    if(!M) return; var B=BOARDS[boardSel];
+    M.querySelector('.np-sel').innerHTML=Object.keys(BOARDS).map(function(k){ return '<button type="button" data-b="'+k+'" class="'+(k===boardSel?'on':'')+'">'+(k==='c38'?'38 ขา · DevKitC':'30 ขา · DevKit V1')+'</button>'; }).join('');
+    M.querySelector('.np-sub').textContent=B.t+' — '+B.s;
+    var narrow=!!(window.matchMedia&&matchMedia('(max-width:700px)').matches);
+    var shown=allParts?cur.filter(function(k){ return !isPart(k); }).concat(Object.keys(PART).map(function(x){ return 'p:'+x; })):cur;
+    M.querySelector('.np-board').innerHTML=boardSVG(boardSel,{pins:shown,compact:narrow,numbers:allParts});
+    var pn=cur.filter(function(k){ return !isPart(k); }), pt=cur.filter(isPart);
+    if(boardSel!=='v30') pt=pt.filter(function(k){ return k!=='p:led2'; });
+    var miss=pn.filter(function(k){ return B.L.indexOf(k)<0&&B.R.indexOf(k)<0; });
+    var btn=function(k,i){ return '<button type="button" data-k="'+k+'" style="--pc:'+CAT[(info(k)||['gnd'])[0]].c+'">'+(isPart(k)?(i+1)+'. ':'')+nameOf(k)+'</button>'; };
+    var ptl=allParts?Object.keys(PART).filter(function(x){ return boardSel==='v30'||x!=='led2'; }).map(function(x){ return 'p:'+x; }):pt;
+    M.querySelector('.np-hl').innerHTML=
+      (ptl.length?'<b>'+(allParts?'ส่วนประกอบทั้งหมดบนบอร์ด':'ส่วนประกอบที่อ้างถึง')+'</b>'+ptl.map(btn).join(''):'')+
+      (pn.length?'<b>ขาที่อ้างถึงในหน้านี้</b>'+pn.map(function(k){ return btn(k); }).join(''):'')+
+      (!cur.length?'<b>แตะขาหรือชิ้นส่วนใดก็ได้บนบอร์ด</b>':'')+
+      '<b></b><button type="button" class="np-allparts">'+(allParts?'ซ่อนส่วนประกอบ':'แสดงส่วนประกอบทั้งหมด')+'</button>'+
+      (miss.length?'<small>บอร์ดแบบนี้ไม่มีขา '+miss.map(nameOf).join(', ')+' ที่หัวเข็ม'+(miss.every(function(k){ return k>=6&&k<=11; })?' แต่ยังอยู่ที่ขาด้านล่างของโมดูล (กรอบสีแดง) และต่อกับ Flash ภายใน':' ให้ใช้งาน')+'</small>':'');
+    show(selK!=null?selK:(pt.length?pt[0]:(pn.length?pn[0]:null)));
+  }
+  function show(k){
+    if(!M) return; selK=k; var box=M.querySelector('.np-info');
+    Array.prototype.forEach.call(M.querySelectorAll('.np-board .np-pin,.np-board .np-part'),function(g){ g.classList.toggle('sel',g.getAttribute('data-k')===String(k)); });
+    if(k==null){ box.innerHTML='<p class="np-hint">แตะที่ขา ป้ายชื่อ หรือชิ้นส่วนบนบอร์ด เพื่อดูหน้าที่และข้อควรระวัง</p>'; return; }
+    var inf=info(k); if(!inf){ box.innerHTML=''; return; } var cat=CAT[inf[0]];
+    box.innerHTML='<div class="np-ititle" style="--pc:'+cat.c+'"><b>'+nameOf(k)+'</b><span>'+cat.n+'</span></div><div class="np-itag">'+inf[1]+'</div><p>'+inf[2]+'</p>';
+  }
+  function build(){
+    if(M) return M;
+    M=D.createElement('div'); M.id='npModal'; M.setAttribute('role','dialog'); M.setAttribute('aria-modal','true'); M.setAttribute('aria-label','ผังขา ESP32');
+    M.innerHTML='<div class="np-card"><div class="np-head"><div><b>ผังขา ESP32 แบบเหมือนจริง</b><div class="np-sub"></div></div><div class="np-sel"></div><button type="button" class="np-x" aria-label="ปิด">✕</button></div>'+
+      '<div class="np-body"><div class="np-board"></div><aside><div class="np-info"></div><div class="np-hl"></div><div class="np-leg">'+legend()+'</div></aside></div></div>';
+    D.body.appendChild(M);
+    M.addEventListener('click',function(e){
+      if(e.target===M||e.target.closest('.np-x')){ close(); return; }
+      var b=e.target.closest('[data-b]'); if(b){ boardSel=b.getAttribute('data-b'); try{ localStorage.setItem('cpe2422_board',boardSel); }catch(x){} render(); refreshFigs(); return; }
+      if(e.target.closest('.np-allparts')){ allParts=!allParts; selK=null; render(); return; }
+      var p=e.target.closest('[data-k]'); if(p){ var k=p.getAttribute('data-k'); show(/^\d+$/.test(k)?+k:k); try{ SFX.play('select'); }catch(x){} }
+    });
+    return M;
+  }
+  function open(pins){ build(); cur=pins||[]; selK=null; allParts=false; render(); M.classList.add('show'); D.body.classList.add('np-open'); var x=M.querySelector('.np-x'); if(x) x.focus(); }
+  function close(){ if(M){ M.classList.remove('show'); D.body.classList.remove('np-open'); } }
+  D.addEventListener('keydown',function(e){ if(e.key==='Escape'&&M&&M.classList.contains('show')){ e.stopPropagation(); e.preventDefault(); close(); } },true);
+  function refreshFigs(){ Array.prototype.forEach.call(D.querySelectorAll('.np-fig'),function(f){ figure(f,f._pins); }); }
+
+  window.NeoPin={isPart:isPart,detect:detect,figure:figure,open:open,close:close,name:nameOf,svg:boardSVG};
+})();
+
+</script>
+<script>
+/* ================= BENCH READY ENGINE ================= */
+(function(){
+'use strict';
+var DATA={"items": [{"id": "A01", "s": "A", "l": 1, "t": "pin", "tp": "ตำแหน่งขา GND", "q": "คลิกขา <b>GND<\/b> บนบอร์ด 1 ขา (ขาใดก็ได้)", "ok": ["GND"], "h": "GND มีหลายขา อยู่ทั้งฝั่งซ้ายและขวา ดูตัวอักษรที่พิมพ์ข้างขา", "e": "บอร์ดมี GND หลายขาเพื่อให้ต่อกราวด์ได้สะดวก ทุกขา GND ต่อถึงกันบนแผ่นวงจร เซนเซอร์และโหลดทุกตัวต้องต่อกราวด์ร่วมกับบอร์ด"}, {"id": "A02", "s": "A", "l": 1, "t": "pin", "tp": "ขาไฟเลี้ยง 3V3", "q": "เซนเซอร์ของกลุ่มใช้ไฟ 3.3 V คลิกขาที่จ่ายไฟ <b>3.3 V<\/b> บนบอร์ด", "ok": ["3V3"], "h": "มองหาตัวอักษร 3V3 ที่พิมพ์ข้างขา ตำแหน่งต่างกันตามรุ่นบอร์ด", "e": "ขา 3V3 รับไฟจากเรกูเลเตอร์ AMS1117 บนบอร์ด จ่ายเซนเซอร์ 3.3 V ได้โดยตรง ส่วนขา 5V (VIN) เป็นไฟจากพอร์ต USB ใช้กับโมดูลที่ต้องการ 5 V"}, {"id": "A03", "s": "A", "l": 1, "t": "mcq", "tp": "ขา I2C ค่าเริ่มต้น", "q": "ใน Arduino IDE ขา <b>SDA<\/b> และ <b>SCL<\/b> ของบัส I2C บน ESP32 โดยค่าเริ่มต้นคือขาใด", "c": ["SDA = GPIO21, SCL = GPIO22", "SDA = GPIO22, SCL = GPIO21", "SDA = GPIO18, SCL = GPIO19", "SDA = GPIO16, SCL = GPIO17"], "h": "สองขานี้อยู่ติดกันฝั่งขวาของบอร์ด ใกล้ขา TX/RX", "e": "Wire.begin() ใช้ GPIO21 เป็น SDA และ GPIO22 เป็น SCL ถ้าจำเป็นต้องย้ายขา ใช้ Wire.begin(sda, scl) ได้เพราะ ESP32 มี GPIO Matrix"}, {"id": "A04", "s": "A", "l": 1, "t": "mcq", "tp": "การเชื่อมต่อในเบรดบอร์ด", "q": "รู a–e ที่อยู่ใน <b>แถวหมายเลขเดียวกัน<\/b> ของเบรดบอร์ด มีความสัมพันธ์ทางไฟฟ้าอย่างไร", "c": ["ต่อถึงกันทั้ง 5 รู ใช้เป็นจุดต่อเดียวกันได้", "แยกจากกันทุกรู ต้องเชื่อมด้วยสายจั๊มป์เอง", "ต่อกับรางไฟ + ด้านบนของเบรดบอร์ดโดยอัตโนมัติ", "ต่อข้ามร่องกลางไปถึงรู f–j ของแถวเดียวกัน"], "h": "นึกถึงแผ่นโลหะสปริงใต้เบรดบอร์ด 1 แผ่นต่อ 1 แถวครึ่งซีก", "e": "ใต้รู a–e ของแต่ละแถวมีแผ่นโลหะชิ้นเดียว ส่วนรู f–j เป็นอีกชิ้น ร่องกลางแยกสองฝั่งออกจากกัน จึงวางบอร์ดหรือ IC คร่อมร่องกลางได้"}, {"id": "A05", "s": "A", "l": 2, "t": "pin", "tp": "ADC1 ใช้ร่วมกับ Wi-Fi", "q": "ต้องอ่านค่า potentiometer ด้วย <code>analogRead()<\/code> ขณะเชื่อม Wi-Fi ตลอดเวลา คลิกขาที่ใช้ได้ 1 ขา", "ok": ["32", "33", "34", "35", "36", "39"], "h": "ADC มี 2 ชุด ชุดหนึ่งถูกไดรเวอร์ Wi-Fi ใช้อยู่", "e": "ขา ADC1 ได้แก่ GPIO32–39 (บนบอร์ดคือ 32, 33, 34, 35, 36/VP, 39/VN) ใช้ร่วมกับ Wi-Fi ได้ ส่วนขา ADC2 อ่านค่าไม่ได้ขณะ Wi-Fi ทำงาน"}, {"id": "A06", "s": "A", "l": 2, "t": "pin", "tp": "ขา DAC", "q": "ต้องการสร้างแรงดันแอนะล็อกจริงด้วย <code>dacWrite()<\/code> คลิกขาที่ทำได้ 1 ขา", "ok": ["25", "26"], "h": "ESP32 มี DAC 8 บิต 2 ช่องเท่านั้น", "e": "DAC1 อยู่ที่ GPIO25 และ DAC2 อยู่ที่ GPIO26 ให้แรงดัน 0–3.3 V แบบ 8 บิต ต่างจาก PWM ที่เป็นคลื่นสี่เหลี่ยมเปิด-ปิด"}, {"id": "A07", "s": "A", "l": 2, "t": "mcq", "tp": "ข้อจำกัด GPIO34–39", "q": "ข้อใดคือข้อจำกัดของขา <b>GPIO34–39<\/b>", "c": ["ใช้เป็นอินพุตได้อย่างเดียว และไม่มี pull-up ภายใน", "ใช้เป็นเอาต์พุตได้อย่างเดียว และไม่มีวงจร ADC", "ต่อกับ Flash ภายใน ห้ามใช้ในทุกกรณีเลย", "อ่านค่าไม่ได้ขณะเปิด Wi-Fi เพราะทุกขาเป็นขา ADC2 ทั้งหมด"], "h": "ขากลุ่มนี้ไม่มีวงจรขับเอาต์พุต", "e": "GPIO34, 35, 36, 39 เป็นอินพุตอย่างเดียว ไม่มี pull-up/pull-down ภายใน จึงเหมาะกับอ่านแอนะล็อก (เป็น ADC1) แต่ถ้าต่อปุ่มต้องใส่ตัวต้านทาน pull-up ภายนอก"}, {"id": "A08", "s": "A", "l": 2, "t": "mcq", "tp": "Echo ของ HC-SR04 5 V", "safe": 1, "q": "ต่อเซนเซอร์อัลตราโซนิก HC-SR04 ที่ใช้ไฟ 5 V ขา <b>Echo<\/b> ควรเข้า ESP32 อย่างไร", "c": ["ผ่านตัวแบ่งแรงดันให้เหลือราว 3.3 V ก่อนเข้า GPIO", "ต่อตรงเข้า GPIO ได้เลย เพราะขา ESP32 ทนไฟ 5 V", "ต่อสาย Echo เข้าขา 5V ของบอร์ดแทนการต่อเข้าขา GPIO", "ต่อผ่านตัวต้านทาน 10 kΩ ลงกราวด์เพียงตัวเดียว"], "h": "GPIO ของ ESP32 ทนแรงดันได้ไม่เกิน 3.6 V", "e": "Echo ส่งพัลส์ 5 V ซึ่งเกินพิกัด GPIO (สูงสุด 3.6 V) ใช้ตัวแบ่งแรงดัน เช่น 1 kΩ กับ 2 kΩ ได้ 5 × 2/3 ≈ 3.3 V หรือใช้วงจรแปลงระดับลอจิก"}, {"id": "A09", "s": "A", "l": 3, "t": "pin", "tp": "เลือกขาขับรีเลย์", "q": "ต้องการขาขับโมดูลรีเลย์ ห้ามใช้ขา strapping (0, 2, 5, 12, 15) ขาอินพุตอย่างเดียว และ UART0 (TX/RX) คลิกขาที่เหมาะสม 1 ขา", "ok": ["4", "13", "14", "16", "17", "18", "19", "21", "22", "23", "25", "26", "27", "32", "33"], "h": "ตัดขา 34–39, ขา TX/RX, ขา strapping และขา Flash ออก ที่เหลือใช้ได้", "e": "ขาที่ปลอดภัยสำหรับเอาต์พุต เช่น GPIO4, 13, 16–19, 21–23, 25–27, 32, 33 ขา strapping อาจทำให้บูตผิดโหมด และขา TX/RX ใช้คุยกับคอมพิวเตอร์ตอนอัปโหลด"}, {"id": "A10", "s": "A", "l": 3, "t": "pin", "tp": "ขาเข้าโหมดดาวน์โหลด", "board": "c38", "q": "ถ้าขาใดถูกดึงลง <b>LOW<\/b> ขณะเปิดเครื่อง ESP32 จะเข้าโหมดอัปโหลดโปรแกรมแทนการรันโค้ด คลิกขานั้น", "ok": ["0"], "h": "ขานี้ต่อกับปุ่ม BOOT บนบอร์ด", "e": "GPIO0 เป็นขา strapping ถ้าเป็น LOW ตอนรีเซ็ตชิปจะเข้า Download mode ปุ่ม BOOT ดึงขานี้ลงกราวด์ จึงต้องระวังไม่ต่อโมดูลที่ดึงขานี้ลงตลอดเวลา"}, {"id": "A11", "s": "A", "l": 3, "t": "mcq", "tp": "strapping GPIO12", "q": "ต่อโมดูลที่มีตัวต้านทาน pull-up เข้ากับ <b>GPIO12<\/b> แล้วบอร์ดบูตไม่ขึ้น สาเหตุที่เป็นไปได้มากที่สุดคือข้อใด", "c": ["GPIO12 เป็นขา strapping ถ้าเป็น HIGH ตอนบูต ชิปจะตั้งแรงดัน Flash ผิด", "GPIO12 เป็นขาอินพุตอย่างเดียว การต่อโมดูลภายนอกจึงทำให้ชิปค้าง", "GPIO12 ต่อกับ Flash ภายในโดยตรง สัญญาณของโมดูลภายนอกจึงชนกับสัญญาณ Flash", "GPIO12 เป็นขา UART0 RX ตัวต้านทาน pull-up จึงรบกวนการสื่อสารกับคอมพิวเตอร์"], "h": "ขานี้ชื่อเดิมคือ MTDI และเกี่ยวกับแรงดันของหน่วยความจำ", "e": "GPIO12 (MTDI) กำหนดแรงดัน Flash ตอนบูต ถ้าเป็น HIGH ชิปจะใช้ 1.8 V กับ Flash 3.3 V ของโมดูล WROOM-32 ทำให้บูตไม่ขึ้น จึงไม่ควรต่ออุปกรณ์ที่ดึงขานี้ขึ้น"}, {"id": "A12", "s": "A", "l": 3, "t": "mcq", "tp": "ADC2 กับ Wi-Fi", "q": "อ่านเซนเซอร์ด้วย <code>analogRead(4)<\/code> ได้ปกติ แต่ค่าผิดทันทีเมื่อโค้ดเชื่อม Wi-Fi เพราะอะไร", "c": ["GPIO4 เป็นขา ADC2 ซึ่งไดรเวอร์ Wi-Fi ใช้งานอยู่", "GPIO4 เป็นขา DAC จึงส่งแรงดันออกขณะเปิด Wi-Fi", "Wi-Fi ทำให้ความละเอียด ADC1 ลดเหลือ 8 บิตเสมอ", "GPIO4 เป็นขา strapping จึงรีเซ็ตทุกครั้งที่ต่อ Wi-Fi"], "h": "ADC มีสองชุด ดูว่า GPIO4 อยู่ชุดไหน", "e": "GPIO4 คือ ADC2_CH0 เมื่อ Wi-Fi ทำงาน ADC2 ใช้ไม่ได้ ให้ย้ายสัญญาณแอนะล็อกไปขา ADC1 (GPIO32–39)"}, {"id": "B01", "s": "B", "l": 1, "t": "num", "tp": "ค่า R ของ LED แดง", "q": "LED สีแดง (Vf ≈ 2.0 V) ต่อกับ GPIO 3.3 V ต้องการกระแสราว <b>10 mA<\/b> ค่าตัวต้านทานที่คำนวณได้กี่โอห์ม", "unit": "Ω", "ans": "130", "lo": 110, "hi": 160, "h": "R = (แรงดันแหล่งจ่าย − Vf) ÷ กระแส และ 10 mA = 0.010 A", "e": "R = (3.3 − 2.0) ÷ 0.010 = 130 Ω ค่ามาตรฐานใกล้เคียงคือ 120 Ω หรือ 150 Ω (ได้ราว 8.7 mA) ทั้งคู่ใช้ได้และไม่เกินพิกัดกระแส GPIO"}, {"id": "B02", "s": "B", "l": 1, "t": "num", "tp": "ตัวแบ่งแรงดันค่าเท่ากัน", "q": "ตัวต้านทาน 10 kΩ สองตัวต่ออนุกรมเป็นตัวแบ่งแรงดันจาก 5 V แรงดันที่จุดกึ่งกลางเท่าใด", "unit": "V", "ans": "2.5", "lo": 2.45, "hi": 2.55, "h": "Vout = Vin × R2 ÷ (R1 + R2)", "e": "Vout = 5 × 10 ÷ (10 + 10) = 2.5 V ตัวต้านทานเท่ากันแบ่งแรงดันได้ครึ่งหนึ่งเสมอ"}, {"id": "B03", "s": "B", "l": 1, "t": "num", "tp": "กำลังไฟฟ้า P = VI", "q": "ปั๊มน้ำ 12 V กินกระแส 0.5 A ใช้กำลังไฟฟ้ากี่วัตต์", "unit": "W", "ans": "6", "lo": 5.95, "hi": 6.05, "h": "P = V × I", "e": "P = 12 × 0.5 = 6 W ใช้ค่านี้เลือกแหล่งจ่ายและ MOSFET โดยเผื่อกำลังไว้อย่างน้อย 25–50%"}, {"id": "B04", "s": "B", "l": 1, "t": "mcq", "tp": "ระดับแรงดันลอจิก ESP32", "q": "GPIO ของ ESP32 ทำงานที่ระดับแรงดันลอจิกเท่าใด", "c": ["3.3 V", "5 V", "1.8 V", "12 V"], "h": "ดูจากขาไฟเลี้ยงของโมดูล WROOM-32", "e": "ESP32 ใช้ลอจิก 3.3 V สัญญาณ HIGH ที่ส่งออกราว 3.3 V และขาอินพุตไม่ควรรับเกิน 3.6 V"}, {"id": "B05", "s": "B", "l": 2, "t": "num", "tp": "ตัวแบ่งแรงดัน 10k/20k", "q": "ตัวแบ่งแรงดัน R1 = 10 kΩ (ด้านบน) และ R2 = 20 kΩ (ด้านล่าง) ป้อน 5 V แรงดันขาออกเท่าใด", "unit": "V", "ans": "3.33", "lo": 3.25, "hi": 3.42, "h": "Vout = Vin × R2 ÷ (R1 + R2)", "e": "Vout = 5 × 20 ÷ 30 ≈ 3.33 V เป็นคู่ค่าที่นิยมใช้ลดสัญญาณ 5 V ให้ปลอดภัยกับ GPIO"}, {"id": "B06", "s": "B", "l": 2, "t": "num", "tp": "แปลงค่า ADC เป็นแรงดัน", "q": "ADC 12 บิตของ ESP32 อ่านได้ <b>2048<\/b> โดยเต็มสเกลราว 3.3 V แรงดันที่ขาโดยประมาณเท่าใด", "unit": "V", "ans": "1.65", "lo": 1.55, "hi": 1.75, "h": "V ≈ ค่าที่อ่าน ÷ 4095 × 3.3", "e": "V ≈ 2048 ÷ 4095 × 3.3 ≈ 1.65 V ADC ของ ESP32 ไม่เป็นเชิงเส้นช่วงปลาย งานที่ต้องการแรงดันแม่นยำให้ใช้ analogReadMilliVolts()"}, {"id": "B07", "s": "B", "l": 2, "t": "mcq", "tp": "ไฟขดลวดรีเลย์", "q": "โมดูลรีเลย์ 5 V ดึงกระแสขดลวดราว 70 mA ควรต่อขา VCC ของโมดูลกับแหล่งใด", "c": ["ขา 5V/VIN หรือแหล่ง 5 V ภายนอก ใช้ GND ร่วมกับบอร์ด", "ขา GPIO โดยตรง เพราะ GPIO จ่ายกระแสได้ถึง 100 mA", "ขา 3V3 ผ่านตัวต้านทาน 1 kΩ เพื่อจำกัดกระแสขดลวด", "ขา EN ของบอร์ด เพราะเป็นจุดที่มีแรงดันคงที่ตลอด"], "h": "GPIO จ่ายกระแสได้เพียงราว 20–40 mA", "e": "ขดลวดรีเลย์ต้องการกระแสมาก ให้จ่ายจาก 5 V แล้วใช้ GPIO สั่งเฉพาะขา IN ของโมดูล และต้องต่อ GND ร่วมกันเพื่อให้ระดับสัญญาณอ้างอิงจุดเดียวกัน"}, {"id": "B08", "s": "B", "l": 3, "t": "num", "tp": "อายุแบตเตอรี่", "q": "แบตเตอรี่ 2000 mAh จ่ายให้ระบบที่กินกระแสเฉลี่ย 80 mA ใช้งานได้ประมาณกี่ชั่วโมง (ไม่คิดการสูญเสีย)", "unit": "ชั่วโมง", "ans": "25", "lo": 24.5, "hi": 25.5, "h": "ชั่วโมง = ความจุ (mAh) ÷ กระแสเฉลี่ย (mA)", "e": "2000 ÷ 80 = 25 ชั่วโมง ของจริงน้อยกว่านี้เพราะประสิทธิภาพวงจรแปลงไฟและความจุที่ใช้ได้จริง จึงควรเผื่ออีกราว 20–30%"}, {"id": "B09", "s": "B", "l": 3, "t": "num", "tp": "ค่า R ของ LED น้ำเงิน", "q": "LED สีน้ำเงิน (Vf ≈ 3.0 V) ต่อกับ GPIO 3.3 V ต้องการกระแส <b>5 mA<\/b> ค่าตัวต้านทานกี่โอห์ม", "unit": "Ω", "ans": "60", "lo": 47, "hi": 68, "h": "ส่วนต่างแรงดันเหลือเพียง 0.3 V", "e": "R = (3.3 − 3.0) ÷ 0.005 = 60 Ω ใช้ 47–68 Ω ได้ LED น้ำเงิน/ขาวที่ 3.3 V มีแรงดันเหลือน้อย ความสว่างจึงไวต่อค่า Vf ของแต่ละหลอด"}, {"id": "B10", "s": "B", "l": 3, "t": "num", "tp": "ออกแบบตัวแบ่งแรงดัน", "q": "ต้องลดสัญญาณ 5 V ให้เหลือราว 3.3 V ถ้า R ด้านบน = 10 kΩ ค่า R ด้านล่างควรประมาณกี่ kΩ", "unit": "kΩ", "ans": "19.4 (ใช้ 18–22)", "lo": 18, "hi": 22, "h": "แก้สมการ 3.3 = 5 × R2 ÷ (10 + R2)", "e": "R2 = 3.3 × 10 ÷ (5 − 3.3) ≈ 19.4 kΩ ค่ามาตรฐาน 18 kΩ ได้ 3.21 V และ 22 kΩ ได้ 3.44 V ซึ่งยังไม่เกินพิกัด 3.6 V ของ GPIO"}, {"id": "B11", "s": "B", "l": 3, "t": "mcq", "tp": "ไดโอดคร่อมโหลดขดลวด", "safe": 1, "q": "วงจร MOSFET ขับปั๊ม 12 V จาก GPIO ทำไมต้องมี <b>ไดโอด<\/b> ต่อคร่อมปั๊ม", "c": ["ปั๊มเป็นขดลวด ตอนตัดไฟจะเกิดแรงดันย้อนกลับสูง ไดโอดระบายกระแสนี้", "ไดโอดช่วยเพิ่มแรงดันให้ปั๊มหมุนแรงขึ้นในช่วงที่แบตเตอรี่อ่อน", "ไดโอดแปลงไฟกระแสสลับจากอะแดปเตอร์เป็นกระแสตรงให้ปั๊มทำงานได้ทุกจังหวะ", "ไดโอดจำกัดกระแสเข้าปั๊มแทนตัวต้านทาน จึงไม่ต้องใช้ฟิวส์ป้องกันในวงจรอีก"], "h": "นึกถึงสิ่งที่เกิดกับขดลวดเมื่อกระแสถูกตัดทันที", "e": "มอเตอร์และขดลวดเก็บพลังงานในสนามแม่เหล็ก เมื่อ MOSFET ตัดกระแสจะเกิดแรงดันกระชากย้อนกลับ (back-EMF) ไดโอด flyback เช่น 1N4007 หรือ 1N5819 ให้กระแสวนกลับผ่านขดลวด ป้องกัน MOSFET เสีย"}, {"id": "C01", "s": "C", "l": 1, "t": "mcq", "tp": "สัญญาณของ DHT22", "q": "DHT22 ส่งค่าอุณหภูมิและความชื้นให้ ESP32 ด้วยสัญญาณแบบใด", "c": ["ดิจิทัลสายเดียว ผ่านขา DATA ขาเดียว", "แอนะล็อก อ่านด้วย analogRead() ได้ทันที", "I2C ผ่านขา SDA และ SCL ที่อยู่ 0x76", "UART ผ่านขา TX และ RX ความเร็ว 9600"], "h": "ใช้ไลบรารี DHT และระบุขาเพียงขาเดียว", "e": "DHT22 ใช้โปรโตคอลดิจิทัลสายเดียวของผู้ผลิตเอง (single-bus) ต้องใช้ไลบรารีอ่าน และควรอ่านห่างกันอย่างน้อย 2 วินาที"}, {"id": "C02", "s": "C", "l": 1, "t": "mcq", "tp": "ขา DO ของโมดูลเซนเซอร์", "q": "โมดูลเซนเซอร์ที่มีทั้งขา AO และ DO เช่น MQ-2 ขา <b>DO<\/b> ให้ข้อมูลแบบใด", "c": ["HIGH/LOW ตามเกณฑ์ที่ปรับด้วยตัวต้านทานปรับค่าบนโมดูล", "ค่าความเข้มข้นของแก๊สเป็นหน่วย ppm ส่งออกมาโดยตรง", "แรงดันแอนะล็อกที่เปลี่ยนต่อเนื่องตามปริมาณแก๊ส", "ข้อมูลดิจิทัลแบบ I2C ที่มีหมายเลขที่อยู่เฉพาะตัว"], "h": "บนโมดูลมีชิปเปรียบเทียบแรงดันและตัวต้านทานปรับค่าสีฟ้า", "e": "DO มาจากวงจรเปรียบเทียบ (เช่น LM393) ให้เพียง HIGH/LOW ตามเกณฑ์ที่ตั้ง ถ้าต้องการค่าต่อเนื่องเพื่อคำนวณหรือทำกราฟต้องอ่านจาก AO"}, {"id": "C03", "s": "C", "l": 1, "t": "mcq", "tp": "อ่าน LDR", "q": "LDR ต่อเป็นตัวแบ่งแรงดันกับตัวต้านทาน 10 kΩ ESP32 ต้องอ่านค่าด้วยคำสั่งใด", "c": ["analogRead() บนขา ADC", "digitalRead() บนขาใดก็ได้", "Wire.read() บนบัส I2C", "Serial.read() บนขา RX"], "h": "ค่าความต้านทานเปลี่ยนต่อเนื่อง แรงดันก็เปลี่ยนต่อเนื่อง", "e": "ตัวแบ่งแรงดันให้แรงดันแอนะล็อก จึงอ่านด้วย analogRead() บนขา ADC (ควรเป็น ADC1 ถ้าใช้ Wi-Fi)"}, {"id": "C04", "s": "C", "l": 2, "t": "mcq", "tp": "pull-up ของ DS18B20", "q": "DS18B20 บนบัส 1-Wire ต้องมีตัวต้านทาน pull-up ระหว่างขา DATA กับ 3.3 V ค่าประมาณเท่าใด", "c": ["4.7 kΩ", "47 Ω", "470 kΩ", "ไม่ต้องใช้"], "h": "ค่ามาตรฐานใน datasheet อยู่ระดับกิโลโอห์ม", "e": "บัส 1-Wire เป็นแบบ open-drain ต้องมี pull-up ราว 4.7 kΩ ถ้าไม่มีหรือสายหลุด ไลบรารีจะคืนค่า −127 °C"}, {"id": "C05", "s": "C", "l": 2, "t": "mcq", "tp": "ที่อยู่ I2C ซ้ำ", "q": "ต่อเซนเซอร์ I2C สองตัวที่มีที่อยู่ (address) ซ้ำกันคือ 0x76 บนบัสเดียว จะเกิดอะไรขึ้น", "c": ["บอร์ดแยกสองตัวไม่ได้ ต้องเปลี่ยนที่อยู่ตัวหนึ่งหรือแยกบัส", "บอร์ดเลือกอ่านตัวที่สายสั้นกว่าได้เองโดยอัตโนมัติทุกครั้ง", "ทั้งสองตัวผลัดกันตอบ โดยไม่มีผลต่อค่าที่อ่านได้เลย", "บัส I2C เพิ่มความเร็วเองเพื่อรองรับทั้งสองตัวพร้อมกัน"], "h": "ที่อยู่ I2C ทำหน้าที่เหมือนเลขที่บ้าน", "e": "อุปกรณ์ที่อยู่ซ้ำจะตอบพร้อมกันจนข้อมูลชนกัน แก้โดยเปลี่ยนขา ADDR (เช่น BME280 เปลี่ยนเป็น 0x77) ใช้บัส I2C ชุดที่สอง หรือใช้ตัวสลับบัส TCA9548A"}, {"id": "C06", "s": "C", "l": 2, "t": "mcq", "tp": "การสื่อสารของ PMS5003", "q": "เซนเซอร์ฝุ่น PMS5003 ส่งค่า PM2.5 ให้ ESP32 ด้วยการสื่อสารแบบใด", "c": ["UART (TX/RX) ความเร็ว 9600 bps", "แอนะล็อก 0–3.3 V ผ่านขา ADC1", "I2C ที่อยู่ 0x12 ผ่าน SDA/SCL", "1-Wire ร่วมสายกับ DS18B20"], "h": "เซนเซอร์ส่งเฟรมข้อมูล 32 ไบต์ออกมาเป็นช่วง ๆ", "e": "PMS5003 ส่งเฟรมข้อมูลทาง UART 9600 bps ระดับสัญญาณ 3.3 V จึงต่อเข้า RX2 (GPIO16) ได้ แต่ไฟเลี้ยงพัดลมต้องใช้ 5 V"}, {"id": "C07", "s": "C", "l": 2, "t": "mcq", "tp": "INPUT_PULLUP กับปุ่ม", "q": "ปุ่มกดต่อระหว่าง GPIO กับ GND ต้องตั้งโหมดขาอย่างไรให้ค่าไม่ลอย และกดแล้วอ่านได้ค่าใด", "c": ["INPUT_PULLUP · กดแล้วอ่านได้ LOW", "OUTPUT · กดแล้วอ่านได้ HIGH", "INPUT · กดแล้วอ่านได้ HIGH ทุกครั้ง", "INPUT_PULLDOWN · กดแล้วอ่านได้ HIGH"], "h": "เมื่อกด ขาจะถูกต่อเข้ากราวด์", "e": "INPUT_PULLUP ใช้ตัวต้านทานภายในดึงขาขึ้น HIGH เมื่อกดปุ่มขาจะลงกราวด์จึงอ่านได้ LOW (active-low) ใช้ไม่ได้กับ GPIO34–39 ที่ไม่มี pull-up"}, {"id": "C08", "s": "C", "l": 2, "t": "mcq", "tp": "กรองสัญญาณรบกวน ADC", "q": "ค่า <code>analogRead()<\/code> กระโดดไปมา ±50 ทั้งที่สภาพแวดล้อมคงที่ ควรทำอย่างไรก่อนนำค่าไปตัดสินใจ", "c": ["อ่านหลายครั้งแล้วเฉลี่ย หรือใช้ค่าเฉลี่ยเคลื่อนที่", "เพิ่ม delay() เป็น 10 วินาทีต่อการอ่านแต่ละครั้ง", "เปลี่ยนไปใช้ digitalRead() เพื่อให้ค่าคงที่ขึ้น", "ลดความละเอียด ADC จาก 12 บิตเหลือเพียง 1 บิต"], "h": "สัญญาณรบกวนแบบสุ่มลดลงเมื่อรวมหลายตัวอย่าง", "e": "การเฉลี่ยหลายตัวอย่าง (เช่น 16–32 ครั้ง) หรือค่าเฉลี่ยเคลื่อนที่ลดสัญญาณรบกวนแบบสุ่มได้ อาจเพิ่มตัวเก็บประจุ 0.1 µF ที่ขา ADC ร่วมด้วย"}, {"id": "C09", "s": "C", "l": 3, "t": "mcq", "tp": "อุ่นเครื่องเซนเซอร์แก๊ส", "q": "ทำไมเซนเซอร์แก๊สตระกูล MQ ต้องอุ่นเครื่อง (preheat) ก่อนอ่านค่า", "c": ["ขดลวดความร้อนต้องพาชั้นสารรับรู้ถึงอุณหภูมิทำงาน ค่าจึงคงที่", "ต้องรอให้ ESP32 เชื่อม Wi-Fi สำเร็จก่อน ค่าจึงจะส่งออกจากเซนเซอร์", "ต้องรอให้ตัวเก็บประจุบนโมดูลคายประจุจนหมดก่อนจึงเริ่มวัดได้", "ต้องรอให้แอลกอฮอล์ในอากาศรอบตัวระเหยออกไปจนหมดเสียก่อน"], "h": "ในหัวเซนเซอร์มีขดลวด heater", "e": "เซนเซอร์ MQ ใช้สารกึ่งตัวนำ SnO2 ที่ต้องร้อนถึงอุณหภูมิทำงาน ค่าจึงเสถียร ช่วงอุ่นเครื่องควรแสดงสถานะ \"กำลังเตรียม\" และไม่ตัดสินผล"}, {"id": "C10", "s": "C", "l": 3, "t": "mcq", "tp": "คาลิเบรตหัววัด pH 2 จุด", "q": "ทำไมต้องคาลิเบรตหัววัด pH ด้วยน้ำยามาตรฐาน 2 จุด เช่น pH 7 และ pH 4", "c": ["เพื่อหาค่าออฟเซตและความชันของสมการแปลงแรงดันเป็น pH", "เพื่อเปลี่ยนสัญญาณของหัววัดจากแอนะล็อกเป็นดิจิทัลก่อนส่งเข้า ESP32", "เพื่อลดกระแสที่หัววัดดึงจากขา 3.3 V ของบอร์ดขณะวัดต่อเนื่อง", "เพื่อให้ ESP32 รู้ที่อยู่ I2C ของโมดูลวัด pH"], "h": "เส้นตรงหนึ่งเส้นต้องใช้กี่จุดในการกำหนด", "e": "แรงดันจากหัววัดสัมพันธ์กับ pH แบบเชิงเส้น สองจุดอ้างอิงให้ทั้งจุดตัด (offset) และความชัน (slope) ซึ่งเปลี่ยนตามอายุหัววัดและอุณหภูมิ"}, {"id": "C11", "s": "C", "l": 3, "t": "num", "tp": "ตั้งเกณฑ์ ADC จากแรงดัน", "q": "ต้องการตั้งเกณฑ์ \"มืด\" เมื่อแรงดันจากตัวแบ่งแรงดัน LDR สูงกว่า <b>2.5 V<\/b> ค่า ADC 12 บิต (เต็มสเกลราว 3.3 V) ที่ใช้เป็นเกณฑ์ประมาณเท่าใด", "unit": "", "ans": "3102", "lo": 2950, "hi": 3250, "h": "ค่า ADC ≈ แรงดัน ÷ 3.3 × 4095", "e": "2.5 ÷ 3.3 × 4095 ≈ 3102 ควรตรวจกับค่าที่อ่านได้จริงในห้อง เพราะ ADC ของ ESP32 ไม่เชิงเส้นช่วงปลายสเกล"}, {"id": "D01", "s": "D", "l": 1, "t": "bug", "tp": "pinMode ของขา LED", "q": "LED ที่ GPIO2 ไม่กะพริบเลย คลิกบรรทัดที่ผิด", "code": ["const int LED = 2;", "void setup() {", "  pinMode(LED, INPUT);", "}", "void loop() {", "  digitalWrite(LED, HIGH); delay(500);", "  digitalWrite(LED, LOW);  delay(500);", "}"], "ok": [2], "h": "ขาที่ใช้ขับ LED ต้องอยู่ในโหมดใด", "e": "ขาขับ LED ต้องเป็น OUTPUT คือ pinMode(LED, OUTPUT); โหมด INPUT ไม่มีวงจรขับ digitalWrite จึงเพียงเปิด-ปิด pull-up ภายใน LED แทบไม่ติด"}, {"id": "D02", "s": "D", "l": 1, "t": "bug", "tp": "อ่านค่าใน setup() ครั้งเดียว", "q": "ค่าอุณหภูมิแสดงบน Serial Monitor เพียงครั้งเดียวแล้วไม่อัปเดตอีก คลิกบรรทัดที่วางผิดที่", "code": ["void setup() {", "  Serial.begin(115200);", "  dht.begin();", "  Serial.println(dht.readTemperature());", "}", "void loop() {", "  delay(2000);", "}"], "ok": [3], "h": "ฟังก์ชันใดทำงานครั้งเดียว ฟังก์ชันใดทำซ้ำ", "e": "setup() ทำงานครั้งเดียวตอนเริ่ม การอ่านและพิมพ์ค่าต้องอยู่ใน loop() ก่อน delay(2000) เพื่อให้อัปเดตทุก 2 วินาที"}, {"id": "D03", "s": "D", "l": 1, "t": "mcq", "tp": "Baud rate ไม่ตรงกัน", "q": "Serial Monitor แสดงตัวอักษรอ่านไม่ออก สาเหตุที่พบบ่อยที่สุดคือข้อใด", "c": ["Baud rate ใน Serial Monitor ไม่ตรงกับ Serial.begin()", "ไม่ได้ต่อขา GND ของเซนเซอร์เข้ากับขา GND ของบอร์ด ESP32 ให้ครบทุกตัว", "ตั้งค่า pinMode ของขา LED บนบอร์ดผิดเป็น INPUT แทน OUTPUT", "ยังไม่ได้ติดตั้งไลบรารี Wi-Fi ใน Arduino IDE"], "h": "ทั้งสองฝั่งต้องคุยกันด้วยความเร็วเดียวกัน", "e": "ถ้าโค้ดใช้ Serial.begin(115200) ต้องตั้ง Serial Monitor เป็น 115200 ด้วย ความเร็วไม่ตรงกันทำให้ถอดรหัสบิตผิดเป็นตัวอักษรขยะ"}, {"id": "D04", "s": "D", "l": 2, "t": "bug", "tp": "ปุ่ม active-low", "q": "ปุ่มต่อ GPIO4 กับ GND แต่ผลกลับด้าน: ไม่กด LED ติด กดแล้ว LED ดับ คลิกบรรทัดที่ผิด", "code": ["void setup() {", "  pinMode(4, INPUT_PULLUP);", "  pinMode(2, OUTPUT);", "}", "void loop() {", "  if (digitalRead(4) == HIGH) {", "    digitalWrite(2, HIGH);", "  } else {", "    digitalWrite(2, LOW);", "  }", "}"], "ok": [5], "h": "เมื่อใช้ INPUT_PULLUP กดปุ่มแล้วอ่านได้ค่าใด", "e": "INPUT_PULLUP ทำให้กดปุ่มแล้วอ่านได้ LOW เงื่อนไขที่ถูกคือ if (digitalRead(4) == LOW)"}, {"id": "D05", "s": "D", "l": 2, "t": "bug", "tp": "= กับ == ในเงื่อนไข", "q": "ต้องการให้ LED ติดเมื่ออุณหภูมิ <b>เกิน 30 °C<\/b> แต่ LED ติดตลอดเวลา คลิกบรรทัดที่ผิด", "code": ["void loop() {", "  float t = dht.readTemperature();", "  if (t = 30) {", "    digitalWrite(LED, HIGH);", "  } else {", "    digitalWrite(LED, LOW);", "  }", "  delay(2000);", "}"], "ok": [2], "h": "เครื่องหมายเท่ากับตัวเดียวทำอะไรในภาษา C/C++", "e": "t = 30 เป็นการกำหนดค่า ผลลัพธ์คือ 30 ซึ่งไม่ใช่ศูนย์จึงจริงเสมอ เงื่อนไขที่ต้องการคือ if (t > 30)"}, {"id": "D06", "s": "D", "l": 2, "t": "mcq", "tp": "ช่วงค่า analogRead", "q": "<code>analogRead()<\/code> บน ESP32 (ค่าเริ่มต้น 12 บิต) คืนค่าในช่วงใด", "c": ["0 ถึง 4095", "0 ถึง 1023", "0 ถึง 255", "−2048 ถึง 2047"], "h": "2 ยกกำลัง 12 เท่ากับเท่าใด", "e": "ADC 12 บิตแบ่งได้ 2^12 = 4096 ระดับ คือ 0–4095 ต่างจาก Arduino Uno ที่เป็น 10 บิต (0–1023) โค้ดที่ย้ายมาจาก Uno ต้องแก้เกณฑ์ใหม่"}, {"id": "D07", "s": "D", "l": 2, "t": "bug", "tp": "จับเวลาด้วย millis()", "q": "ใช้ <code>millis()<\/code> กะพริบ LED ทุก 1 วินาทีแบบไม่บล็อก แต่หลังวินาทีแรก LED ดูหรี่ค้างไม่กะพริบ คลิกบรรทัดที่ผิด", "code": ["unsigned long last = 0;", "void loop() {", "  unsigned long now = millis();", "  if (now - last >= 1000) {", "    ledState = !ledState;", "    digitalWrite(LED, ledState);", "    now = last;", "  }", "}"], "ok": [6], "h": "ตัวแปรใดต้องจำเวลาที่สลับครั้งล่าสุด", "e": "ต้องเป็น last = now; ตัวแปร last จึงจะเลื่อนตามเวลา โค้ดนี้ไม่เคยอัปเดต last เงื่อนไขจึงจริงทุกรอบหลังวินาทีแรก LED สลับถี่จนดูหรี่"}, {"id": "D08", "s": "D", "l": 2, "t": "mcq", "tp": "delay() ยาวทำให้ไม่ตอบสนอง", "q": "โค้ดใช้ <code>delay(60000)<\/code> ใน loop() เพื่อส่งค่าทุก 1 นาที ปัญหาที่ตามมาคือข้อใด", "c": ["ระหว่างรอ โปรแกรมไม่ตอบสนองปุ่มหรือเหตุเตือนอื่นเลย", "ESP32 จะรีเซ็ตตัวเองทุก 1 นาทีเพราะ watchdog ทำงาน", "ค่าเวลาคลาดเคลื่อนเพราะ delay() นับหน่วยเป็นไมโครวินาที", "SRAM จะเต็มเพราะ delay() จองหน่วยความจำสะสมทุกรอบ"], "h": "delay() ทำให้ loop() หยุดตรงนั้น", "e": "delay() บล็อกการทำงานทั้งหมดใน loop() ระบบเตือนภัยจึงพลาดเหตุการณ์ได้ ให้ใช้ millis() จับเวลาแบบไม่บล็อกแทน"}, {"id": "D09", "s": "D", "l": 3, "t": "bug", "tp": "วนรอ Wi-Fi แบบบล็อก", "q": "ระบบเตือนควัน: เมื่อ Wi-Fi หลุด บัซเซอร์ไม่ดังเลยทั้งที่เซนเซอร์ยังทำงาน คลิกบรรทัดที่เป็นต้นเหตุ", "code": ["void loop() {", "  while (WiFi.status() != WL_CONNECTED) {", "    delay(500);", "  }", "  readSensors();", "  checkAlarm();", "  sendToCloud();", "}"], "ok": [1], "h": "อะไรเกิดขึ้นกับ loop() ระหว่างที่ Wi-Fi ยังไม่กลับมา", "e": "while วนรอ Wi-Fi ทำให้ readSensors() และ checkAlarm() ไม่ถูกเรียกเลย งานเตือนภัยต้องทำในเครื่องเสมอ แล้วค่อยส่งขึ้นคลาวด์เมื่อเชื่อมได้"}, {"id": "D10", "s": "D", "l": 3, "t": "bug", "tp": "volatile กับตัวแปรใน ISR", "q": "นับพัลส์จากเซนเซอร์ด้วย interrupt แต่ค่าใน loop() บางครั้งไม่อัปเดตตามจริง คลิกบรรทัดที่ควรแก้", "code": ["int pulses = 0;", "void IRAM_ATTR onPulse() {", "  pulses++;", "}", "void setup() {", "  attachInterrupt(digitalPinToInterrupt(27), onPulse, FALLING);", "}"], "ok": [0], "h": "คอมไพเลอร์อาจเก็บค่าตัวแปรไว้ในรีจิสเตอร์", "e": "ตัวแปรที่แก้ใน ISR ต้องประกาศเป็น volatile int pulses = 0; เพื่อบังคับให้อ่านค่าจากหน่วยความจำทุกครั้ง และควรอ่านใน loop() โดยปิด interrupt ชั่วครู่"}, {"id": "D11", "s": "D", "l": 3, "t": "bug", "tp": "Hysteresis", "q": "รีเลย์พัดลมเปิด-ปิดถี่มากเมื่ออุณหภูมิอยู่ราว 30 °C คลิกบรรทัดที่ควรแก้", "code": ["float t = readTemp();", "if (t > 30.0) {", "  digitalWrite(FAN, HIGH);", "} else if (t < 30.0) {", "  digitalWrite(FAN, LOW);", "}"], "ok": [3], "h": "เกณฑ์เปิดกับเกณฑ์ปิดควรต่างกัน", "e": "เกณฑ์เปิดและปิดเท่ากันทำให้ค่าแกว่งเล็กน้อยสั่งรีเลย์สลับถี่ ใช้ Hysteresis เช่นปิดเมื่อ t < 28.0 ช่วง 2 °C นี้ทำให้ระบบนิ่ง"}, {"id": "D12", "s": "D", "l": 1, "t": "num", "tp": "ค่า PWM duty", "q": "สั่ง <code>analogWrite()<\/code> ความละเอียด 8 บิต (0–255) ต้องการ duty cycle <b>50%<\/b> ต้องใส่ค่าใด", "unit": "", "ans": "128", "lo": 126, "hi": 129, "h": "ครึ่งหนึ่งของค่าสูงสุด", "e": "255 × 0.5 ≈ 127.5 ใช้ 127 หรือ 128 ได้ ค่า 255 คือเปิดตลอด และ 0 คือปิดตลอด"}, {"id": "E01", "s": "E", "l": 1, "t": "mcq", "tp": "ตรวจก่อนจ่ายไฟ", "safe": 1, "q": "ก่อนเสียบ USB จ่ายไฟให้วงจรที่เพิ่งต่อเสร็จ ควรทำสิ่งใดก่อน", "c": ["วัดความต่อเนื่องว่าขา 3V3/5V ไม่ลัดวงจรกับ GND", "อัปโหลดโค้ดใหม่ก่อน แล้วค่อยต่อสายไฟเลี้ยงเซนเซอร์", "เปิด Serial Monitor รอไว้ แล้วเสียบ USB ทันที", "ต่อแบตเตอรี่สำรองพร้อมกับ USB เพื่อให้ไฟเพียงพอ"], "h": "ความผิดพลาดที่ทำให้บอร์ดเสียเร็วที่สุดคืออะไร", "e": "ใช้มัลติมิเตอร์โหมดวัดความต่อเนื่อง (มีเสียงบี๊บ) ตรวจระหว่างรางไฟกับ GND ขณะยังไม่จ่ายไฟ ถ้าดังคือมีการลัดวงจร ต้องแก้ก่อน"}, {"id": "E02", "s": "E", "l": 1, "t": "mcq", "tp": "ตั้งมัลติมิเตอร์วัดแรงดัน", "q": "จะวัดแรงดันที่ขา 3V3 เทียบกับ GND ต้องตั้งมัลติมิเตอร์และต่อสายอย่างไร", "c": ["โหมด V DC ต่อขนานคร่อมจุดวัด สายดำที่ GND", "โหมด A DC ต่ออนุกรมแทรกในสาย สายดำที่ GND", "โหมด Ω วัดขณะจ่ายไฟอยู่ สายแดงที่ขา 3V3", "โหมด V AC ต่อขนานคร่อมจุดวัด สายดำที่ 3V3"], "h": "วัดแรงดันต้องต่อแบบใด และไฟจากบอร์ดเป็นไฟชนิดใด", "e": "แรงดันวัดแบบขนาน ไฟจากบอร์ดเป็นไฟตรง จึงใช้โหมด V DC (V⎓) สายดำ (COM) ที่ GND สายแดงที่จุดวัด ควรอ่านได้ราว 3.2–3.4 V"}, {"id": "E03", "s": "E", "l": 1, "t": "mcq", "tp": "ถอดไฟก่อนแก้สาย", "safe": 1, "q": "ระหว่างต้องย้ายหรือเปลี่ยนสายบนเบรดบอร์ด ควรทำอย่างไร", "c": ["ถอดไฟเลี้ยง (USB/แบตเตอรี่) ออกก่อนทุกครั้ง", "ย้ายสายได้เลย ถ้าใช้มือข้างเดียวจับสาย", "กดปุ่ม EN ค้างไว้ตลอดระหว่างย้ายสาย", "ปิด Wi-Fi ในโค้ดก่อน แล้วค่อยย้ายสาย"], "h": "สายที่หลุดไปแตะผิดจุดเพียงชั่วขณะก็ทำให้ลัดวงจรได้", "e": "การย้ายสายขณะมีไฟเสี่ยงต่อการลัดวงจรชั่วขณะ ซึ่งทำให้เรกูเลเตอร์หรือขา GPIO เสียได้ ถอดไฟ แก้สาย ตรวจ แล้วจึงจ่ายไฟใหม่"}, {"id": "E04", "s": "E", "l": 2, "t": "mcq", "tp": "โหมดวัดกระแสคร่อมแหล่งจ่าย", "safe": 1, "q": "เพื่อนตั้งมัลติมิเตอร์ไว้ที่โหมดวัดกระแส (A) แล้วจิ้มคร่อมขา 5V กับ GND ของบอร์ดโดยตรง จะเกิดอะไรขึ้น", "c": ["ลัดวงจรผ่านมิเตอร์ ฟิวส์มิเตอร์หรือพอร์ต USB อาจเสียหาย", "มิเตอร์แสดงแรงดัน 5 V ได้ตามปกติ เหมือนตั้งไว้ที่โหมดวัดแรงดัน V", "มิเตอร์อ่านค่าความต้านทานรวมของบอร์ดแทนค่ากระแส", "ไม่มีผลใด ๆ เพราะในโหมดวัดกระแส มิเตอร์มีความต้านทานภายในสูงมาก"], "h": "ในโหมด A ภายในมิเตอร์มีความต้านทานต่ำมาก", "e": "โหมดวัดกระแสมีความต้านทานภายในต่ำมาก ต่อคร่อมแหล่งจ่ายจึงเท่ากับลัดวงจร ต้องต่ออนุกรมเท่านั้น และย้ายสายแดงกลับช่อง V ทุกครั้งหลังวัดกระแส"}, {"id": "E05", "s": "E", "l": 2, "t": "mcq", "tp": "GND ร่วมสองแหล่งจ่าย", "safe": 1, "q": "จ่ายไฟปั๊ม 12 V และ ESP32 จากคนละแหล่ง ต้องต่อสายใดร่วมกันเพื่อให้ GPIO สั่ง MOSFET ได้", "c": ["ต่อ GND ของทั้งสองแหล่งเข้าด้วยกัน", "ต่อ +12 V เข้าขา 5V ของบอร์ด ESP32", "ต่อ +12 V เข้าขา 3V3 ของบอร์ด ESP32", "ไม่ต้องต่อสายใดร่วมกันระหว่างสองแหล่ง"], "h": "แรงดันที่ Gate วัดเทียบกับจุดใด", "e": "แรงดันสัญญาณต้องมีจุดอ้างอิงเดียวกัน จึงต้องต่อ GND ร่วม ห้ามต่อ +12 V เข้าขาไฟเลี้ยงของบอร์ดเด็ดขาด เพราะบอร์ดจะเสียทันที"}, {"id": "E06", "s": "E", "l": 2, "t": "mcq", "tp": "บอร์ดร้อนจัดเมื่อจ่ายไฟ", "safe": 1, "q": "เสียบ USB แล้วโมดูลบนบอร์ดร้อนจัดทันทีและไฟ PWR หรี่ สิ่งแรกที่ต้องทำคือข้อใด", "c": ["ถอด USB ทันที แล้วหาจุดลัดวงจรระหว่างไฟเลี้ยงกับ GND", "กดปุ่ม EN เพื่อรีเซ็ตบอร์ด แล้วรอดูอาการต่ออีกสักพัก", "อัปโหลดโค้ดใหม่เพื่อลดความเร็ว CPU ให้ชิปเย็นลง", "เปิด Serial Monitor เพื่ออ่านข้อความแจ้งข้อผิดพลาด"], "h": "ความร้อนผิดปกติคือสัญญาณกระแสไหลเกิน", "e": "ร้อนจัดและไฟหรี่บ่งบอกว่ามีกระแสลัดวงจร ต้องตัดไฟก่อนเสมอ แล้วไล่ตรวจด้วยโหมดวัดความต่อเนื่อง ทุกวินาทีที่รอเพิ่มความเสียหาย"}, {"id": "E07", "s": "E", "l": 2, "t": "order", "tp": "ลำดับตรวจก่อนจ่ายไฟ", "q": "เรียงลำดับขั้นตอนก่อนจ่ายไฟวงจรใหม่ จากขั้นแรกไปขั้นสุดท้าย", "items": ["ตรวจสายตามผังวงจรทีละเส้น", "วัดความต่อเนื่องว่าไฟเลี้ยงไม่ลัดกับ GND", "เสียบ USB แล้วสังเกตไฟ PWR และความร้อน", "อัปโหลดโค้ดทดสอบทีละส่วน"], "h": "ตรวจด้วยตาและมิเตอร์ตอนไม่มีไฟ ก่อนดูผลตอนมีไฟ", "e": "ตรวจตามผังโดยไม่จ่ายไฟ → วัดลัดวงจร → จ่ายไฟและสังเกต 10 วินาทีแรก → อัปโหลดโค้ดทดสอบทีละส่วน ลำดับนี้ทำให้ความเสียหายเกิดยากที่สุด"}, {"id": "E08", "s": "E", "l": 3, "t": "mcq", "tp": "วัดกระแสใช้งานจริง", "q": "จะวัดกระแสที่ระบบ IoT ใช้จริงขณะทำงาน ต้องต่อมัลติมิเตอร์อย่างไร", "c": ["ต่ออนุกรมแทรกในสายไฟเลี้ยง เริ่มจากย่านกระแสสูงก่อน", "ต่อขนานคร่อมขาไฟเลี้ยงกับ GND ของบอร์ด แล้วตั้งย่านวัดเป็น mA", "ต่อขนานคร่อมตัวต้านทานโหลดในโหมด Ω ขณะที่ยังจ่ายไฟให้วงจร", "ต่ออนุกรมในสายสัญญาณ GPIO แล้วตั้งโหมด V DC"], "h": "กระแสต้องไหลผ่านมิเตอร์", "e": "ตัดสายไฟเลี้ยงแล้วต่อมิเตอร์อนุกรมเข้าไป เริ่มที่ย่าน 10 A แล้วค่อยลดย่าน ESP32 ตอนส่ง Wi-Fi อาจดึงกระแสสูงสุดได้หลายร้อย mA ช่วงสั้น ๆ"}, {"id": "E09", "s": "E", "l": 3, "t": "mcq", "tp": "ระบบที่มีน้ำ", "safe": 1, "q": "ระบบที่มีปั๊มน้ำและตู้น้ำ ข้อใดคือการจัดวางที่ปลอดภัยที่สุด", "c": ["วางบอร์ดและแหล่งจ่ายสูงกว่าระดับน้ำ ใช้ขั้วต่อกันน้ำและมีฟิวส์", "วางบอร์ดใต้ตู้ใกล้ปลั๊กไฟ เพื่อให้สายไฟจากแหล่งจ่ายสั้นที่สุด", "พันเทปใสรอบบอร์ดแล้ววางลอยบนน้ำ เพื่อให้วัดค่าได้ใกล้ที่สุด", "ใช้อะแดปเตอร์ 12 V ตัวเดียวต่อตรงเข้าขา 3V3 เพื่อลดจำนวนสาย"], "h": "น้ำไหลลงต่ำเสมอ", "e": "น้ำที่หยดหรือล้นจะไหลลงต่ำ จึงต้องวางอิเล็กทรอนิกส์สูงกว่าระดับน้ำ ใช้กล่องและขั้วต่อกันน้ำ มีฟิวส์ที่แหล่งจ่าย และเดินสายให้มีจุดหยดน้ำ (drip loop)"}, {"id": "E10", "s": "E", "l": 3, "t": "mcq", "tp": "งานไฟ 220 V AC", "safe": 1, "q": "โปรเจกต์ใช้รีเลย์สั่งอุปกรณ์ไฟบ้าน 220 V ข้อใดถูกต้องที่สุด", "c": ["ปิดฝาครอบขั้ว 220 V มิดชิด แยกจากฝั่ง 3.3 V และให้อาจารย์ตรวจก่อนเสียบ", "ใช้สายจั๊มป์เบรดบอร์ดต่อไฟ 220 V ได้ ถ้าเปิดใช้งานเพียงไม่กี่นาที", "ต่อไฟ 220 V ผ่านเบรดบอร์ดก่อนเข้ารีเลย์ เพื่อให้ย้ายและแก้สายได้สะดวกขึ้น", "ทดสอบโดยแตะขั้ว COM ด้วยนิ้วขณะเปิด เพื่อดูว่ารีเลย์ทำงานหรือไม่"], "h": "เบรดบอร์ดและสายจั๊มป์ทนไฟได้ไม่ถึงระดับไฟบ้าน", "e": "ไฟ 220 V อันตรายถึงชีวิต ห้ามผ่านเบรดบอร์ดหรือสายจั๊มป์ ใช้ขั้วต่อแบบขันสกรูในกล่องปิด แยกฝั่งไฟสูงจากวงจรควบคุม และให้ผู้สอนตรวจก่อนจ่ายไฟทุกครั้ง"}, {"id": "F01", "s": "F", "l": 1, "t": "mcq", "tp": "ไม่พบพอร์ต COM", "q": "Arduino IDE ไม่พบพอร์ต COM เมื่อเสียบบอร์ด สิ่งที่ควรตรวจก่อนคือข้อใด", "c": ["สาย USB รับส่งข้อมูลได้ และติดตั้งไดรเวอร์ CP210x/CH340 แล้ว", "ติดตั้งไลบรารี DHT ครบทุกเวอร์ชันในโปรแกรม Arduino IDE แล้วหรือยัง", "ตั้ง baud rate ของ Serial Monitor เป็น 9600 ไว้แล้วหรือยัง", "รหัสผ่าน Wi-Fi ที่พิมพ์ไว้ในโค้ดถูกต้องครบทุกตัวหรือไม่"], "h": "พอร์ต COM มาจากชิปแปลง USB เป็น UART บนบอร์ด", "e": "สาย USB บางเส้นมีแต่สายไฟไม่มีสายข้อมูล และคอมพิวเตอร์ต้องมีไดรเวอร์ของชิปแปลง USB-UART (CP2102 หรือ CH340) จึงจะเห็นพอร์ต"}, {"id": "F02", "s": "F", "l": 1, "t": "mcq", "tp": "อัปโหลดค้าง Connecting", "q": "อัปโหลดโค้ดแล้วค้างที่ข้อความ <code>Connecting........_____<\/code> ควรทำอย่างไร", "c": ["กดปุ่ม BOOT ค้างไว้ขณะเริ่มอัปโหลด จนเห็นเปอร์เซ็นต์ขึ้น", "กดปุ่ม EN ค้างไว้ตลอดจนกว่าการอัปโหลดจะเสร็จสมบูรณ์", "ถอดสาย GND ของเซนเซอร์ทุกตัวออกก่อนเริ่มอัปโหลด", "เปลี่ยน baud rate ของ Serial Monitor ให้เป็น 9600"], "h": "ต้องพาชิปเข้าโหมดดาวน์โหลด", "e": "บางบอร์ดวงจรอัตโนมัติพาเข้าโหมดดาวน์โหลดไม่ทัน กด BOOT (ดึง GPIO0 ลง LOW) ค้างไว้จนเห็น Writing… แล้วปล่อย ถ้ายังไม่ได้ให้ตรวจว่าไม่มีโมดูลต่อขา GPIO0/2/12 อยู่"}, {"id": "F03", "s": "F", "l": 1, "t": "mcq", "tp": "DS18B20 อ่านได้ −127", "q": "DS18B20 อ่านได้ <b>−127 °C<\/b> ตลอดเวลา สาเหตุที่น่าจะเป็นมากที่สุดคือข้อใด", "c": ["บอร์ดหาเซนเซอร์บนบัสไม่เจอ เช่น สายหลุดหรือไม่มี pull-up", "อุณหภูมิห้องเย็นลงจริงจนต่ำกว่าศูนย์องศาเซลเซียส", "ไลบรารีเวอร์ชันใหม่เปลี่ยนไปแสดงหน่วยเป็นเคลวิน", "ADC ของบอร์ดอ่านค่าผิดเพราะเปิด Wi-Fi พร้อมกับการอ่านเซนเซอร์"], "h": "−127 เป็นค่ารหัสพิเศษของไลบรารี", "e": "DallasTemperature คืนค่า −127 (DEVICE_DISCONNECTED_C) เมื่อไม่พบอุปกรณ์ ตรวจสาย DATA ตัวต้านทาน 4.7 kΩ และไฟเลี้ยง โค้ดควรกรองค่านี้ทิ้งไม่ส่งขึ้นกราฟ"}, {"id": "F04", "s": "F", "l": 2, "t": "mcq", "tp": "I2C Scanner", "q": "จอ OLED แบบ I2C ไม่แสดงผล ขั้นตอนแรกที่ได้ข้อมูลมากที่สุดคือข้อใด", "c": ["รัน I2C Scanner ดูว่าบอร์ดเห็นที่อยู่ 0x3C หรือไม่", "เปลี่ยนจอใหม่ทันที เพราะจอ OLED เสียง่ายที่สุด", "เพิ่ม delay(5000) ไว้ทุกบรรทัดในฟังก์ชัน loop()", "ย้ายสาย SDA/SCL ไปไว้ที่ขา GPIO34 และ GPIO35"], "h": "แยกให้ได้ก่อนว่าปัญหาอยู่ที่สายหรือโค้ด", "e": "I2C Scanner บอกได้ทันทีว่าบอร์ดคุยกับจอได้หรือไม่ ถ้าไม่เจอให้ตรวจสายและไฟเลี้ยง ถ้าเจอแต่ที่อยู่ต่าง (เช่น 0x3D) ให้แก้ที่อยู่ในโค้ด"}, {"id": "F05", "s": "F", "l": 2, "t": "mcq", "tp": "ไฟตกเมื่อรีเลย์ทำงาน", "q": "เซนเซอร์อ่านค่าปกติ แต่ค่าเพี้ยนทุกครั้งที่รีเลย์ทำงาน สาเหตุที่น่าสงสัยที่สุดคือข้อใด", "c": ["ไฟเลี้ยงตกหรือสัญญาณรบกวนจากขดลวดรีเลย์", "เซนเซอร์ต้องอุ่นเครื่องใหม่ทุกครั้งที่รีเลย์ทำงาน", "baud rate ของ Serial เปลี่ยนเองเมื่อมีโหลดเพิ่ม", "ไลบรารีของรีเลย์เขียนทับตัวแปรค่าของเซนเซอร์"], "h": "อาการเกิดพร้อมกับโหลดที่ดึงกระแสมาก", "e": "ขดลวดรีเลย์ดึงกระแสกระชากและสร้างสัญญาณรบกวน ทำให้ไฟเลี้ยงและแรงดันอ้างอิงของ ADC แกว่ง แก้โดยแยกแหล่งจ่ายโหลด เพิ่มตัวเก็บประจุ และใช้โมดูลรีเลย์ที่มีออปโตคัปเปลอร์"}, {"id": "F06", "s": "F", "l": 2, "t": "mcq", "tp": "Brownout reset", "q": "ESP32 รีบูตทุกครั้งที่เชื่อม Wi-Fi และ Serial แสดง <code>Brownout detector was triggered<\/code> ควรแก้อย่างไร", "c": ["ใช้สายและแหล่งจ่ายที่จ่ายกระแสพอ และเพิ่มตัวเก็บประจุที่ไฟเลี้ยง", "ลด baud rate ของ Serial ลงเหลือ 9600 เพื่อลดภาระการทำงานของชิป", "เปลี่ยนรหัสผ่าน Wi-Fi ให้สั้นลง เพื่อให้บอร์ดเชื่อมต่อเราเตอร์ได้เร็วขึ้นกว่าเดิม", "ย้ายเซนเซอร์ทั้งหมดไปขา ADC2 เพื่อลดภาระงานของวงจร ADC1"], "h": "Brownout แปลว่าแรงดันตกต่ำกว่าเกณฑ์", "e": "ช่วงส่ง Wi-Fi ชิปดึงกระแสสูงชั่วขณะ ถ้าสาย USB ยาวหรือพอร์ตจ่ายไม่พอแรงดันจะตกจนวงจรตรวจ brownout สั่งรีเซ็ต แก้ด้วยสายสั้นคุณภาพดี แหล่งจ่ายที่พอ และตัวเก็บประจุ 100–470 µF"}, {"id": "F07", "s": "F", "l": 2, "t": "order", "tp": "ลำดับไล่ปัญหาเซนเซอร์", "q": "เซนเซอร์อ่านค่าไม่ได้ เรียงลำดับการไล่ปัญหาจากพื้นฐานไปหาซับซ้อน", "items": ["วัดไฟเลี้ยงที่ขาเซนเซอร์ด้วยมัลติมิเตอร์", "ตรวจสายสัญญาณว่าตรงกับขาที่ประกาศในโค้ด", "รันโค้ดตัวอย่างของไลบรารีกับเซนเซอร์ตัวเดียว", "รวมกลับเข้าโค้ดโปรเจกต์ทีละส่วน"], "h": "เริ่มจากฮาร์ดแวร์พื้นฐานก่อนซอฟต์แวร์", "e": "ไล่จากไฟเลี้ยง → สาย → โค้ดตัวอย่างที่รู้ว่าถูก → โค้ดโปรเจกต์ ถ้าตัวอย่างใช้ได้ ปัญหาอยู่ที่โค้ดของเรา ถ้าไม่ได้ ปัญหาอยู่ที่ฮาร์ดแวร์"}, {"id": "F08", "s": "F", "l": 2, "t": "mcq", "tp": "PIR ช่วงอุ่นเครื่อง", "q": "PIR แจ้งว่ามีคนตลอดช่วง 1 นาทีแรกหลังเปิดเครื่อง แม้ห้องว่าง สาเหตุคือข้อใด", "c": ["PIR ต้องปรับตัวกับสภาพห้องราว 30–60 วินาทีหลังจ่ายไฟ", "PIR ต่อกับขา ADC2 จึงอ่านผิดทุกครั้งที่เปิด Wi-Fi อยู่", "PIR ต้องใช้ไฟเลี้ยง 12 V จึงจะทำงานถูกต้องทุกกรณี", "PIR ตรวจจับคลื่น Wi-Fi ของ ESP32 ว่าเป็นคนเคลื่อนไหว"], "h": "เซนเซอร์อินฟราเรดต้องเรียนรู้ระดับความร้อนพื้นหลังก่อน", "e": "โมดูล PIR เช่น HC-SR501 ต้องใช้เวลาเสถียรราว 30–60 วินาทีหลังจ่ายไฟ โค้ดควรข้ามค่าช่วงนี้ และ PIR ให้สัญญาณดิจิทัลที่อ่านด้วย digitalRead()"}, {"id": "F09", "s": "F", "l": 3, "t": "mcq", "tp": "ระบบค้างหลังใช้งานนาน", "q": "ระบบทำงานได้ 2–3 ชั่วโมงแล้วค้าง ต้องกด EN จึงกลับมา แนวทางที่เหมาะสมที่สุดคือข้อใด", "c": ["บันทึกสถานะลง Serial/Log หาจุดค้าง และเพิ่ม watchdog ให้รีเซ็ตเอง", "เพิ่ม delay() ให้ยาวขึ้น เพื่อลดจำนวนรอบที่ loop() ต้องทำงาน", "เปลี่ยนไปใช้ขา GPIO อื่นทั้งหมด เพื่อป้องกันขาเดิมเสื่อมสภาพ", "ลดความละเอียด ADC ลง เพราะการอ่านละเอียดเป็นเหตุให้ชิปค้าง"], "h": "ต้องรู้ก่อนว่าค้างตรงไหน และต้องมีระบบกู้คืนเอง", "e": "อาการค้างหลังใช้งานนานมักมาจากหน่วยความจำรั่ว การรอเครือข่ายแบบบล็อก หรือ millis() ล้นที่เขียนผิด บันทึก log หาสาเหตุ แล้วเปิด Task Watchdog ให้รีเซ็ตเองระหว่างแก้"}, {"id": "F10", "s": "F", "l": 3, "t": "mcq", "tp": "แหล่งจ่ายสองทาง", "q": "ต่อ USB เข้าคอมพิวเตอร์และต่อแหล่ง 5 V ภายนอกเข้าขา 5V พร้อมกัน แล้วพอร์ต USB ของคอมพิวเตอร์ตัดไฟ เพราะอะไร", "c": ["แหล่งจ่ายสองทางจ่ายย้อนเข้าหากัน คู่มือบอร์ดให้ใช้ทีละแหล่ง", "ขา 5V รับไฟเข้าไม่ได้ ใช้ได้เฉพาะจ่ายไฟออกเพียงทางเดียว", "คอมพิวเตอร์ตรวจพบไวรัสในโค้ดจึงตัดไฟพอร์ต USB อัตโนมัติ", "แหล่ง 5 V ภายนอกทำให้ความถี่ CPU สูงเกินกว่าที่ USB รองรับ"], "h": "ไฟสองแหล่งที่แรงดันไม่เท่ากันพอดีต่อถึงกันโดยตรง", "e": "คู่มือ ESP32-DevKitC ระบุให้จ่ายไฟทางเดียว (USB หรือ 5V/GND หรือ 3V3/GND) การต่อสองแหล่งพร้อมกันอาจจ่ายกระแสย้อนเข้าพอร์ต USB ถ้าต้องใช้ทั้งคู่ให้ใส่ไดโอดกันย้อน"}, {"id": "G11", "g": "S1", "s": "A", "l": 2, "t": "pin", "tp": "S1 ขา ADC1 สำหรับ MQ-3", "q": "S1 ต่อขา AO ของ MQ-3 (ผ่านตัวแบ่งแรงดันแล้ว) เข้า ESP32 ที่ต้องส่งผลขึ้น Dashboard ผ่าน Wi-Fi คลิกขาที่เหมาะสม 1 ขา", "ok": ["32", "33", "34", "35", "36", "39"], "h": "ต้องอ่านแอนะล็อกขณะเปิด Wi-Fi", "e": "ใช้ขา ADC1 (GPIO32–39) เพราะ ADC2 ใช้ไม่ได้ขณะ Wi-Fi ทำงาน GPIO34/35 เหมาะมากเพราะเป็นอินพุตอย่างเดียวอยู่แล้ว"}, {"id": "G12", "g": "S1", "s": "C", "l": 2, "t": "mcq", "tp": "S1 แรงดัน AO ของ MQ-3", "safe": 1, "q": "โมดูล MQ-3 ของ S1 ใช้ไฟ 5 V ขา AO ขึ้นได้เกือบ 5 V เมื่อแอลกอฮอล์เข้มข้น ควรต่อเข้า ESP32 อย่างไร", "c": ["ผ่านตัวแบ่งแรงดันให้ไม่เกินราว 3.3 V ก่อนเข้าขา ADC1", "ต่อตรงเข้าขา ADC2 เพราะทนแรงดันได้สูงกว่าขา ADC1", "ต่อเข้าขา 5V ของบอร์ดเพื่อให้แรงดันอ้างอิงตรงกัน", "ตั้ง INPUT_PULLUP เพื่อลดแรงดันให้เหลือเพียง 3.3 V"], "h": "GPIO ทุกขารับได้ไม่เกิน 3.6 V", "e": "AO ของโมดูล 5 V อาจสูงเกินพิกัด GPIO ใช้ตัวแบ่งแรงดัน เช่น 10 kΩ กับ 20 kΩ แล้วชดเชยอัตราส่วนในโค้ด"}, {"id": "G21", "g": "S2", "s": "C", "l": 2, "t": "mcq", "tp": "S2 DS18B20 หลายตัวบนบัสเดียว", "q": "S2 ต่อ DS18B20 กันน้ำ 2 ตัว (น้ำในตู้และน้ำสำรอง) ต้องใช้ขา GPIO กี่ขา", "c": ["1 ขา เพราะ 1-Wire ต่อหลายตัวบนบัสเดียว แยกด้วยรหัสประจำตัว", "2 ขา เพราะเซนเซอร์แต่ละตัวต้องมีขาสัญญาณแยกกันเสมอ", "4 ขา เพราะเซนเซอร์แต่ละตัวต้องใช้ทั้งขา SDA และขา SCL", "ไม่ต้องใช้ขา GPIO เลย เพราะ DS18B20 ส่งข้อมูลผ่านเครือข่าย Wi-Fi ได้เอง"], "h": "ชิป DS18B20 ทุกตัวมีรหัส 64 บิตไม่ซ้ำกัน", "e": "บัส 1-Wire ต่อ DS18B20 หลายตัวบนขาเดียวพร้อม pull-up 4.7 kΩ ตัวเดียว ไลบรารีอ้างถึงแต่ละตัวด้วยรหัส 64 บิต หรือด้วยลำดับ index"}, {"id": "G22", "g": "S2", "s": "F", "l": 2, "t": "mcq", "tp": "S2 หัววัด pH กับ TDS รบกวนกัน", "q": "S2 พบว่าค่า pH เพี้ยนเฉพาะเมื่อเปิดหัววัด TDS ในน้ำเดียวกัน ควรแก้อย่างไร", "c": ["สลับเวลาเปิดอ่าน pH กับ TDS หรือแยกกราวด์ด้วยตัวแยกสัญญาณ", "อ่าน pH ให้ถี่ขึ้นเป็น 1000 ครั้งต่อวินาทีแล้วเลือกค่าสูงสุด", "ย้ายหัววัด pH ไปต่อขา ADC2 เพื่อแยกจาก ADC1 ของหัววัด TDS", "ลดความยาวสาย Wi-Fi ระหว่างบอร์ดกับเราเตอร์ให้สั้นลงกว่าเดิม"], "h": "หัววัด TDS ปล่อยกระแสลงในน้ำ", "e": "หัววัด TDS ส่งกระแสสลับลงน้ำ ทำให้ศักย์ไฟฟ้าในน้ำเปลี่ยนและรบกวนหัววัด pH ที่วัดแรงดันระดับมิลลิโวลต์ วิธีปฏิบัติคือสลับเวลาเปิด (จ่ายไฟผ่าน MOSFET ทีละตัว) หรือใช้โมดูลแยกกราวด์"}, {"id": "G31", "g": "S3", "s": "C", "l": 2, "t": "mcq", "tp": "S3 Reed switch", "q": "S3 ใช้ Reed switch ตรวจประตู ต่อระหว่าง GPIO กับ GND และตั้ง INPUT_PULLUP เมื่อประตูปิด (แม่เหล็กอยู่ใกล้ สวิตช์ต่อวงจร) จะอ่านได้ค่าใด", "c": ["LOW เพราะสวิตช์ต่อขาลงกราวด์", "HIGH เพราะแม่เหล็กเพิ่มแรงดันให้ขา", "ราว 2048 เพราะเป็นสัญญาณแอนะล็อก", "สลับ HIGH/LOW ตลอดจนกว่าจะเปิดประตู"], "h": "สวิตช์ต่อวงจร = ขาถูกต่อเข้ากราวด์", "e": "Reed switch แบบปกติเปิด (NO) จะต่อวงจรเมื่อแม่เหล็กอยู่ใกล้ ขาจึงลงกราวด์อ่านได้ LOW เมื่อเปิดประตู pull-up ดึงกลับเป็น HIGH"}, {"id": "G32", "g": "S3", "s": "F", "l": 2, "t": "mcq", "tp": "S3 ลดการแจ้งเตือนผิด", "q": "ระบบ S3 แจ้งเตือนควันผิดพลาดบ่อยช่วงเปิดแอร์ แนวทางลดการแจ้งเตือนผิดที่ดีที่สุดคือข้อใด", "c": ["ยืนยันเหตุด้วยหลายเซนเซอร์ และให้ค่าเกินเกณฑ์ต่อเนื่องหลายวินาที", "ลดเกณฑ์แจ้งเตือนของ MQ-2 ลง เพื่อให้เซนเซอร์ไวขึ้นกว่าเดิม", "ปิดการอ่าน MQ-2 ทุกครั้งที่อุณหภูมิห้องต่ำกว่า 27 °C", "ย้าย MQ-2 ไปไว้หน้าช่องลมแอร์ เพื่อให้อากาศถ่ายเทได้ดีขึ้น"], "h": "เหตุการณ์จริงมักทำให้หลายค่าผิดปกติพร้อมกัน", "e": "ใช้ตรรกะยืนยันเหตุ เช่น ควันเกินเกณฑ์ต่อเนื่อง 5 วินาทีร่วมกับอุณหภูมิหรือ Flame sensor ผิดปกติ ช่วยลดการแจ้งเตือนผิดโดยไม่ลดความไวต่อเหตุจริง"}, {"id": "G41", "g": "S4", "s": "A", "l": 2, "t": "pin", "tp": "S4 ขา RX2 สำหรับ PMS5003", "q": "S4 ต่อ PMS5003 ที่ UART2 ค่าเริ่มต้น คลิกขา <b>RX2<\/b> ของ ESP32 ที่ต้องรับสาย TX ของเซนเซอร์", "ok": ["16"], "h": "UART2 ค่าเริ่มต้นใช้ขา 16 และ 17", "e": "Serial2 ใช้ GPIO16 เป็น RX2 และ GPIO17 เป็น TX2 สาย TX ของเซนเซอร์ต้องเข้า RX ของบอร์ด (ไขว้กัน) เรียก Serial2.begin(9600, SERIAL_8N1, 16, 17)"}, {"id": "G42", "g": "S4", "s": "B", "l": 2, "t": "mcq", "tp": "S4 ไฟเลี้ยง PMS5003", "q": "PMS5003 ของ S4 ต้องใช้ไฟเลี้ยง 5 V แต่ขาสัญญาณ TX เป็นระดับ 3.3 V ควรต่อกับ ESP32 อย่างไร", "c": ["จ่าย VCC จากขา 5V และต่อ TX เข้า RX2 ได้โดยตรง", "จ่าย VCC จากขา 3V3 และต่อ TX ผ่านตัวแบ่งแรงดัน", "จ่าย VCC จากขา GPIO และต่อ TX เข้าขา ADC1", "จ่าย VCC จากขา 5V และต่อ TX เข้าขา TX0 ของบอร์ด"], "h": "พัดลมในเซนเซอร์ต้องการ 5 V ส่วนสัญญาณเป็น 3.3 V อยู่แล้ว", "e": "ตาม datasheet PMS5003 ใช้ไฟเลี้ยง 4.5–5.5 V แต่ระดับสัญญาณ UART เป็น 3.3 V จึงต่อ TX เข้า RX2 (GPIO16) ได้โดยตรงโดยไม่ต้องลดแรงดัน"}, {"id": "G51", "g": "S5", "s": "E", "l": 2, "t": "mcq", "tp": "S5 ขับปั๊ม 12 V", "safe": 1, "q": "ชุดไฮโดรโปนิกส์ S5 ใช้ MOSFET ขับปั๊ม 12 V จาก ESP32 ข้อใดถูกต้อง", "c": ["ใช้ logic-level MOSFET มีไดโอดคร่อมปั๊ม และต่อ GND ร่วมกับบอร์ด", "ให้ขา GPIO จ่ายไฟให้ปั๊มโดยตรงผ่านตัวต้านทานจำกัดกระแส 220 Ω", "ต่อปั๊มเข้าขา 5V ของบอร์ด แล้วใช้ PWM เร่งแรงดันให้ขึ้นเป็น 12 V", "ใช้ MOSFET รุ่นใดก็ได้ และไม่ต้องต่อ GND ร่วมเพราะแยกแหล่งจ่าย"], "h": "ต้องครบสามเรื่อง: เปิด MOSFET ได้ด้วย 3.3 V, กัน back-EMF, จุดอ้างอิงเดียวกัน", "e": "MOSFET แบบ logic-level (เช่น IRLZ44N) เปิดได้เต็มที่ด้วย 3.3 V ไดโอด flyback ป้องกันแรงดันย้อนจากมอเตอร์ และ GND ร่วมทำให้สัญญาณ Gate อ้างอิงถูกต้อง"}, {"id": "G52", "g": "S5", "s": "D", "l": 2, "t": "num", "tp": "S5 PWM หรี่ไฟปลูกพืช", "q": "S5 หรี่หลอด LED ปลูกพืชด้วย PWM 8 บิต (0–255) ต้องการความสว่าง <b>40%<\/b> ต้องสั่งค่า duty เท่าใด", "unit": "", "ans": "102", "lo": 100, "hi": 104, "h": "ค่า duty = 255 × สัดส่วนที่ต้องการ", "e": "255 × 0.40 = 102 ใช้ ledcWrite() หรือ analogWrite() กับขาที่ต่อ Gate ของ MOSFET ความถี่ PWM ราว 1–5 kHz ช่วยลดการกะพริบที่มองเห็น"}, {"id": "G61", "g": "S6", "s": "C", "l": 2, "t": "mcq", "tp": "S6 ตรวจคนนอนนิ่ง", "q": "Smart AC ของ S6 ต้องรู้ว่ายังมีคนนอนนิ่งอยู่ในห้อง เซนเซอร์ใดเหมาะที่สุด", "c": ["เรดาร์ mmWave เช่น LD2410 ตรวจการหายใจและขยับเล็กน้อยได้", "PIR รุ่นความไวสูง เพราะตรวจคนที่นอนนิ่งได้ดีกว่าเรดาร์ทุกกรณี", "LDR เพราะคนที่นอนอยู่บนเตียงจะบังแสงจนค่าความสว่างลดลงชัดเจน", "DHT22 เพราะอุณหภูมิห้องสูงขึ้นทันทีที่มีคนอยู่ในห้อง"], "h": "PIR ตรวจได้เฉพาะการเคลื่อนไหวของความร้อน", "e": "PIR ตอบสนองเฉพาะการเปลี่ยนแปลงอินฟราเรด คนนอนนิ่งจึงหายไปจากการตรวจ เรดาร์ mmWave 24 GHz ตรวจการเคลื่อนไหวเล็กมาก เช่น การหายใจ จึงบอกได้ว่ายังมีคนอยู่"}, {"id": "G62", "g": "S6", "s": "F", "l": 2, "t": "mcq", "tp": "S6 ส่งรหัส IR ไม่ได้ผล", "q": "S6 สั่งส่งรหัส IR แล้วแอร์ไม่ตอบสนอง แต่รีโมทเดิมใช้ได้ สิ่งที่ควรตรวจก่อนคือข้อใด", "c": ["ดูแสง IR ผ่านกล้องมือถือ และตรวจว่ารหัสตรงโปรโตคอลของแอร์", "เปลี่ยน DHT22 เป็น SHT31 เพราะค่าอุณหภูมิทำให้ส่งรหัสไม่ได้", "เพิ่มความแรง Wi-Fi เพราะสัญญาณ IR ส่งผ่านเครือข่าย Wi-Fi", "ย้ายขา IR ไปที่ GPIO34 เพราะเป็นขาที่ขับสัญญาณได้แรงที่สุด"], "h": "แยกให้ได้ก่อนว่าหลอด IR ส่งแสงออกมาหรือไม่", "e": "กล้องมือถือมองเห็นแสง IR เป็นจุดสีม่วง ถ้าไม่เห็นให้ตรวจวงจรขับหลอด ถ้าเห็นแต่แอร์ไม่ตอบ รหัสอาจไม่ครบหรือผิดโปรโตคอล ให้บันทึกรหัสแบบ raw ใหม่ และ GPIO34 ส่งสัญญาณออกไม่ได้"}, {"id": "G71", "g": "S7", "s": "C", "l": 2, "t": "mcq", "tp": "S7 Hysteresis ของ LDR", "q": "S7 ใช้ LDR ตรวจเวลาค่ำ ช่วงโพล้เพล้ค่าแกว่งจนเครื่องเปิด-ปิดถี่ ควรแก้อย่างไร", "c": ["ใช้สองเกณฑ์: เปิดเมื่อมืดกว่า A และปิดเมื่อสว่างกว่า B", "เปลี่ยนไปใช้ digitalRead() กับ LDR เพื่อให้ได้ค่าแน่นอน", "ต่อตัวต้านทานอนุกรมกับ LDR เพิ่มอีก 10 ตัวเพื่อลดค่า", "ใช้เกณฑ์เดียวแต่เพิ่มค่าเกณฑ์ขึ้นเป็นสองเท่าของเดิม"], "h": "ช่องว่างระหว่างเกณฑ์เปิดและปิดช่วยกันแกว่ง", "e": "Hysteresis ใช้เกณฑ์เปิดและปิดต่างกัน ค่าที่แกว่งเล็กน้อยใกล้เกณฑ์จึงไม่ทำให้สถานะสลับ อาจใช้ร่วมกับค่าเฉลี่ยเคลื่อนที่และเวลาจาก NTP"}, {"id": "G72", "g": "S7", "s": "F", "l": 2, "t": "mcq", "tp": "S7 รีเซ็ตเมื่อพัดลมเริ่มหมุน", "q": "เครื่องไล่แมลง S7: ESP32 รีเซ็ตทุกครั้งที่พัดลม 12 V เริ่มหมุน สาเหตุและการแก้ที่ถูกต้องคือข้อใด", "c": ["กระแสกระชากทำไฟตก แยกแหล่งจ่ายโหลดและเพิ่มตัวเก็บประจุ", "PIR ตรวจจับใบพัดว่าเป็นคนจึงสั่งรีเซ็ตบอร์ดทุกครั้ง", "LDR ได้รับแสง UV มากเกินไปจนชิปประมวลผลทำงานผิดพลาดและรีเซ็ตตัวเอง", "NTP ส่งเวลาผิดขณะพัดลมทำงาน ทำให้ระบบต้องรีบูตใหม่ทุกครั้งที่เริ่มหมุน"], "h": "มอเตอร์ดึงกระแสสูงที่สุดตอนเริ่มหมุน", "e": "มอเตอร์ดึงกระแสเริ่มต้นสูงหลายเท่าของกระแสปกติ ถ้าใช้แหล่งจ่ายร่วม แรงดันของ ESP32 จะตกจน brownout แก้ด้วยแหล่งจ่ายแยก GND ร่วม ตัวเก็บประจุใหญ่ใกล้โหลด และไดโอดคร่อมมอเตอร์"}], "skills": {"A": {"n": "ขาและการต่อสาย", "short": "ขา/สาย", "review": [["game2_pin_wars.html", "ด่าน 2 PIN WARS"]]}, "B": {"n": "ไฟเลี้ยงและการคำนวณ", "short": "ไฟ/คำนวณ", "review": [["game3_sensor_hunter.html", "ด่าน 3 ตัวแบ่งแรงดัน"], ["game4_launchpad.html", "ด่าน 4 ขับโหลด"]]}, "C": {"n": "สัญญาณเซนเซอร์", "short": "เซนเซอร์", "review": [["game3_sensor_hunter.html", "ด่าน 3 SENSOR HUNTER"]]}, "D": {"n": "อ่านโค้ดและหาบั๊ก", "short": "โค้ด", "review": [["game1_brain_core.html", "ด่าน 1 BRAIN CORE"], ["game4_launchpad.html", "ด่าน 4 Hysteresis"]]}, "E": {"n": "ความปลอดภัยและการวัด", "short": "ปลอดภัย", "review": [["game4_launchpad.html", "ด่าน 4 ขับโหลดอย่างปลอดภัย"], ["game2_pin_wars.html", "ด่าน 2 ไฟเลี้ยง"]]}, "F": {"n": "การไล่หาปัญหา", "short": "ไล่ปัญหา", "review": [["game4_launchpad.html", "ด่าน 4 ALERT"], ["game1_brain_core.html", "ด่าน 1 อัปโหลดโค้ด"]]}}, "groups": {"S1": "เครื่องคัดกรองแอลกอฮอล์จากลมหายใจ", "S2": "คุณภาพน้ำตู้เลี้ยงกุ้ง IoT", "S3": "อุณหภูมิและควันห้อง Server", "S4": "Site Heat-PM Alert", "S5": "ไฮโดรโปนิกส์บนโต๊ะ", "S6": "Smart AC เพื่อการพักผ่อน", "S7": "เครื่องไล่แมลงอัตโนมัติ"}, "boss": [{"t": "โต๊ะ 1 · ESP32 + DHT22 + รีเลย์ + ปุ่ม", "rows": [["DHT22: VCC → 3V3, GND → GND, DATA → GPIO4 พร้อม pull-up 10 kΩ ไป 3V3", true, "C", false, "ต่อถูกต้อง DHT22 ทำงานที่ 3.3 V ได้ และขา DATA ต้องมี pull-up"], ["LED แดง: GPIO2 → ตัวต้านทาน 150 Ω → ขายาวของ LED, ขาสั้น → GND", true, "B", false, "ต่อถูกต้อง กระแสราว 8.7 mA และ LED ต่อลงกราวด์ไม่ขัดขวางการบูตของ GPIO2"], ["โมดูลรีเลย์ 5 V: VCC → 5V, GND → GND, IN → GPIO26", true, "B", false, "ต่อถูกต้อง ขดลวดได้ไฟ 5 V และ GPIO26 เป็นขาเอาต์พุตที่ปลอดภัย"], ["ปุ่มกด: GPIO34 → ปุ่ม → GND โดยตั้ง INPUT_PULLUP ในโค้ด", false, "A", false, "GPIO34 ไม่มี pull-up ภายใน ขาจะลอยเมื่อไม่กด ต้องย้ายไปขาอื่นหรือใส่ตัวต้านทาน 10 kΩ ไป 3V3"], ["Echo ของ HC-SR04: ตัวแบ่งแรงดัน 1 kΩ (บน) กับ 2 kΩ (ล่าง) แล้วเข้า GPIO18", true, "B", false, "ต่อถูกต้อง 5 × 2/3 ≈ 3.3 V ปลอดภัยกับ GPIO"], ["ตัวเก็บประจุ 100 µF: ขา + ลง GND และขา − (แถบสีขาว) ต่อ 5V", false, "E", true, "ต่อกลับขั้ว ตัวเก็บประจุอิเล็กโทรไลต์จะร้อน บวม หรือระเบิดได้ ขาแถบสีขาว (−) ต้องลง GND"]]}, {"t": "โต๊ะ 2 · ESP32 + ปั๊ม 12 V ผ่าน MOSFET + DS18B20 + OLED", "rows": [["DS18B20: DATA → GPIO27 พร้อม pull-up 4.7 kΩ ไป 3V3", true, "C", false, "ต่อถูกต้องตามมาตรฐานบัส 1-Wire"], ["OLED I2C: SDA → GPIO21, SCL → GPIO22, VCC → 3V3, GND → GND", true, "A", false, "ต่อถูกต้องตามขา I2C ค่าเริ่มต้น"], ["MOSFET IRLZ44N: Gate ← GPIO25 ผ่าน 220 Ω และมี 10 kΩ จาก Gate ลง GND", true, "B", false, "ต่อถูกต้อง ตัวต้านทาน 10 kΩ ดึง Gate ลงให้ปั๊มดับระหว่างบูต"], ["ปั๊ม 12 V: ขั้ว + ต่อ +12 V, ขั้ว − ต่อ Drain โดยไม่มีไดโอดคร่อมปั๊ม", false, "E", true, "ขาดไดโอด flyback แรงดันย้อนจากมอเตอร์จะทำให้ MOSFET เสีย ต้องใส่ไดโอดโดยขีดแถบไปทาง +12 V"], ["GND ของอะแดปเตอร์ 12 V ไม่ได้ต่อกับ GND ของ ESP32", false, "B", false, "ต้องต่อ GND ร่วม มิฉะนั้นแรงดัน Gate ไม่มีจุดอ้างอิง MOSFET จะไม่เปิดหรือเปิดไม่เต็มที่"], ["Source ของ MOSFET ต่อลง GND", true, "B", false, "ต่อถูกต้อง N-channel MOSFET ใช้เป็นสวิตช์ด้านล่าง (low-side) Source ต้องลง GND"]]}, {"t": "โต๊ะ 3 · ESP32 + MQ-2 + PMS5003 + บัซเซอร์", "rows": [["โมดูล MQ-2 ใช้ไฟ 5 V: ขา AO → GPIO34 โดยตรง", false, "B", true, "AO ของโมดูล 5 V ขึ้นได้เกือบ 5 V เกินพิกัด GPIO ต้องผ่านตัวแบ่งแรงดันก่อน"], ["PMS5003: VCC → 5V, TX → GPIO16 (RX2), RX → GPIO17 (TX2)", true, "A", false, "ต่อถูกต้อง ไฟเลี้ยง 5 V สัญญาณ 3.3 V และสาย TX/RX ไขว้กันถูกแล้ว"], ["บัซเซอร์ 5 V ขับผ่านทรานซิสเตอร์ NPN: Base ← GPIO23 ผ่าน 1 kΩ, Emitter → GND", true, "B", false, "ต่อถูกต้อง ทรานซิสเตอร์รับกระแสบัซเซอร์แทนขา GPIO"], ["ต่อสายจากขา 5V ไปขา 3V3 โดยตรง เพื่อให้ราง 3.3 V มีกระแสมากขึ้น", false, "E", true, "อันตรายมาก เป็นการต่อแหล่งจ่ายสองระดับเข้าหากัน เรกูเลเตอร์และชิปจะเสียหาย"], ["Flame sensor: DO → GPIO35 (โมดูลมีตัวต้านทาน pull-up บนบอร์ดแล้ว)", true, "A", false, "ต่อถูกต้อง GPIO35 เป็นอินพุตอย่างเดียวและโมดูลมี pull-up ให้แล้ว"], ["เสียบ USB เข้าคอมพิวเตอร์ พร้อมกับต่อแหล่ง 5 V ภายนอกเข้าขา 5V", false, "E", true, "คู่มือบอร์ดให้จ่ายไฟทางเดียว การจ่ายสองทางอาจจ่ายย้อนเข้าพอร์ต USB ของคอมพิวเตอร์"]]}], "bossSec": 90};
+var D=document, $=function(s){return D.querySelector(s);};
+var ID_KEY='cpe2422_student', RES_KEY='cpe2422_results', SECRET='ru2569', MASK='xxxxxxxxxx';
+var SK=Object.keys(DATA.skills), W={1:.7,2:.85,3:1}, ROUNDS=3;
+var S=null;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('on');},1800);}
+function show(id){Array.prototype.forEach.call(D.querySelectorAll('.scr'),function(s){s.classList.toggle('on',s.id===id);});$('#hud').hidden=(id==='sIntro'||id==='sResult');}
+function pinName(k){return /^\d+$/.test(k)?'GPIO'+k:k;}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
+
+/* ---------- ธีม ---------- */
+$('#btnTheme').addEventListener('click',function(){var t=D.documentElement.getAttribute('data-theme')==='light'?'dark':'light';D.documentElement.setAttribute('data-theme',t);ls('cpe2422_theme',t);});
+
+/* ---------- ลงทะเบียน ---------- */
+function checkId(raw){
+  var v=(raw||'').trim(); if(v.toLowerCase()===SECRET) return {ok:true,sid:MASK,via:'code'};
+  var d=v.replace(/[\s-]/g,''); if(!d) return {ok:false,msg:'กรุณากรอกรหัสนักศึกษา 10 หลัก'};
+  if(/^\d+$/.test(d)){ if(d.length!==10) return {ok:false,msg:'รหัสนักศึกษาต้องมี 10 หลัก (ตอนนี้ '+d.length+' หลัก)'};
+    if(!/^[5-7]\d{9}$/.test(d)) return {ok:false,msg:'รหัสนักศึกษาต้องขึ้นต้นด้วยปีที่เข้าศึกษา เช่น 69xxxxxxxx'}; return {ok:true,sid:d,via:'id'}; }
+  return {ok:false,msg:'กรอกได้เฉพาะตัวเลข 10 หลัก หรือรหัสลับที่ได้รับจากผู้สอน'};
+}
+var grp=ls('cpe2422_group')||'', board=ls('cpe2422_board')||'c38'; if(board!=='v30') board='c38';
+(function(){
+  var h='<button type="button" class="chip" data-g="">ไม่ระบุ</button>';
+  Object.keys(DATA.groups).forEach(function(g){h+='<button type="button" class="chip" data-g="'+g+'">'+g+'</button>';});
+  $('#grpChips').innerHTML=h;
+  function paint(){
+    Array.prototype.forEach.call(D.querySelectorAll('#grpChips .chip'),function(b){b.classList.toggle('on',b.getAttribute('data-g')===grp);});
+    Array.prototype.forEach.call(D.querySelectorAll('#brdChips .chip'),function(b){b.classList.toggle('on',b.getAttribute('data-b')===board);});
+    $('#gName').textContent=grp?(grp+' · '+DATA.groups[grp]):'โจทย์ทั่วไปทั้งหมด';
+  }
+  $('#grpChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;grp=b.getAttribute('data-g');paint();});
+  $('#brdChips').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;board=b.getAttribute('data-b');paint();});
+  var cur=null; try{cur=JSON.parse(sessionStorage.getItem(ID_KEY)||'null');}catch(e){}
+  if(cur&&cur.sid){$('#iSid').value=cur.raw||(cur.via==='id'?cur.sid:'');$('#iNick').value=cur.nick||'';}
+  function live(){var v=$('#iSid').value.trim(),d=v.replace(/[\s-]/g,'');$('#sidCnt').textContent=v.toLowerCase()===SECRET?'รหัสลับ':((/^\d*$/.test(d)?d.length:'-')+'/10');}
+  $('#iSid').addEventListener('input',live); live(); paint();
+})();
+$('#fStart').addEventListener('submit',function(e){
+  e.preventDefault(); var r=checkId($('#iSid').value), err=$('#err');
+  if(!r.ok){err.textContent=r.msg;$('#iSid').focus();return;}
+  var nk=$('#iNick').value.trim(); if(!nk){err.textContent='กรุณากรอกชื่อเล่น เพื่อแสดงบนใบผล';$('#iNick').focus();return;}
+  err.textContent='';
+  try{sessionStorage.setItem(ID_KEY,JSON.stringify({sid:r.sid,via:r.via,raw:$('#iSid').value.trim(),nick:nk}));}catch(x){}
+  ls('cpe2422_group',grp); ls('cpe2422_board',board);
+  start({sid:r.sid,nick:nk});
+});
+
+/* ---------- เริ่มเกม ---------- */
+function start(who){
+  var seq=[], prev=null;
+  for(var r=0;r<ROUNDS;r++){ var o=shuffle(SK); if(o[0]===prev){o.push(o.shift());} o.forEach(function(s){seq.push({s:s,r:r});}); prev=o[o.length-1]; }
+  S={who:who,grp:grp,board:board,lvl:{},used:{},seq:seq,i:0,log:[],fuses:3,combo:0,bestCombo:0,cur:null,t0:Date.now()};
+  SK.forEach(function(s){S.lvl[s]=2;});
+  drawTrace(); drawFuses(false); drawCombo(); show('sPlay'); next(true);
+}
+function eligible(it){ return !S.used[it.id] && (!it.board||it.board===S.board); }
+function pick(s,r){
+  if(S.grp&&r>=1){ var gi=DATA.items.filter(function(it){return it.g===S.grp&&it.s===s&&eligible(it);}); if(gi.length) return gi[0]; }
+  var L=S.lvl[s], tries=[L,L-1,L+1,L-2,L+2];
+  for(var k=0;k<tries.length;k++){ var lv=tries[k]; if(lv<1||lv>3) continue;
+    var pool=DATA.items.filter(function(it){return !it.g&&it.s===s&&it.l===lv&&eligible(it);}); if(pool.length) return shuffle(pool)[0]; }
+  return null;
+}
+function drawTrace(){
+  var h=''; S.seq.forEach(function(x,i){ var lg=S.log.filter(function(l){return l.k===i;})[0]; h+='<i class="'+(lg?(lg.ok?'ok':'no'):(i===S.i?'now':''))+'"></i>'; });
+  h+='<i class="bs'+(S.i>=S.seq.length?' now':'')+'" title="บอส Smoke Test"></i>'; $('#trace').innerHTML=h;
+}
+function drawFuses(blowIdx){ var h=''; for(var i=0;i<3;i++) h+='<span class="fuse'+(i>=S.fuses?' out':'')+(blowIdx===i?' blow':'')+'"></span>'; $('#fuses').innerHTML=h; }
+function drawCombo(){ var c=$('#combo'); c.textContent=S.combo>=2?('COMBO x'+S.combo):('COMBO '+S.combo); c.classList.toggle('hot',S.combo>=3); }
+
+/* ---------- แสดงโจทย์ ---------- */
+function next(first){
+  if(!first) S.i++;
+  if(S.i>=S.seq.length){ drawTrace(); return bossStart(); }
+  var q=S.seq[S.i], it=pick(q.s,q.r); if(!it){ S.i++; return next(true); }
+  S.used[it.id]=1; S.cur={it:it,sel:null,ord:[],hint:false,done:false,choices:null};
+  drawTrace();
+  var sk=DATA.skills[it.s];
+  $('#qSk').textContent=sk.n;
+  var lvl=it.l, lh='Lv '; for(var i=1;i<=3;i++) lh+='<i class="'+(i<=lvl?'on':'')+'"></i>'; $('#qLv').innerHTML=lh;
+  var g=$('#qG'); g.hidden=!it.g; if(it.g) g.textContent='ภารกิจกลุ่ม '+it.g;
+  $('#qNo').textContent='ข้อ '+(S.i+1)+' / '+S.seq.length;
+  $('#qText').innerHTML=it.q;
+  var b=$('#qBody'); b.className='qbody'; b.innerHTML='';
+  $('#qcard').classList.remove('lock','flash-ok','flash-no');
+  ({mcq:rMcq,num:rNum,pin:rPin,bug:rBug,order:rOrd})[it.t](b,it);
+  $('#acts').style.display=''; $('#fb').classList.remove('on'); $('#btnHint').disabled=false; $('#actNote').textContent='';
+  b.scrollTop=0;
+}
+function rMcq(b,it){
+  var order=shuffle([0,1,2,3]); S.cur.choices=order;
+  var h='<div class="opts">'; order.forEach(function(ci,k){ h+='<button type="button" class="opt" data-c="'+ci+'"><b>'+'ABCD'[k]+'</b><span>'+it.c[ci]+'</span></button>'; }); h+='</div>';
+  b.innerHTML=h;
+  b.querySelector('.opts').addEventListener('click',function(e){ var o=e.target.closest('.opt'); if(!o) return; S.cur.sel=+o.getAttribute('data-c');
+    Array.prototype.forEach.call(b.querySelectorAll('.opt'),function(x){x.classList.toggle('sel',x===o);}); });
+}
+function rNum(b,it){
+  b.innerHTML='<div class="numrow"><input id="numIn" inputmode="decimal" autocomplete="off" placeholder="กรอกตัวเลข" aria-label="คำตอบตัวเลข"><span class="u">'+esc(it.unit||'')+'</span></div><p class="note" style="margin:0;color:var(--mute);font-size:var(--fs-s)">ใช้จุดทศนิยมได้ ระบบยอมรับคำตอบที่ใกล้เคียงในช่วงคลาดเคลื่อนที่สมเหตุสมผล</p>';
+  var inp=b.querySelector('input'); inp.addEventListener('input',function(){ S.cur.sel=inp.value.trim()===''?null:inp.value; });
+  setTimeout(function(){try{inp.focus({preventScroll:true});}catch(e){}},60);
+}
+function rPin(b,it){
+  b.classList.add('pin');
+  b.innerHTML='<div class="pinside"><div class="picked" id="picked">แตะขาบนภาพบอร์ดเพื่อเลือก</div><p style="margin:0;color:var(--mute);font-size:var(--fs-s)">ภาพนี้คือบอร์ด '+(S.board==='v30'?'ESP32 DevKit V1 30 ขา':'ESP32-DevKitC V4 38 ขา')+' มองจากด้านบน เสาอากาศอยู่ด้านบน อ่านชื่อขาจากตัวอักษรที่พิมพ์บนบอร์ดเหมือนของจริง</p></div><div class="boardbox" id="bbox"></div>';
+  $('#bbox').innerHTML=NeoPin.svg(S.board,{quiz:true});
+  $('#bbox').addEventListener('click',function(e){ var p=e.target.closest('.np-pin'); if(!p||S.cur.done) return; var k=p.getAttribute('data-k'); S.cur.sel=k;
+    Array.prototype.forEach.call(D.querySelectorAll('#bbox .np-pin'),function(x){x.classList.toggle('q-sel',x===p);});
+    var pk=$('#picked'); pk.textContent='เลือก: '+pinName(k); pk.classList.add('has'); });
+}
+function rBug(b,it){
+  var h='<div class="code" role="listbox" aria-label="โค้ด คลิกบรรทัดที่ผิด">'; it.code.forEach(function(ln,i){ h+='<button type="button" class="line" data-i="'+i+'"><i>'+(i+1)+'</i>'+esc(ln)+'</button>'; }); h+='</div>';
+  b.innerHTML=h;
+  b.querySelector('.code').addEventListener('click',function(e){ var l=e.target.closest('.line'); if(!l) return; S.cur.sel=+l.getAttribute('data-i');
+    Array.prototype.forEach.call(b.querySelectorAll('.line'),function(x){x.classList.toggle('sel',x===l);}); });
+}
+function rOrd(b,it){
+  var mix=shuffle(it.items.map(function(x,i){return i;})); if(mix.join()===it.items.map(function(x,i){return i;}).join()) mix.reverse(); S.cur.mix=mix;
+  function paint(){
+    var h='<div class="ord"><div class="col"><h4>ขั้นตอนทั้งหมด (แตะเพื่อเพิ่มเข้าลำดับ)</h4>';
+    mix.forEach(function(i){ if(S.cur.ord.indexOf(i)<0) h+='<button type="button" data-i="'+i+'" data-a="add">'+esc(it.items[i])+'</button>'; });
+    h+='</div><div class="col"><h4>ลำดับของคุณ (แตะเพื่อนำออก)</h4>';
+    for(var k=0;k<it.items.length;k++){ var v=S.cur.ord[k]; h+= v==null?'<button type="button" class="slot"><b>'+(k+1)+'</b></button>':'<button type="button" data-i="'+v+'" data-a="rm" data-k="'+k+'"><b>'+(k+1)+'</b>'+esc(it.items[v])+'</button>'; }
+    h+='</div></div>'; b.innerHTML=h;
+    S.cur.sel=S.cur.ord.length===it.items.length?S.cur.ord.slice():null;
+  }
+  b.onclick=function(e){ var t=e.target.closest('button[data-a]'); if(!t||S.cur.done) return; var i=+t.getAttribute('data-i');
+    if(t.getAttribute('data-a')==='add') S.cur.ord.push(i); else S.cur.ord.splice(S.cur.ord.indexOf(i),1); paint(); };
+  paint();
+}
+
+/* ---------- คำใบ้และส่งคำตอบ ---------- */
+$('#btnHint').addEventListener('click',function(){
+  if(!S.cur||S.cur.hint) return; S.cur.hint=true; this.disabled=true;
+  var d=D.createElement('div'); d.className='hint'; d.innerHTML='<b>คำใบ้:</b> '+S.cur.it.h; $('#qBody').insertBefore(d,$('#qBody').firstChild);
+});
+$('#btnSure').addEventListener('click',function(){submit('sure');});
+$('#btnUnsure').addEventListener('click',function(){submit('unsure');});
+function judge(it,sel){
+  if(it.t==='mcq') return sel===0;
+  if(it.t==='num'){ var v=parseFloat(String(sel).replace(',','.').replace(/[^\d.\-]/g,'')); return !isNaN(v)&&v>=it.lo&&v<=it.hi; }
+  if(it.t==='pin') return it.ok.indexOf(String(sel))>=0;
+  if(it.t==='bug') return it.ok.indexOf(sel)>=0;
+  if(it.t==='order') return sel.join()===it.items.map(function(x,i){return i;}).join();
+  return false;
+}
+function submit(conf){
+  var c=S.cur; if(!c||c.done) return;
+  if(c.sel==null||c.sel===''){ $('#actNote').textContent=c.it.t==='order'?'เรียงให้ครบทุกขั้นตอนก่อนส่ง':'เลือกหรือกรอกคำตอบก่อนส่ง'; var a=$('#acts'); a.classList.remove('shake'); void a.offsetWidth; a.classList.add('shake'); return; }
+  c.done=true; var it=c.it, ok=judge(it,c.sel), pts=ok?W[it.l]*(c.hint?.5:1):0;
+  S.log.push({k:S.i,id:it.id,s:it.s,l:it.l,t:it.t,ok:ok,conf:conf,hint:c.hint,tp:it.tp,safe:!!it.safe,g:it.g||'',pts:pts,e:it.e});
+  S.lvl[it.s]=ok?Math.min(3,it.l+1):Math.max(1,it.l-1);
+  var blown=false; if(ok){S.combo++;S.bestCombo=Math.max(S.bestCombo,S.combo);} else {S.combo=0; if(it.safe&&S.fuses>0){S.fuses--;blown=S.fuses;}}
+  drawCombo(); drawFuses(blown===false?false:blown); drawTrace();
+  $('#qcard').classList.add('lock',ok?'flash-ok':'flash-no');
+  mark(it,c,ok);
+  var vd=$('#fbVd'); vd.className='vd '+(ok?'ok':'no'); vd.textContent=ok?'PASS':'SPARK!';
+  var tx='';
+  if(!ok) tx+='<p class="ans">คำตอบที่ถูก: '+answerText(it)+'</p>';
+  if(!ok&&it.safe) tx+='<p style="color:var(--bad);font-weight:600">ข้อความปลอดภัย: ฟิวส์ขาด 1 ดวง'+(S.fuses===0?' · ฟิวส์หมดแล้ว ผลรอบนี้จะยังไม่ได้ใบอนุญาต แต่ทำต่อเพื่อดูโปรไฟล์ทักษะให้ครบ':'')+'</p>';
+  if(ok&&conf==='unsure') tx+='<p style="color:var(--a)">ถูกต้อง แต่คุณยังไม่มั่นใจ เรื่องนี้ควรทวนให้แน่นก่อนวันประกอบจริง</p>';
+  if(!ok&&conf==='sure') tx+='<p style="color:var(--bad)">ตอบผิดแบบมั่นใจ เรื่องนี้จะถูกจัดเป็นลำดับแรกในใบสั่งทบทวน</p>';
+  tx+='<p>'+it.e+'</p>';
+  $('#fbTx').innerHTML=tx; $('#acts').style.display='none'; $('#fb').classList.add('on');
+  $('#btnNext').textContent=S.i+1>=S.seq.length?'ไปด่านบอส Smoke Test':'ข้อถัดไป';
+  setTimeout(function(){try{$('#btnNext').focus({preventScroll:true});}catch(e){}},50);
+}
+function answerText(it){
+  if(it.t==='mcq') return it.c[0];
+  if(it.t==='num') return it.ans+' '+(it.unit||'');
+  if(it.t==='pin') return it.ok.length>6?('ขาใดก็ได้ในกลุ่มที่ไฮไลต์สีเขียว เช่น '+it.ok.slice(0,6).map(pinName).join(', ')):it.ok.map(pinName).join(' หรือ ');
+  if(it.t==='bug') return 'บรรทัดที่ '+it.ok.map(function(i){return i+1;}).join(', ');
+  if(it.t==='order') return it.items.map(function(x,i){return (i+1)+') '+x;}).join(' · ');
+  return '';
+}
+function mark(it,c,ok){
+  var b=$('#qBody');
+  if(it.t==='mcq') Array.prototype.forEach.call(b.querySelectorAll('.opt'),function(o){ var ci=+o.getAttribute('data-c'); if(ci===0) o.classList.add('ok'); else if(ci===c.sel) o.classList.add('bad'); });
+  if(it.t==='num') b.querySelector('.numrow').classList.add(ok?'ok':'bad');
+  if(it.t==='bug') Array.prototype.forEach.call(b.querySelectorAll('.line'),function(l){ var i=+l.getAttribute('data-i'); if(it.ok.indexOf(i)>=0) l.classList.add('ok'); else if(i===c.sel) l.classList.add('bad'); });
+  if(it.t==='pin') Array.prototype.forEach.call(D.querySelectorAll('#bbox .np-pin'),function(p){ var k=p.getAttribute('data-k'); p.classList.remove('q-sel'); if(it.ok.indexOf(k)>=0) p.classList.add('q-ok'); else if(k===String(c.sel)) p.classList.add('q-bad'); });
+  if(it.t==='order') Array.prototype.forEach.call(b.querySelectorAll('button[data-a="rm"]'),function(x){ var k=+x.getAttribute('data-k'); x.classList.add(+x.getAttribute('data-i')===k?'ok':'bad'); });
+}
+$('#btnNext').addEventListener('click',function(){ next(false); });
+D.addEventListener('keydown',function(e){
+  if(!$('#sPlay').classList.contains('on')||!S||!S.cur) return;
+  if(S.cur.done&&e.key==='Enter'){ e.preventDefault(); next(false); return; }
+  if(!S.cur.done&&S.cur.it.t==='mcq'&&/^[1-4]$/.test(e.key)){ var o=D.querySelectorAll('#qBody .opt')[+e.key-1]; if(o) o.click(); }
+});
+
+/* ---------- บอส Smoke Test ---------- */
+var B=null;
+function bossStart(){
+  var set=DATA.boss[Math.floor(Math.random()*DATA.boss.length)];
+  B={set:set,ans:{},left:DATA.bossSec,done:false,t:null};
+  $('#bTitle').innerHTML='<span>SMOKE TEST</span> · '+esc(set.t); $('#bSec').textContent=DATA.bossSec; $('#bNote').textContent='';
+  var h=''; set.rows.forEach(function(r,i){ h+='<div class="brow" data-i="'+i+'"><p>'+(i+1)+'. '+esc(r[0])+'</p><div class="tg"><button type="button" data-v="1">ผ่าน</button><button type="button" data-v="0">ต้องแก้</button></div><div class="why"></div></div>'; });
+  $('#bList').innerHTML=h; $('#btnBoss').textContent='ยืนยันผลการตรวจ'; $('#btnBoss').disabled=false;
+  show('sBoss'); tick();
+  B.t=setInterval(tick,1000);
+}
+function tick(){ if(!B||B.done) return; $('#bBar').style.transform='scaleX('+Math.max(0,B.left/DATA.bossSec)+')'; $('#bNote').textContent='เหลือ '+B.left+' วินาที'; if(B.left<=0){ bossEnd(true); return; } B.left--; }
+$('#bList').addEventListener('click',function(e){ var t=e.target.closest('.tg button'); if(!t||B.done) return; var row=t.closest('.brow'), i=+row.getAttribute('data-i');
+  B.ans[i]=t.getAttribute('data-v')==='1'; Array.prototype.forEach.call(row.querySelectorAll('.tg button'),function(x){x.classList.toggle('on',x===t);}); });
+$('#btnBoss').addEventListener('click',function(){ if(B.done){ finish(); return; } bossEnd(false); });
+function bossEnd(timeout){
+  B.done=true; clearInterval(B.t); var miss=0, okc=0, firstBlow=false;
+  B.set.rows.forEach(function(r,i){ var a=B.ans[i], ok=(a===r[1]); if(ok) okc++;
+    var hazard=r[3]&&!r[1]&&a!==false; if(hazard&&S.fuses>0){ S.fuses--; firstBlow=S.fuses; miss++; }
+    S.log.push({k:-1,id:'BOSS'+i,s:r[2],l:2,t:'boss',ok:ok,conf:null,hint:false,tp:'Smoke Test: '+(r[0].length>46?r[0].slice(0,44)+'…':r[0]),safe:!!r[3],g:'',pts:ok?W[2]:0,e:r[4]});
+    var row=D.querySelector('.brow[data-i="'+i+'"]'); row.classList.add('done',ok?'ok':'bad');
+    row.querySelector('.why').innerHTML='<b>'+(r[1]?'ผ่าน':'ต้องแก้')+'</b> · '+esc(r[4]); });
+  drawFuses(firstBlow===false?false:firstBlow); $('#bList').scrollTop=0;
+  $('#bNote').textContent=(timeout?'หมดเวลา · ':'')+'ตรวจถูก '+okc+' จาก '+B.set.rows.length+' แถว'+(miss?' · ปล่อยจุดอันตรายผ่าน '+miss+' จุด ฟิวส์ขาด':'');
+  $('#btnBoss').textContent='ดูผลการตรวจความพร้อม';
+}
+
+/* ---------- ผลลัพธ์ ---------- */
+function scores(){
+  var o={}; SK.forEach(function(s){ var L=S.log.filter(function(l){return l.s===s;}); var e=L.reduce(function(a,l){return a+l.pts;},0); o[s]=L.length?Math.round(100*e/L.length):0; });
+  return o;
+}
+function ck(str){ var h=7; for(var i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i))%9973; return ('0'+(h%97)).slice(-2); }
+function makeCode(sc,tot,vd){
+  var sid=S.who.sid===MASK?'XXXX':S.who.sid.slice(-4), p=function(n){return ('0'+Math.min(99,n)).slice(-2);};
+  var body='BR5-'+(S.grp||'S0')+'-'+sid+'-'+SK.map(function(s){return s+p(sc[s]);}).join('')+'-T'+p(tot)+'-'+vd+'-F'+S.fuses;
+  return body+'-K'+ck(body+SECRET);
+}
+function radar(sc){
+  var n=SK.length, cx=200, cy=190, R=135, pt=function(i,v){ var a=-Math.PI/2+i*2*Math.PI/n; return [cx+Math.cos(a)*R*v, cy+Math.sin(a)*R*v]; };
+  var s='<svg viewBox="-46 0 492 380" role="img" aria-label="กราฟเรดาร์ทักษะ 6 ด้าน">';
+  [.25,.5,.75,1].forEach(function(f){ s+='<polygon points="'+SK.map(function(k,i){return pt(i,f).join(',');}).join(' ')+'" fill="none" stroke="var(--edge)" stroke-width="'+(f===1?1.5:1)+'"'+(f===.75?' stroke-dasharray="5 4" style="stroke:var(--a);opacity:.7"':'')+'/>'; });
+  SK.forEach(function(k,i){ var p=pt(i,1); s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0]+'" y2="'+p[1]+'" stroke="var(--edge)"/>'; });
+  s+='<polygon points="'+SK.map(function(k,i){return pt(i,Math.max(.04,sc[k]/100)).join(',');}).join(' ')+'" fill="color-mix(in srgb,var(--b) 28%,transparent)" stroke="var(--b)" stroke-width="2.5"/>';
+  SK.forEach(function(k,i){ var p=pt(i,Math.max(.04,sc[k]/100)), c=sc[k]>=75?'var(--ok)':sc[k]>=50?'var(--a)':'var(--bad)'; s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="5.5" fill="'+c+'" stroke="var(--bg)" stroke-width="2"/>';
+    var q=pt(i,1.2), an=Math.abs(q[0]-cx)<10?'middle':(q[0]>cx?'start':'end');
+    s+='<text x="'+q[0]+'" y="'+(q[1]+4)+'" text-anchor="'+an+'" font-size="14" font-weight="600" fill="var(--text)" font-family="Kanit,sans-serif">'+esc(DATA.skills[k].short)+' <tspan fill="'+c+'" font-family="JetBrains Mono,monospace">'+sc[k]+'</tspan></text>'; });
+  s+='<text x="'+(cx+4)+'" y="'+(cy-R*.75-4)+'" font-size="10" fill="var(--a)" font-family="Kanit,sans-serif">เกณฑ์ 75</text>';
+  return s+'</svg>';
+}
+function finish(){
+  var sc=scores(), vals=SK.map(function(s){return sc[s];}), tot=Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length), mn=Math.min.apply(null,vals);
+  var vd=S.fuses>0&&tot>=70&&mn>=50?'R':(S.fuses>0&&tot>=55?'C':'N');
+  var stars=Math.round(tot/100*6); if(vd!=='R') stars=Math.min(stars,4); if(vd==='N') stars=Math.min(stars,3);
+  show('sResult');
+  $('#rWho').textContent=S.who.nick+' · '+(S.who.sid===MASK?MASK:S.who.sid)+(S.grp?' · กลุ่ม '+S.grp:'')+' · บอร์ด '+(S.board==='v30'?'30 ขา':'38 ขา');
+  $('#rPct').innerHTML=tot+'%<small>คะแนนความพร้อมรวม</small>';
+  var bd=$('#rBadge'); bd.className='badge '+vd; bd.textContent={R:'BENCH READY',C:'พร้อมแบบมีเงื่อนไข',N:'ต้องเตรียมเพิ่ม'}[vd];
+  var st=''; for(var i=0;i<6;i++) st+='<svg viewBox="0 0 20 20"><path d="M10 1.5l2.6 5.6 6 .7-4.5 4.1 1.2 6L10 15l-5.3 2.9 1.2-6L1.4 7.8l6-.7z" fill="'+(i<stars?'#f5b301':'var(--glass2)')+'" stroke="'+(i<stars?'#b45309':'var(--edge)')+'"/></svg>'; $('#rStars').innerHTML=st;
+  $('#rRadar').innerHTML=radar(sc);
+  var h=''; SK.slice().sort(function(a,b){return sc[a]-sc[b];}).forEach(function(s){ var v=sc[s], c=v>=75?'g':v>=50?'y':'r', col=v>=75?'var(--ok)':v>=50?'var(--a)':'var(--bad)';
+    h+='<div class="skr"><span class="dot '+c+'"></span><span>'+esc(DATA.skills[s].n)+'</span><span class="bar"><i style="width:'+v+'%;background:'+col+'"></i></span><b>'+v+'</b></div>'; });
+  $('#rSkills').innerHTML=h;
+  var Q=S.log.filter(function(l){return l.conf;}), n=function(f){return Q.filter(f).length;};
+  var c1=n(function(l){return l.ok&&l.conf==='sure';}), c2=n(function(l){return l.ok&&l.conf==='unsure';}), c3=n(function(l){return !l.ok&&l.conf==='sure';}), c4=n(function(l){return !l.ok&&l.conf==='unsure';});
+  $('#rConf').innerHTML='<div class="c1"><b>'+c1+'</b>รู้จริง (ถูกและมั่นใจ)</div><div class="c2"><b>'+c2+'</b>ถูกแต่ไม่มั่นใจ · ทวนให้แน่น</div><div class="c3"><b>'+c3+'</b>เข้าใจผิดแบบมั่นใจ · แก้ก่อนต่อวงจร</div><div class="c4"><b>'+c4+'</b>ยังไม่รู้ · เรียนเพิ่ม</div>';
+  var rx='', bad=S.log.filter(function(l){return !l.ok;});
+  var conf=bad.filter(function(l){return l.conf==='sure'||(l.safe&&l.t==='boss');});
+  if(conf.length){ rx+='<div class="it"><h4><span class="dot r"></span>แก้ก่อนวันประกอบจริง</h4><ul>'+conf.map(function(l){return '<li><b>'+esc(l.tp)+'</b> · '+l.e+'</li>';}).join('')+'</ul></div>'; }
+  SK.slice().sort(function(a,b){return sc[a]-sc[b];}).forEach(function(s){
+    if(sc[s]>=75) return; var miss=bad.filter(function(l){return l.s===s;}), sk=DATA.skills[s];
+    var tps=[]; miss.forEach(function(l){ if(tps.indexOf(l.tp)<0) tps.push(l.tp); });
+    rx+='<div class="it"><h4><span class="dot '+(sc[s]>=50?'y':'r')+'"></span>'+esc(sk.n)+' · '+sc[s]+'%</h4>'+
+      (tps.length?'<div>เรื่องที่พลาด: '+tps.map(esc).join(' · ')+'</div>':'<div>ตอบถูกแต่ใช้คำใบ้หรือได้โจทย์ระดับพื้นฐาน ลองเล่นซ้ำเพื่อเก็บระดับที่สูงขึ้น</div>')+
+      '<div>ทวนที่: '+sk.review.map(function(r){return '<a href="'+r[0]+'">'+esc(r[1])+'</a>';}).join(' · ')+'</div></div>';
+  });
+  if(!rx) rx='<div class="it"><h4><span class="dot g"></span>พร้อมลงมือ</h4>ทุกทักษะผ่านเกณฑ์ 75% ในวันประกอบจริง ให้ทำ Smoke Test ตรวจสายก่อนจ่ายไฟทุกครั้ง และช่วยตรวจงานของเพื่อนในกลุ่ม</div>';
+  if(S.fuses===0) rx='<div class="it"><h4><span class="dot r"></span>ฟิวส์หมด</h4><span class="warn">พลาดเรื่องความปลอดภัยครบ 3 ครั้ง</span> ทวนหัวข้อความปลอดภัยด้านล่าง แล้วตรวจความพร้อมใหม่ก่อนจ่ายไฟวงจรจริง</div>'+rx;
+  $('#rRx').innerHTML=rx;
+  var code=makeCode(sc,tot,vd); $('#rCode').textContent=code; S.code=code;
+  save(sc,tot,stars,vd,code);
+}
+function save(sc,tot,stars,vd,code){
+  try{ var all=JSON.parse(localStorage.getItem(RES_KEY)||'{}'), k=S.who.sid||MASK; all[k]=all[k]||{}; var old=all[k].game5||{};
+    all[k].game5={pre:old.pre!=null?old.pre:stars,post:stars,max:6,best:Math.max(stars,old.best||0),nick:S.who.nick,at:new Date().toISOString(),plays:(old.plays||0)+1,skills:sc,total:tot,verdict:vd,code:code,group:S.grp};
+    localStorage.setItem(RES_KEY,JSON.stringify(all)); }catch(e){}
+}
+$('#btnCopy').addEventListener('click',function(){ var c=S&&S.code; if(!c) return;
+  (navigator.clipboard?navigator.clipboard.writeText(c):Promise.reject()).then(function(){toast('คัดลอกรหัสผลแล้ว');},function(){ var r=D.createRange(); r.selectNodeContents($('#rCode')); var s=getSelection(); s.removeAllRanges(); s.addRange(r); toast('เลือกข้อความไว้แล้ว กด Ctrl+C'); }); });
+$('#btnAgain').addEventListener('click',function(){ start(S.who); });
+
+/* ---------- ตรวจรหัสผล (ผู้สอน) ---------- */
+$('#btnVerify').addEventListener('click',function(){ $('#dlg').classList.add('on'); $('#dlgIn').focus(); });
+$('#dlgX').addEventListener('click',function(){ $('#dlg').classList.remove('on'); });
+$('#dlg').addEventListener('click',function(e){ if(e.target.id==='dlg') $('#dlg').classList.remove('on'); });
+D.addEventListener('keydown',function(e){ if(e.key==='Escape') $('#dlg').classList.remove('on'); });
+$('#dlgGo').addEventListener('click',function(){
+  var rows=$('#dlgIn').value.split(/\s+/).filter(Boolean), re=/^(BR5-(S[0-7])-(\w{4})-A(\d\d)B(\d\d)C(\d\d)D(\d\d)E(\d\d)F(\d\d)-T(\d\d)-([RCN])-F(\d))-K(\d\d)$/;
+  var h='<table><tr><th>กลุ่ม</th><th>รหัสท้าย</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>รวม</th><th>ผล</th><th>ฟิวส์</th><th>ตรวจ</th></tr>';
+  rows.forEach(function(r){ var m=re.exec(r.trim()); if(!m){ h+='<tr><td colspan="11">'+esc(r)+'</td><td class="v0">รูปแบบผิด</td></tr>'; return; }
+    var ok=ck(m[1]+SECRET)===m[13];
+    h+='<tr><td>'+m[2]+'</td><td>'+m[3]+'</td><td>'+m[4]+'</td><td>'+m[5]+'</td><td>'+m[6]+'</td><td>'+m[7]+'</td><td>'+m[8]+'</td><td>'+m[9]+'</td><td>'+m[10]+'</td><td>'+{R:'READY',C:'มีเงื่อนไข',N:'เตรียมเพิ่ม'}[m[11]]+'</td><td>'+m[12]+'</td><td class="'+(ok?'v1':'v0')+'">'+(ok?'ถูกต้อง':'ถูกแก้ไข')+'</td></tr>'; });
+  $('#dlgOut').innerHTML=h+'</table>';
+});
+window.BENCH={state:function(){return S;}};
+})();
+</script>
+</body>
+</html>

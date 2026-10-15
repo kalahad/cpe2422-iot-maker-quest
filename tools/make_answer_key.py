@@ -3,7 +3,7 @@
 ห้ามเผยแพร่ไฟล์นี้บน GitHub Pages ของนักศึกษา"""
 import os, sys, html, re, importlib
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, 'games_src'))
-OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.dirname(HERE)), 'CPE2422_คลังข้อสอบและเฉลยผู้สอน_v1.0.html')  # เก็บนอก repo เสมอ
+OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.dirname(HERE)), 'CPE2422_คลังข้อสอบและเฉลยผู้สอน_v1.1.html')  # เก็บนอก repo เสมอ
 MODS = ['g1_brain_core', 'g2_pin_wars', 'g3_sensor_hunter', 'g4_launchpad']
 
 def labels(js):
@@ -20,6 +20,38 @@ for m in MODS:
             opts = ''.join('<li%s>%s</li>' % (' class="ans"' if i == 0 else '', c[i]) for i in range(4))
             parts.append('<li class="q"><div>%s</div><ol type="A" class="opts">%s</ol><div class="ex"><b>เฉลย:</b> %s · %s</div></li>' % (q, opts, c[0], e))
         parts.append('</ol>')
+
+# ---------- ด่าน 5 BENCH READY (หลายชนิดโจทย์ + บอส Smoke Test) ----------
+import g5_items as G5
+parts.append('<h2>BENCH READY · ด่านตรวจก่อนต่อวงจรจริง</h2><p class="meta">ไฟล์ game5_bench_ready.html · สุ่ม 18 ข้อจากคลัง %d ข้อ ปรับระดับตามทักษะ + บอส 1 ชุด</p>' % len(G5.ITEMS))
+TN = {'mcq': 'ปรนัย', 'num': 'กรอกตัวเลข', 'pin': 'คลิกขาบนบอร์ด', 'bug': 'คลิกบรรทัดที่ผิด', 'order': 'เรียงลำดับ'}
+for sk, meta in G5.SKILLS.items():
+    its = [x for x in G5.ITEMS if x['s'] == sk]
+    parts.append('<h3>ทักษะ %s · %s (%d ข้อ)</h3><ol>' % (sk, html.escape(meta['n']), len(its)))
+    for it in sorted(its, key=lambda x: (x.get('g', ''), x['l'])):
+        total += 1
+        tag = 'ระดับ %d · %s%s%s' % (it['l'], TN[it['t']], ' · กลุ่ม ' + it['g'] if it.get('g') else '', ' · ความปลอดภัย' if it.get('safe') else '')
+        if it['t'] == 'mcq':
+            body = '<ol type="A" class="opts">%s</ol>' % ''.join('<li%s>%s</li>' % (' class="ans"' if i == 0 else '', c) for i, c in enumerate(it['c']))
+            ans = it['c'][0]
+        elif it['t'] == 'num':
+            body = ''; ans = '%s %s (ยอมรับ %s–%s)' % (it['ans'], it.get('unit', ''), it['lo'], it['hi'])
+        elif it['t'] == 'pin':
+            body = ''; ans = ', '.join(('GPIO' + k) if k.isdigit() else k for k in it['ok'])
+        elif it['t'] == 'bug':
+            body = '<div class="codebox">%s</div>' % '\n'.join('%2d  %s' % (i + 1, html.escape(l)) for i, l in enumerate(it['code']))
+            ans = 'บรรทัดที่ ' + ', '.join(str(i + 1) for i in it['ok'])
+        else:
+            body = ''; ans = ' → '.join(it['items'])
+        parts.append('<li class="q"><div class="meta">%s · %s</div><div>%s</div>%s<div class="ex"><b>เฉลย:</b> %s · %s</div></li>' % (it['id'], tag, it['q'], body, ans, it['e']))
+    parts.append('</ol>')
+parts.append('<h3>บอส Smoke Test (%d ชุด ชุดละ 6 แถว เวลา %d วินาที)</h3>' % (len(G5.BOSS), G5.BOSS_SECONDS))
+for b in G5.BOSS:
+    parts.append('<p><b>%s</b></p><ol>' % html.escape(b['t']))
+    for r in b['rows']:
+        total += 1
+        parts.append('<li class="q"><div>%s</div><div class="ex"><b>เฉลย: %s</b>%s · %s</div></li>' % (html.escape(r[0]), 'ผ่าน' if r[1] else 'ต้องแก้', ' (จุดอันตราย)' if r[3] else '', html.escape(r[4])))
+    parts.append('</ol>')
 
 doc = """<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>คลังข้อสอบและเฉลยผู้สอน CPE2422/2428</title>

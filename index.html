@@ -5,14 +5,14 @@
 <script>(function(){try{var t=localStorage.getItem('cpe2422_theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CPE2422/2428 · ภารกิจ IoT Maker Quest | มหาวิทยาลัยรามคำแหง</title>
-<meta name="description" content="ชุดเกมบทเรียน 4 ด่าน วิชา CPE2422 อิเล็กทรอนิกส์วิศวกรรม และ CPE2428 ปฏิบัติการ: ไมโครคอนโทรลเลอร์ ESP32 เซนเซอร์ 38 ชนิด และโปรเจกต์ IoT S1–S7 คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง">
+<meta name="description" content="ชุดเกมบทเรียน 5 ด่าน วิชา CPE2422 อิเล็กทรอนิกส์วิศวกรรม และ CPE2428 ปฏิบัติการ: ไมโครคอนโทรลเลอร์ ESP32 เซนเซอร์ 38 ชนิด และโปรเจกต์ IoT S1–S7 และด่านตรวจความพร้อมก่อนต่อวงจรจริง คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230b0f14'/%3E%3Ctext x='50' y='64' font-family='monospace' font-weight='700' font-size='42' text-anchor='middle' fill='%23fbbf24'%3E%7B%7D%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Kanit:wght@400;500;600;700&family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
 /* =================================================================
-   CPE2422/2428 IoT Maker Quest — หน้าแผนที่ภารกิจ 4 ด่าน (ต่อยอดจาก GNR1007 index v4.1 · UI v7.0)
+   CPE2422/2428 IoT Maker Quest — หน้าแผนที่ภารกิจ 5 ด่าน (ต่อยอดจาก GNR1007 index v4.1 · UI v7.0)
    - ลงทะเบียนด้วยรหัสนักศึกษา 10 หลัก หรือรหัสลับจากผู้สอน + ชื่อเล่น
    - โหมดมืด/สว่าง ความต่างสีข้อความ >= 4.5:1
    ================================================================= */
@@ -237,16 +237,16 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
       <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9.5 3v4M14.5 3v4M9.5 17v4M14.5 17v4M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/></svg></div>
       <div>
         <h1>IoT Maker Quest <span>CPE2422/2428</span></h1>
-        <p>เคลียร์ให้ครบ 4 ด่าน สะสมดาว จากสมองกล สู่ขา ESP32 เซนเซอร์ 38 ชนิด และปล่อยโปรเจกต์ IoT ของกลุ่ม</p>
+        <p>เคลียร์ให้ครบ 5 ด่าน สะสมดาว จากสมองกล สู่ขา ESP32 เซนเซอร์ 38 ชนิด ปล่อยโปรเจกต์ IoT ของกลุ่ม และผ่านด่านตรวจ BENCH READY ก่อนต่อวงจรจริง</p>
       </div>
     </div>
-    <span class="cleared" id="cleared">เคลียร์แล้ว <b>0 / 4</b> ด่าน</span>
+    <span class="cleared" id="cleared">เคลียร์แล้ว <b>0 / 5</b> ด่าน</span>
     <button class="ibtn" id="btnTheme" type="button" aria-label="สลับโหมดสว่างหรือมืด" title="สลับโหมดสว่าง/มืด">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
     </button>
   </header>
 
-  <main class="map" id="map" aria-label="แผนที่ภารกิจ 4 ด่าน"><div class="dots"></div><div id="world"></div><div class="tipbox" id="tipbox" role="tooltip"></div></main>
+  <main class="map" id="map" aria-label="แผนที่ภารกิจ 5 ด่าน"><div class="dots"></div><div id="world"></div><div class="tipbox" id="tipbox" role="tooltip"></div></main>
 
   <aside class="side">
     <div class="pc">
@@ -256,7 +256,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
         <span class="chg">เปลี่ยน</span>
       </button>
       <div class="kv"><span>ฉายา</span><b id="uRank">—</b></div>
-      <div class="kv"><span>ดาวสะสม</span><b id="uStars">0 / 24</b></div>
+      <div class="kv"><span>ดาวสะสม</span><b id="uStars">0 / 30</b></div>
       <div class="bar"><i id="uBar"></i></div>
     </div>
     <div class="pc nx">
@@ -279,7 +279,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
     {k:'game1', f:'game1_brain_core.html',   n:'BRAIN CORE',       th:'ถอดรหัสสมองกลฝังตัว',     tp:'MCU · MEMORY · ADC · LOOP',        d:1, ch:'คลิปที่ 1',   acc:'#22d3ee', accl:'#0e7490', max:6},
     {k:'game2', f:'game2_pin_wars.html',     n:'PIN WARS',         th:'สังเวียนขา ESP32',         tp:'GPIO · ADC1/ADC2 · PWM · BUS',     d:1, ch:'คลิปที่ 2',   acc:'#ff7a30', accl:'#c2410c', max:6},
     {k:'game3', f:'game3_sensor_hunter.html',n:'SENSOR HUNTER',    th:'ล่าเซนเซอร์ 38 ชนิด',      tp:'SENSOR DEX · AO/DO · DIVIDER',     d:2, ch:'คลิปที่ 3',   acc:'#34d399', accl:'#047857', max:6},
-    {k:'game4', f:'game4_launchpad.html',    n:'PROJECT LAUNCHPAD',th:'ฐานปล่อยโปรเจกต์ S1–S7',   tp:'IPO · DRIVER · HYSTERESIS · IoT',  d:3, ch:'โปรเจกต์กลุ่ม',acc:'#818cf8', accl:'#4338ca', max:6}
+    {k:'game4', f:'game4_launchpad.html',    n:'PROJECT LAUNCHPAD',th:'ฐานปล่อยโปรเจกต์ S1–S7',   tp:'IPO · DRIVER · HYSTERESIS · IoT',  d:3, ch:'โปรเจกต์กลุ่ม',acc:'#818cf8', accl:'#4338ca', max:6},
+    {k:'game5', f:'game5_bench_ready.html',  n:'BENCH READY',      th:'ด่านตรวจก่อนต่อวงจรจริง',  tp:'6 ทักษะ · SMOKE TEST · เรดาร์',    d:3, ch:'ก่อนประกอบจริง',acc:'#ffc21a', accl:'#9a5b00', max:6}
   ];
   var DAYS={1:'3 ต.ค.',2:'3 ต.ค.',3:'17–31 ต.ค.'};
   var ID_KEY='cpe2422_student', RES_KEY='cpe2422_results', SECRET='ru2569', MASK='xxxxxxxxxx';
@@ -338,19 +339,20 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
   /* ---------- แผนที่ผจญภัย + แผงผู้เล่น ---------- */
   var ZONES={1:{n:'ฐานสมองกล',s:'คลิปที่ 1–2 · MCU และขา ESP32',c:'#22d3ee',cl:'#0e7490'},
              2:{n:'สนามล่าเซนเซอร์',s:'คลิปที่ 3 · เซนเซอร์ 38 ชนิด',c:'#34d399',cl:'#047857'},
-             3:{n:'ฐานปล่อยโปรเจกต์',s:'Lab 17–31 ต.ค. · โปรเจกต์ S1–S7',c:'#818cf8',cl:'#4338ca'}};
+             3:{n:'ฐานปล่อยโปรเจกต์',s:'Lab 17–31 ต.ค. · โปรเจกต์ S1–S7 · ตรวจก่อนต่อวงจร',c:'#818cf8',cl:'#4338ca'}};
   var ICON={
    game1:'<rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9.5 3v4M14.5 3v4M9.5 17v4M14.5 17v4M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/>',
    game2:'<rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="9.5" cy="8" r="1.2"/><circle cx="9.5" cy="12" r="1.2"/><circle cx="9.5" cy="16" r="1.2"/><circle cx="14.5" cy="8" r="1.2"/><circle cx="14.5" cy="12" r="1.2"/><circle cx="14.5" cy="16" r="1.2"/>',
    game3:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12l6-5"/><circle cx="16" cy="9" r="1"/>',
-   game4:'<path d="M12 2.5c3 3 4 7 3.4 11H8.6C8 9.5 9 5.5 12 2.5z"/><circle cx="12" cy="9" r="1.6"/><path d="M8.6 13.5L6 17l3-1M15.4 13.5L18 17l-3-1M10 17l2 4 2-4"/>'};
+   game4:'<path d="M12 2.5c3 3 4 7 3.4 11H8.6C8 9.5 9 5.5 12 2.5z"/><circle cx="12" cy="9" r="1.6"/><path d="M8.6 13.5L6 17l3-1M15.4 13.5L18 17l-3-1M10 17l2 4 2-4"/>',
+   game5:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>'};
   function svgIcon(k,size){return '<svg viewBox="0 0 24 24" width="'+(size||24)+'" height="'+(size||24)+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+ICON[k]+'</svg>';}
   function isLight(){return document.documentElement.getAttribute('data-theme')==='light';}
   function results(){
     var c=getId(); if(!c) return {};
     try{return (JSON.parse(localStorage.getItem(RES_KEY)||'{}')[c.sid])||{};}catch(e){return {};}
   }
-  function rankOf(st){var R=[[0,'ผู้เริ่มต้นภารกิจ'],[6,'นักประดิษฐ์ฝึกหัด'],[12,'วิศวกร IoT'],[18,'นักสร้างระบบตัวจริง'],[23,'ปรมาจารย์ Maker']],r=R[0];R.forEach(function(x){if(st>=x[0])r=x;});return r[1];}
+  function rankOf(st){var R=[[0,'ผู้เริ่มต้นภารกิจ'],[7,'นักประดิษฐ์ฝึกหัด'],[14,'วิศวกร IoT'],[21,'นักสร้างระบบตัวจริง'],[27,'ปรมาจารย์ Maker']],r=R[0];R.forEach(function(x){if(st>=x[0])r=x;});return r[1];}
   var R={}, NX=0;
   function pickNext(){
     for(var i=0;i<GAMES.length;i++) if(!R[GAMES[i].k]) return {i:i,replay:false};
@@ -385,8 +387,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
   function drawMap(){
     var el=$('#map'), W=el.clientWidth, H=el.clientHeight; if(!W||!H) return;
     var port=W<H*0.95, VW=port?400:1000, VH=port?Math.round(400*H/W):Math.max(460,Math.round(1000*H/W));
-    var P=port?[[110,.82],[300,.62],[110,.42],[260,.2]]
-              :[[150,.72],[390,.36],[620,.66],[860,.36]];
+    var P=port?[[110,.86],[290,.7],[110,.53],[290,.36],[150,.17]]
+              :[[120,.72],[320,.36],[520,.68],[720,.36],[900,.68]];
     P=P.map(function(p){return [p[0],p[1]*VH];});
     var d='M'+P[0][0]+' '+P[0][1];
     for(var i=0;i<P.length-1;i++){var p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||p2;
@@ -395,13 +397,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
     s+='<path d="'+d+'" fill="none" style="stroke:var(--line2)" stroke-width="16" stroke-linecap="round"/>';
     s+='<path d="'+d+'" fill="none" stroke="'+(L?'#d97706':'#fbbf24')+'" stroke-width="3" stroke-dasharray="2 12" stroke-linecap="round"/>';
     if(!port){
-      var ZL={1:[270,.93],2:[620,.93],3:[860,.1]};
+      var ZL={1:[220,.93],2:[520,.93],3:[810,.1]};
       [1,2,3].forEach(function(z){var x=ZL[z][0],y=ZL[z][1]*VH;
         var an=(z===3?' text-anchor="middle"':(z===2?' text-anchor="middle"':''));
         s+='<text class="zlabel"'+an+' x="'+x+'" y="'+y+'" fill="'+(L?ZONES[z].cl:ZONES[z].c)+'">'+ZONES[z].n+'</text><text class="zsub"'+an+' x="'+x+'" y="'+(y+15)+'">'+ZONES[z].s+'</text>';});
     }
     GAMES.forEach(function(g,i){
-      var p=P[i], r=R[g.k], cur=(i===NX), Rr=(g.k==='game4'?38:33)*(port?.85:1), acc=L?g.accl:g.acc, filled=r||cur;
+      var p=P[i], r=R[g.k], cur=(i===NX), Rr=(g.k==='game5'?38:33)*(port?.85:1), acc=L?g.accl:g.acc, filled=r||cur;
       s+='<g class="node" role="listitem" tabindex="0" data-i="'+i+'" transform="translate('+p[0]+' '+p[1]+')" style="color:'+g.acc+'" aria-label="ด่าน '+(i+1)+' '+esc(g.n)+(r?' ผล Posttest '+r.post+' จาก '+g.max:' ยังไม่ได้เล่น')+'">';
       if(cur) s+='<circle class="ring" r="'+Rr+'" fill="none" stroke="'+g.acc+'" stroke-width="4"/>';
       s+='<circle class="disc" r="'+Rr+'" '+(filled?'fill="'+g.acc+'"':'style="fill:var(--surface)"')+' stroke="'+acc+'" stroke-width="3"'+(filled?'':' stroke-dasharray="5 4"')+'/>';

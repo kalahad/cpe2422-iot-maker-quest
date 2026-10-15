@@ -9,6 +9,10 @@ def code(s):
 def bank_js(bank):
     """bank = {'district1':[(q, [ถูก, ผิด, ผิด, ผิด], อธิบาย), ...], ...} -> JS object literal
     ตัวเลือกแรกคือคำตอบที่ถูกเสมอ (เอนจินสลับตัวเลือกให้ทุกครั้งที่สุ่ม)"""
+    import os as _os, sys as _sys
+    _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+    import bank_lint
+    bank_lint.check_bank(bank)   # กันคำตอบยาวเดาได้ — ผิดกฎแล้วหยุด build
     out = {}
     for d, items in bank.items():
         arr = []

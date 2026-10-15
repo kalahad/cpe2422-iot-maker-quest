@@ -168,7 +168,7 @@
     var any=Object.keys(hl).length>0||parts.length>0, compact=!!opt.compact, hasParts=parts.length>0;
     var xray=parts.some(function(p){ return /^(chip|sram|flash|psram|xtal)$/.test(p); });
     var LBW=compact?(hasParts&&!opt.numbers?162:132):300;
-    var vb=compact?[-LBW,-26,W+LBW*2,H+40]:[-LBW,-34,W+LBW*2,H+76];
+    var vb=opt.quiz?[-34,-34,W+68,H+52]:(compact?[-LBW,-26,W+LBW*2,H+40]:[-LBW,-34,W+LBW*2,H+76]);
     var s='<svg class="np-svg" viewBox="'+vb.join(' ')+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ผังขา '+B.t+'">';
     s+='<defs>'+
       '<linearGradient id="'+id+'pcb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b1f29"/><stop offset=".55" stop-color="#0d1017"/><stop offset="1" stop-color="#161a23"/></linearGradient>'+
@@ -243,6 +243,7 @@
         s+=(i===0?'<rect x="'+(x-9)+'" y="'+(y-9)+'" width="18" height="18" rx="2"':'<circle cx="'+x+'" cy="'+y+'" r="9.5"')+' fill="url(#'+id+'au)" stroke="#7a5a1c" stroke-width="1"/>';
         s+='<rect x="'+(x-3.6)+'" y="'+(y-3.6)+'" width="7.2" height="7.2" fill="#d9dde2" stroke="#6b7076" stroke-width=".8"/>';
         s+='<text x="'+(isL?x+15:x-15)+'" y="'+(y+3.6)+'" text-anchor="'+(isL?'start':'end')+'" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="700" fill="#eef0f3">'+silk[i]+'</text>';
+        if(opt.quiz){ s+='<circle class="np-qring" cx="'+x+'" cy="'+y+'" r="13" fill="none" stroke-width="3.5"/><rect class="np-hit" x="'+(isL?x-30:x-60)+'" y="'+(y-12.7)+'" width="90" height="25.4" fill="transparent"/></g>'; return; }
         if(inf[0]==='flash') s+='<path d="M'+(x-7)+' '+(y-7)+' L'+(x+7)+' '+(y+7)+' M'+(x+7)+' '+(y-7)+' L'+(x-7)+' '+(y+7)+'" stroke="#ff4d5e" stroke-width="2.4" opacity="'+(dim?'.3':'.9')+'"/>';
         /* ป้ายด้านนอก */
         var nm=nameOf(k), tg=inf[1], x1=isL?-14:W+14;
@@ -306,7 +307,7 @@
       }
       s+='</g>';
     });
-    if(!(hasParts&&parts.indexOf('antenna')>=0)) s+='<text x="'+(W/2)+'" y="-18" text-anchor="middle" font-size="12" class="np-cap">เสาอากาศ PCB (ด้านบน)</text>';
+    if(!opt.quiz&&!(hasParts&&parts.indexOf('antenna')>=0)) s+='<text x="'+(W/2)+'" y="-18" text-anchor="middle" font-size="12" class="np-cap">เสาอากาศ PCB (ด้านบน)</text>';
     s+='</svg>';
     return s;
   }
